@@ -1,0 +1,1758 @@
+{
+  "conversation_id": "d897fd50-c8ae-4b81-8231-f3a42d934e88",
+  "next_message": null,
+  "history": [
+    {
+      "user": {
+        "additional_context": "",
+        "env_context": {
+          "env_state": {
+            "operating_system": "linux",
+            "current_working_directory": "/home/evaristo/Documents/me&health",
+            "environment_variables": []
+          }
+        },
+        "content": {
+          "Prompt": {
+            "prompt": "as you can see for the symptomps we have its logs and add . can you give a similar approach to other functionalities as well with a simliar view and structure and pattern? we will see how it will look. "
+          }
+        },
+        "timestamp": "2026-02-17T15:33:08.285873531+01:00",
+        "images": null
+      },
+      "assistant": {
+        "ToolUse": {
+          "message_id": "ada822ba-2a40-4499-bdc0-e6160cc8f649",
+          "content": "\n\nLet me first explore the codebase to understand the symptoms functionality and its structure.\n",
+          "tool_uses": [
+            {
+              "id": "tooluse_kIvpr288knFpHaWP6wtbEi",
+              "name": "glob",
+              "orig_name": "glob",
+              "args": {
+                "pattern": "**/*symptom*"
+              },
+              "orig_args": {
+                "pattern": "**/*symptom*"
+              }
+            },
+            {
+              "id": "tooluse_OxAqesSzR7zvxBODzWFMqb",
+              "name": "glob",
+              "orig_name": "glob",
+              "args": {
+                "pattern": "**/*",
+                "path": "/home/evaristo/Documents/me&health"
+              },
+              "orig_args": {
+                "pattern": "**/*",
+                "path": "/home/evaristo/Documents/me&health"
+              }
+            }
+          ]
+        }
+      },
+      "request_metadata": {
+        "request_id": "96f96aec-5866-4f76-ace7-4cd93ea1ce7e",
+        "context_usage_percentage": 4.354592,
+        "message_id": "ada822ba-2a40-4499-bdc0-e6160cc8f649",
+        "request_start_timestamp_ms": 1771338788287,
+        "stream_end_timestamp_ms": 1771338791998,
+        "time_to_first_chunk": {
+          "secs": 2,
+          "nanos": 424887508
+        },
+        "time_between_chunks": [
+          {
+            "secs": 0,
+            "nanos": 54516
+          },
+          {
+            "secs": 0,
+            "nanos": 10512
+          },
+          {
+            "secs": 0,
+            "nanos": 136764908
+          },
+          {
+            "secs": 0,
+            "nanos": 197036639
+          },
+          {
+            "secs": 0,
+            "nanos": 6011546
+          },
+          {
+            "secs": 0,
+            "nanos": 259492137
+          },
+          {
+            "secs": 0,
+            "nanos": 147255557
+          },
+          {
+            "secs": 0,
+            "nanos": 55303
+          },
+          {
+            "secs": 0,
+            "nanos": 58082691
+          },
+          {
+            "secs": 0,
+            "nanos": 146382065
+          },
+          {
+            "secs": 0,
+            "nanos": 23515670
+          },
+          {
+            "secs": 0,
+            "nanos": 25665
+          },
+          {
+            "secs": 0,
+            "nanos": 7689414
+          },
+          {
+            "secs": 0,
+            "nanos": 104252774
+          },
+          {
+            "secs": 0,
+            "nanos": 161541252
+          },
+          {
+            "secs": 0,
+            "nanos": 20219253
+          },
+          {
+            "secs": 0,
+            "nanos": 17021844
+          },
+          {
+            "secs": 0,
+            "nanos": 18507
+          },
+          {
+            "secs": 0,
+            "nanos": 61422
+          },
+          {
+            "secs": 0,
+            "nanos": 328774
+          },
+          {
+            "secs": 0,
+            "nanos": 1780
+          }
+        ],
+        "user_prompt_length": 361,
+        "response_size": 188,
+        "chat_conversation_type": "ToolUse",
+        "tool_use_ids_and_names": [
+          [
+            "tooluse_kIvpr288knFpHaWP6wtbEi",
+            "glob"
+          ],
+          [
+            "tooluse_OxAqesSzR7zvxBODzWFMqb",
+            "glob"
+          ]
+        ],
+        "model_id": "minimax-m2.1",
+        "message_meta_tags": []
+      }
+    },
+    {
+      "user": {
+        "additional_context": "",
+        "env_context": {
+          "env_state": {
+            "operating_system": "linux",
+            "current_working_directory": "/home/evaristo/Documents/me&health",
+            "environment_variables": []
+          }
+        },
+        "content": {
+          "ToolUseResults": {
+            "tool_use_results": [
+              {
+                "tool_use_id": "tooluse_kIvpr288knFpHaWP6wtbEi",
+                "content": [
+                  {
+                    "Json": {
+                      "filePaths": [
+                        "/home/evaristo/Documents/me&health/app/add-symptom.tsx",
+                        "/home/evaristo/Documents/me&health/app/symptoms-log.tsx"
+                      ],
+                      "totalFiles": 2,
+                      "truncated": false
+                    }
+                  }
+                ],
+                "status": "Success"
+              },
+              {
+                "tool_use_id": "tooluse_OxAqesSzR7zvxBODzWFMqb",
+                "content": [
+                  {
+                    "Json": {
+                      "filePaths": [
+                        "/home/evaristo/Documents/me&health/babel.config.js",
+                        "/home/evaristo/Documents/me&health/assets/splash-icon.png",
+                        "/home/evaristo/Documents/me&health/assets/icon.png",
+                        "/home/evaristo/Documents/me&health/assets/adaptive-icon.png",
+                        "/home/evaristo/Documents/me&health/assets/favicon.png",
+                        "/home/evaristo/Documents/me&health/.git/config",
+                        "/home/evaristo/Documents/me&health/.git/info/exclude",
+                        "/home/evaristo/Documents/me&health/.git/hooks/pre-push.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/post-update.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/sendemail-validate.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/fsmonitor-watchman.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/pre-rebase.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/pre-commit.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/applypatch-msg.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/prepare-commit-msg.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/commit-msg.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/pre-receive.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/push-to-checkout.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/pre-merge-commit.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/pre-applypatch.sample",
+                        "/home/evaristo/Documents/me&health/.git/hooks/update.sample",
+                        "/home/evaristo/Documents/me&health/.git/HEAD",
+                        "/home/evaristo/Documents/me&health/.git/index",
+                        "/home/evaristo/Documents/me&health/.git/objects/66/6ab2ae9bd742da6f95efffaa581f29969ca651",
+                        "/home/evaristo/Documents/me&health/.git/objects/91/f379251cd70686530ec43d0b6e7a7ebe85849b",
+                        "/home/evaristo/Documents/me&health/.git/objects/eb/31f964277e8aa0e85f3dbda92919bf12da6915",
+                        "/home/evaristo/Documents/me&health/.git/objects/03/d6f6b6c6727954aec1d8206222769afd178d8d",
+                        "/home/evaristo/Documents/me&health/.git/objects/03/29d0c93c3a2f575e4d87faeea9b6029d400ef1",
+                        "/home/evaristo/Documents/me&health/.git/objects/43/b0c0a434462b367d9bc694dcbaeb83931d2ebd",
+                        "/home/evaristo/Documents/me&health/.git/objects/b9/567f6052d70ca2c9035e33667fded3cc4ed71f",
+                        "/home/evaristo/Documents/me&health/.git/objects/a0/b1526fc7b78680fd8d733dbc6113e1af695487",
+                        "/home/evaristo/Documents/me&health/.git/objects/1d/6e981ef6c4ea336e6fe8f3fbce9487221a075c",
+                        "/home/evaristo/Documents/me&health/.git/objects/42/0574c1bdd37ee22e03bcc870e7b9fad4877d88",
+                        "/home/evaristo/Documents/me&health/.git/objects/e7/5f697b1801871ad8cd9309b05e8ffe8c6b6d01",
+                        "/home/evaristo/Documents/me&health/.git/objects/d9/14c328fe1d7c235283f985f1679a330b40b565",
+                        "/home/evaristo/Documents/me&health/.git/description",
+                        "/home/evaristo/Documents/me&health/guide.md",
+                        "/home/evaristo/Documents/me&health/app.json",
+                        "/home/evaristo/Documents/me&health/index.ts",
+                        "/home/evaristo/Documents/me&health/components/ui/ActionCard.tsx",
+                        "/home/evaristo/Documents/me&health/components/ui/index.ts",
+                        "/home/evaristo/Documents/me&health/components/ui/HealthDataCard.tsx",
+                        "/home/evaristo/Documents/me&health/components/ui/MultiStepFormLayout.tsx",
+                        "/home/evaristo/Documents/me&health/components/ui/SearchableDropdown.tsx",
+                        "/home/evaristo/Documents/me&health/components/ui/CategoryButton.tsx",
+                        "/home/evaristo/Documents/me&health/components/ui/CircularProgressRing.tsx",
+                        "/home/evaristo/Documents/me&health/tailwind.config.js",
+                        "/home/evaristo/Documents/me&health/.gitignore",
+                        "/home/evaristo/Documents/me&health/nativewind-env.d.ts",
+                        "/home/evaristo/Documents/me&health/app/add-activity.tsx",
+                        "/home/evaristo/Documents/me&health/app/settings.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-sleep.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-appointment.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-symptom.tsx",
+                        "/home/evaristo/Documents/me&health/app/onboarding.tsx",
+                        "/home/evaristo/Documents/me&health/app/index.tsx",
+                        "/home/evaristo/Documents/me&health/app/symptoms-log.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-measurement.tsx",
+                        "/home/evaristo/Documents/me&health/app/_layout.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-nutrition.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-medication.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-diagnosis.tsx",
+                        "/home/evaristo/Documents/me&health/app/(tabs)/track.tsx",
+                        "/home/evaristo/Documents/me&health/app/(tabs)/profile.tsx",
+                        "/home/evaristo/Documents/me&health/app/(tabs)/index.tsx",
+                        "/home/evaristo/Documents/me&health/app/(tabs)/_layout.tsx",
+                        "/home/evaristo/Documents/me&health/app/add-mood.tsx",
+                        "/home/evaristo/Documents/me&health/tsconfig.json",
+                        "/home/evaristo/Documents/me&health/package.json",
+                        "/home/evaristo/Documents/me&health/package-lock.json",
+                        "/home/evaristo/Documents/me&health/global.css",
+                        "/home/evaristo/Documents/me&health/types/index.ts",
+                        "/home/evaristo/Documents/me&health/stores/useHealthStore.ts",
+                        "/home/evaristo/Documents/me&health/stores/useUserStore.ts"
+                      ],
+                      "totalFiles": 74,
+                      "truncated": false
+                    }
+                  }
+                ],
+                "status": "Success"
+              }
+            ]
+          }
+        },
+        "timestamp": null,
+        "images": null
+      },
+      "assistant": {
+        "ToolUse": {
+          "message_id": "4bcb1e35-2fe1-4db9-a6ba-db3745ea3099",
+          "content": "\n\n\n",
+          "tool_uses": [
+            {
+              "id": "tooluse_t3C5o249ZdFlNhx8SUA0bT",
+              "name": "fs_read",
+              "orig_name": "fs_read",
+              "args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/symptoms-log.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-symptom.tsx"
+                  }
+                ]
+              },
+              "orig_args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/symptoms-log.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-symptom.tsx"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "request_metadata": {
+        "request_id": "d0c17160-07cc-4e68-a10f-15aee2d24162",
+        "context_usage_percentage": 5.2357144,
+        "message_id": "4bcb1e35-2fe1-4db9-a6ba-db3745ea3099",
+        "request_start_timestamp_ms": 1771338792099,
+        "stream_end_timestamp_ms": 1771338795100,
+        "time_to_first_chunk": {
+          "secs": 1,
+          "nanos": 344731710
+        },
+        "time_between_chunks": [
+          {
+            "secs": 0,
+            "nanos": 69380
+          },
+          {
+            "secs": 0,
+            "nanos": 316779725
+          },
+          {
+            "secs": 0,
+            "nanos": 49459
+          },
+          {
+            "secs": 0,
+            "nanos": 89670350
+          },
+          {
+            "secs": 0,
+            "nanos": 68423
+          },
+          {
+            "secs": 1,
+            "nanos": 249524605
+          },
+          {
+            "secs": 0,
+            "nanos": 49104
+          },
+          {
+            "secs": 0,
+            "nanos": 30862
+          },
+          {
+            "secs": 0,
+            "nanos": 19836
+          },
+          {
+            "secs": 0,
+            "nanos": 83873
+          },
+          {
+            "secs": 0,
+            "nanos": 12165
+          },
+          {
+            "secs": 0,
+            "nanos": 160
+          }
+        ],
+        "user_prompt_length": 0,
+        "response_size": 188,
+        "chat_conversation_type": "ToolUse",
+        "tool_use_ids_and_names": [
+          [
+            "tooluse_t3C5o249ZdFlNhx8SUA0bT",
+            "fs_read"
+          ]
+        ],
+        "model_id": "minimax-m2.1",
+        "message_meta_tags": []
+      }
+    },
+    {
+      "user": {
+        "additional_context": "",
+        "env_context": {
+          "env_state": {
+            "operating_system": "linux",
+            "current_working_directory": "/home/evaristo/Documents/me&health",
+            "environment_variables": []
+          }
+        },
+        "content": {
+          "ToolUseResults": {
+            "tool_use_results": [
+              {
+                "tool_use_id": "tooluse_t3C5o249ZdFlNhx8SUA0bT",
+                "content": [
+                  {
+                    "Text": "=== Operation 1 Result (Text) ===\nimport { useState, useMemo } from 'react';\nimport { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';\n\ntype FilterType = 'all' | 'week' | 'month' | 'year';\ntype SortBy = 'date' | 'intensity' | 'name';\n\nfunction CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void }) {\n    const [currentMonth, setCurrentMonth] = useState(new Date());\n    const days = eachDayOfInterval({ start: startOfWeek(startOfMonth(currentMonth)), end: endOfWeek(endOfMonth(currentMonth)) });\n\n    return (\n        <View style={styles.calendarContainer}>\n            <View style={styles.calendarHeader}>\n                <TouchableOpacity onPress={() => setCurrentMonth(subMonths(currentMonth, 1))}><Ionicons name=\"chevron-back\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n                <Text style={styles.calendarMonth}>{format(currentMonth, 'MMMM yyyy')}</Text>\n                <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name=\"chevron-forward\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n            </View>\n            <View style={styles.weekDays}>\n                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{d}</Text>)}\n            </View>\n            <View style={styles.daysGrid}>\n                {days.map(day => {\n                    const dateStr = format(day, 'yyyy-MM-dd');\n                    const isSelected = selectedDate === dateStr;\n                    const isMarked = markedDates[dateStr];\n                    return (\n                        <TouchableOpacity key={dateStr} style={[styles.day, isSelected && styles.daySelected]} onPress={() => onSelectDate(dateStr)}>\n                            <Text style={[styles.dayText, isSelected && styles.dayTextSelected]}>{format(day, 'd')}</Text>\n                            {isMarked && <View style={[styles.dayDot, { backgroundColor: isMarked.dotColor || '#3B82F6' }]} />}\n                        </TouchableOpacity>\n                    );\n                })}\n            </View>\n            <View style={styles.calendarFooter}>\n                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>Done</Text></TouchableOpacity>\n            </View>\n        </View>\n    );\n}\n\nexport default function SymptomsLogScreen() {\n    const router = useRouter();\n    const { symptoms, removeSymptom } = useHealthStore();\n    const [search, setSearch] = useState('');\n    const [filterType, setFilterType] = useState<FilterType>('all');\n    const [minIntensity, setMinIntensity] = useState(0);\n    const [sortBy, setSortBy] = useState<SortBy>('date');\n    const [showCalendar, setShowCalendar] = useState(false);\n    const [selectedDate, setSelectedDate] = useState<string | null>(null);\n    const [showFilters, setShowFilters] = useState(false);\n\n    const intensityColors = { Mild: '#10B981', Moderate: '#F59E0B', Severe: '#EF4444', 'Very Severe': '#DC2626' };\n\n    const filteredSymptoms = useMemo(() => {\n        let result = [...symptoms];\n        const now = new Date();\n\n        if (filterType === 'week') {\n            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\n            result = result.filter(s => new Date(s.dateStarted) >= weekAgo);\n        } else if (filterType === 'month') {\n            result = result.filter(s => isWithinInterval(new Date(s.dateStarted), { start: startOfMonth(now), end: endOfMonth(now) }));\n        } else if (filterType === 'year') {\n            result = result.filter(s => new Date(s.dateStarted).getFullYear() === now.getFullYear());\n        }\n\n        if (selectedDate) {\n            result = result.filter(s => format(parseISO(s.dateStarted), 'yyyy-MM-dd') === selectedDate);\n        }\n\n        if (search) {\n            result = result.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));\n        }\n\n        if (minIntensity > 0) {\n            result = result.filter(s => s.intensity >= minIntensity);\n        }\n\n        result.sort((a, b) => {\n            if (sortBy === 'date') return new Date(b.dateStarted).getTime() - new Date(a.dateStarted).getTime();\n            if (sortBy === 'intensity') return b.intensity - a.intensity;\n            return a.name.localeCompare(b.name);\n        });\n\n        return result;\n    }, [symptoms, filterType, selectedDate, search, minIntensity, sortBy]);\n\n    const intensityStats = useMemo(() => {\n        const total = filteredSymptoms.length;\n        if (total === 0) return { Mild: 0, Moderate: 0, Severe: 0, 'Very Severe': 0 };\n        const stats = { Mild: 0, Moderate: 0, Severe: 0, 'Very Severe': 0 };\n        filteredSymptoms.forEach(s => stats[s.intensityLabel]++);\n        return stats;\n    }, [filteredSymptoms]);\n\n    const markedDates = symptoms.reduce((acc, s) => {\n        const date = format(parseISO(s.dateStarted), 'yyyy-MM-dd');\n        acc[date] = { marked: true, dotColor: intensityColors[s.intensityLabel] };\n        return acc;\n    }, {} as Record<string, any>);\n\n    const handleDateSelect = (date: string) => {\n        if (selectedDate === date) {\n            setSelectedDate(null);\n        } else {\n            setSelectedDate(date);\n        }\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()}><Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n                <Text style={styles.headerTitle}>Symptoms Log</Text>\n                <TouchableOpacity onPress={() => router.push('/add-symptom')}><Ionicons name=\"add\" size={24} color=\"#3B82F6\" /></TouchableOpacity>\n            </View>\n\n            <View style={styles.searchRow}>\n                <View style={styles.searchContainer}>\n                    <Ionicons name=\"search\" size={20} color=\"#9CA3AF\" />\n                    <TextInput style={styles.searchInput} placeholder=\"Search symptoms...\" value={search} onChangeText={setSearch} />\n                </View>\n                <TouchableOpacity style={[styles.filterButton, showFilters && styles.filterButtonActive]} onPress={() => setShowFilters(!showFilters)}>\n                    <Ionicons name=\"options\" size={20} color={showFilters ? '#3B82F6' : '#6B7280'} />\n                </TouchableOpacity>\n                <TouchableOpacity style={[styles.filterButton, selectedDate && styles.filterButtonActive]} onPress={() => setShowCalendar(true)}>\n                    <Ionicons name=\"calendar\" size={20} color={selectedDate ? '#3B82F6' : '#6B7280'} />\n                </TouchableOpacity>\n            </View>\n\n            {showFilters && (\n                <View style={styles.filterPanel}>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Period:</Text>\n                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(t => (\n                            <TouchableOpacity key={t} style={[styles.filterChip, filterType === t && styles.filterChipActive]} onPress={() => setFilterType(t)}>\n                                <Text style={[styles.filterChipText, filterType === t && styles.filterChipTextActive]}>{t.charAt(0).toUpperCase() + t.slice(1)}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Min Intensity:</Text>\n                        {[0, 25, 50, 75].map(i => (\n                            <TouchableOpacity key={i} style={[styles.filterChip, minIntensity === i && styles.filterChipActive]} onPress={() => setMinIntensity(i)}>\n                                <Text style={[styles.filterChipText, minIntensity === i && styles.filterChipTextActive]}>{i === 0 ? 'All' : `${i}+`}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Sort:</Text>\n                        {(['date', 'intensity', 'name'] as SortBy[]).map(s => (\n                            <TouchableOpacity key={s} style={[styles.filterChip, sortBy === s && styles.filterChipActive]} onPress={() => setSortBy(s)}>\n                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{s.charAt(0).toUpperCase() + s.slice(1)}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                </View>\n            )}\n\n            {filteredSymptoms.length > 0 && (\n                <View style={styles.chartSection}>\n                    <Text style={styles.chartTitle}>Intensity Distribution</Text>\n                    <View style={styles.pieContainer}>\n                        {Object.entries(intensityStats).map(([label, count]) => {\n                            const total = filteredSymptoms.length;\n                            const percentage = total > 0 ? (count / total) * 100 : 0;\n                            if (count === 0) return null;\n                            return (\n                                <View key={label} style={styles.pieItem}>\n                                    <View style={[styles.pieSlice, { backgroundColor: intensityColors[label as keyof typeof intensityColors] }]} />\n                                    <Text style={styles.pieLabel}>{label}</Text>\n                                    <Text style={styles.pieValue}>{count} ({percentage.toFixed(0)}%)</Text>\n                                </View>\n                            );\n                        })}\n                    </View>\n                </View>\n            )}\n\n            <View style={styles.statsRow}>\n                <View style={styles.statItem}><Text style={styles.statValue}>{filteredSymptoms.length}</Text><Text style={styles.statLabel}>Total</Text></View>\n                <View style={styles.statDivider} />\n                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#EF4444' }]}>{intensityStats.Severe + intensityStats['Very Severe']}</Text><Text style={styles.statLabel}>High</Text></View>\n                <View style={styles.statDivider} />\n                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{intensityStats.Mild}</Text><Text style={styles.statLabel}>Mild</Text></View>\n            </View>\n\n            <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>\n                {filteredSymptoms.length === 0 ? (\n                    <View style={styles.emptyState}><Ionicons name=\"pulse\" size={48} color=\"#9CA3AF\" /><Text style={styles.emptyText}>No symptoms found</Text></View>\n                ) : (\n                    filteredSymptoms.map(s => (\n                        <View key={s.id} style={styles.symptomCard}>\n                            <View style={styles.symptomHeader}>\n                                <View style={[styles.intensityDot, { backgroundColor: intensityColors[s.intensityLabel] }]} />\n                                <Text style={styles.symptomName}>{s.name}</Text>\n                                <View style={[styles.intensityBadge, { backgroundColor: intensityColors[s.intensityLabel] + '20' }]}>\n                                    <Text style={[styles.intensityText, { color: intensityColors[s.intensityLabel] }]}>{s.intensityLabel} ({s.intensity}%)</Text>\n                                </View>\n                            </View>\n                            <View style={styles.symptomDetails}>\n                                <View style={styles.detailItem}><Ionicons name=\"calendar-outline\" size={16} color=\"#6B7280\" /><Text style={styles.detailText}>{format(parseISO(s.dateStarted), 'MMM d, yyyy h:mm a')}</Text></View>\n                                {s.place && <View style={styles.detailItem}><Ionicons name=\"location-outline\" size={16} color=\"#6B7280\" /><Text style={styles.detailText}>{s.place}</Text></View>}\n                            </View>\n                            {s.notes && <Text style={styles.notes}>{s.notes}</Text>}\n                            <View style={styles.cardActions}>\n                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeSymptom(s.id)}><Ionicons name=\"trash-outline\" size={18} color=\"#EF4444\" /><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>\n                            </View>\n                        </View>\n                    ))\n                )}\n            </ScrollView>\n\n            <Modal visible={showCalendar} animationType=\"slide\" transparent>\n                <View style={styles.modalOverlay}>\n                    <View style={styles.modalContent}>\n                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} />\n                    </View>\n                </View>\n            </Modal>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    searchRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' },\n    searchContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: 12, borderRadius: 10, marginRight: 8 },\n    searchInput: { flex: 1, paddingVertical: 10, marginLeft: 8, fontSize: 16 },\n    filterButton: { padding: 10, marginLeft: 4, borderRadius: 8, backgroundColor: '#FFFFFF' },\n    filterButtonActive: { backgroundColor: '#DBEAFE' },\n    filterPanel: { backgroundColor: '#FFFFFF', padding: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    filterRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },\n    filterLabel: { fontSize: 14, color: '#6B7280', marginRight: 12, width: 100 },\n    filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F3F4F6', marginRight: 8 },\n    filterChipActive: { backgroundColor: '#3B82F6' },\n    filterChipText: { fontSize: 13, color: '#6B7280' },\n    filterChipTextActive: { color: '#FFFFFF' },\n    chartSection: { backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },\n    chartTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },\n    pieContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' },\n    pieItem: { alignItems: 'center', width: '45%', marginBottom: 12 },\n    pieSlice: { width: 16, height: 16, borderRadius: 8, marginBottom: 4 },\n    pieLabel: { fontSize: 13, fontWeight: '500', color: '#1A1A1A' },\n    pieValue: { fontSize: 12, color: '#6B7280' },\n    statsRow: { flexDirection: 'row', backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },\n    statItem: { flex: 1, alignItems: 'center' },\n    statDivider: { width: 1, backgroundColor: '#E5E7EB' },\n    statValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A' },\n    statLabel: { fontSize: 12, color: '#6B7280', marginTop: 4 },\n    listSection: { flex: 1, marginTop: 16 },\n    listContent: { paddingHorizontal: 16, paddingBottom: 20 },\n    emptyState: { alignItems: 'center', paddingVertical: 60 },\n    emptyText: { fontSize: 16, color: '#6B7280', marginTop: 12 },\n    symptomCard: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12 },\n    symptomHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },\n    intensityDot: { width: 12, height: 12, borderRadius: 6, marginRight: 10 },\n    symptomName: { flex: 1, fontSize: 16, fontWeight: '600', color: '#1A1A1A' },\n    intensityBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },\n    intensityText: { fontSize: 12, fontWeight: '500' },\n    symptomDetails: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },\n    detailItem: { flexDirection: 'row', alignItems: 'center', marginRight: 16, marginTop: 4 },\n    detailText: { fontSize: 13, color: '#6B7280', marginLeft: 4 },\n    notes: { fontSize: 14, color: '#4B5563', fontStyle: 'italic', marginBottom: 8 },\n    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 8, marginTop: 8 },\n    deleteButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6 },\n    deleteText: { fontSize: 14, color: '#EF4444', marginLeft: 4 },\n    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },\n    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },\n    calendarContainer: { padding: 8 },\n    calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },\n    calendarMonth: { fontSize: 18, fontWeight: '600', color: '#1A1A1A' },\n    weekDays: { flexDirection: 'row', marginBottom: 8 },\n    weekDay: { flex: 1, textAlign: 'center', fontSize: 12, color: '#6B7280', fontWeight: '500' },\n    daysGrid: { flexDirection: 'row', flexWrap: 'wrap' },\n    day: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },\n    daySelected: { backgroundColor: '#3B82F6' },\n    dayText: { fontSize: 14, color: '#1A1A1A' },\n    dayTextSelected: { color: '#FFFFFF', fontWeight: '600' },\n    dayDot: { width: 4, height: 4, borderRadius: 2, marginTop: 2 },\n    calendarFooter: { marginTop: 16, alignItems: 'flex-end' },\n    clearButton: { paddingHorizontal: 20, paddingVertical: 10 },\n    clearButtonText: { color: '#3B82F6', fontSize: 16, fontWeight: '600' },\n});\n\n=== Operation 2 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { Symptom } from '../types';\n\nexport default function AddSymptomScreen() {\n    const router = useRouter();\n    const addSymptom = useHealthStore((state) => state.addSymptom);\n    const [name, setName] = useState('');\n    const [intensity, setIntensity] = useState(50);\n    const [place, setPlace] = useState('');\n    const [notes, setNotes] = useState('');\n\n    const getIntensityLabel = (val: number): Symptom['intensityLabel'] => {\n        if (val < 25) return 'Mild';\n        if (val < 50) return 'Moderate';\n        if (val < 75) return 'Severe';\n        return 'Very Severe';\n    };\n\n    const handleSubmit = () => {\n        if (!name.trim()) return;\n        addSymptom({\n            id: Date.now().toString(),\n            name,\n            intensity,\n            intensityLabel: getIntensityLabel(intensity),\n            dateStarted: new Date().toISOString(),\n            notes,\n            place,\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Add Symptom</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Symptom Name *</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., Headache, Fatigue\" value={name} onChangeText={setName} />\n\n                <Text style={styles.label}>Intensity: {getIntensityLabel(intensity)} ({intensity})</Text>\n                <View style={styles.sliderContainer}>\n                    <View style={styles.sliderLabels}>\n                        {[0, 25, 50, 75, 100].map((val) => (\n                            <TouchableOpacity key={val} onPress={() => setIntensity(val)}>\n                                <Text style={[styles.sliderLabel, intensity === val && styles.sliderLabelActive]}>{val}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.sliderTrack}>\n                        <View style={[styles.sliderFill, { width: `${intensity}%`, backgroundColor: intensity >= 75 ? '#EF4444' : intensity >= 50 ? '#F59E0B' : '#10B981' }]} />\n                    </View>\n                </View>\n\n                <Text style={styles.label}>Location/Place</Text>\n                <View style={styles.inputWithIcon}>\n                    <Ionicons name=\"location-outline\" size={20} color=\"#9CA3AF\" />\n                    <TextInput style={styles.inputNoBorder} placeholder=\"e.g., Home, Office\" value={place} onChangeText={setPlace} />\n                </View>\n\n                <Text style={styles.label}>Notes (optional)</Text>\n                <TextInput style={[styles.input, styles.textArea]} placeholder=\"Additional details...\" value={notes} onChangeText={setNotes} multiline textAlignVertical=\"top\" />\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !name.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!name.trim()}>\n                    <Text style={styles.buttonText}>Add Symptom</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    inputWithIcon: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    inputNoBorder: { flex: 1, paddingVertical: 16, marginLeft: 8, fontSize: 16 },\n    textArea: { minHeight: 100 },\n    sliderContainer: { marginBottom: 20 },\n    sliderLabels: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },\n    sliderLabel: { fontSize: 12, color: '#9CA3AF' },\n    sliderLabelActive: { color: '#3B82F6', fontWeight: '600' },\n    sliderTrack: { height: 8, backgroundColor: '#E5E7EB', borderRadius: 4, overflow: 'hidden' },\n    sliderFill: { height: '100%', borderRadius: 4 },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#3B82F6', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});"
+                  }
+                ],
+                "status": "Success"
+              }
+            ]
+          }
+        },
+        "timestamp": null,
+        "images": null
+      },
+      "assistant": {
+        "ToolUse": {
+          "message_id": "c1d1fa5e-6f7f-4b2d-8edf-69a291882acb",
+          "content": "\n\nNow let me check the other add screens to understand their data structures:\n",
+          "tool_uses": [
+            {
+              "id": "tooluse_EVg1LVfHuO1vKq5W58YaEo",
+              "name": "fs_read",
+              "orig_name": "fs_read",
+              "args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-sleep.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-appointment.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-measurement.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-nutrition.tsx"
+                  }
+                ]
+              },
+              "orig_args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-sleep.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-appointment.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-measurement.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-nutrition.tsx"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "request_metadata": {
+        "request_id": "5966b084-5421-4988-aeac-35a7a547717c",
+        "context_usage_percentage": 8.471939,
+        "message_id": "c1d1fa5e-6f7f-4b2d-8edf-69a291882acb",
+        "request_start_timestamp_ms": 1771338795199,
+        "stream_end_timestamp_ms": 1771338800349,
+        "time_to_first_chunk": {
+          "secs": 2,
+          "nanos": 86977668
+        },
+        "time_between_chunks": [
+          {
+            "secs": 0,
+            "nanos": 17737
+          },
+          {
+            "secs": 0,
+            "nanos": 212105823
+          },
+          {
+            "secs": 0,
+            "nanos": 126684193
+          },
+          {
+            "secs": 0,
+            "nanos": 205127158
+          },
+          {
+            "secs": 0,
+            "nanos": 215356698
+          },
+          {
+            "secs": 0,
+            "nanos": 205450304
+          },
+          {
+            "secs": 0,
+            "nanos": 260903501
+          },
+          {
+            "secs": 0,
+            "nanos": 1297326
+          },
+          {
+            "secs": 0,
+            "nanos": 158561756
+          },
+          {
+            "secs": 0,
+            "nanos": 240129793
+          },
+          {
+            "secs": 0,
+            "nanos": 49189
+          },
+          {
+            "secs": 1,
+            "nanos": 436675095
+          },
+          {
+            "secs": 0,
+            "nanos": 52586
+          },
+          {
+            "secs": 0,
+            "nanos": 31598
+          },
+          {
+            "secs": 0,
+            "nanos": 104236
+          },
+          {
+            "secs": 0,
+            "nanos": 18723
+          },
+          {
+            "secs": 0,
+            "nanos": 74978
+          },
+          {
+            "secs": 0,
+            "nanos": 677
+          }
+        ],
+        "user_prompt_length": 0,
+        "response_size": 438,
+        "chat_conversation_type": "ToolUse",
+        "tool_use_ids_and_names": [
+          [
+            "tooluse_EVg1LVfHuO1vKq5W58YaEo",
+            "fs_read"
+          ]
+        ],
+        "model_id": "minimax-m2.1",
+        "message_meta_tags": []
+      }
+    },
+    {
+      "user": {
+        "additional_context": "",
+        "env_context": {
+          "env_state": {
+            "operating_system": "linux",
+            "current_working_directory": "/home/evaristo/Documents/me&health",
+            "environment_variables": []
+          }
+        },
+        "content": {
+          "ToolUseResults": {
+            "tool_use_results": [
+              {
+                "tool_use_id": "tooluse_EVg1LVfHuO1vKq5W58YaEo",
+                "content": [
+                  {
+                    "Text": "=== Operation 1 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { SleepLog } from '../types';\n\nconst qualities: SleepLog['quality'][] = ['Poor', 'Fair', 'Good', 'Excellent'];\n\nexport default function AddSleepScreen() {\n    const router = useRouter();\n    const addSleepLog = useHealthStore((state) => state.addSleepLog);\n    const [hours, setHours] = useState(7);\n    const [quality, setQuality] = useState<SleepLog['quality'] | null>(null);\n\n    const handleSubmit = () => {\n        if (!quality) return;\n        addSleepLog({\n            id: Date.now().toString(),\n            dateTime: new Date().toISOString(),\n            hours,\n            quality,\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Log Sleep</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Hours of sleep</Text>\n                <View style={styles.hoursSelector}>\n                    <TouchableOpacity style={styles.hourButton} onPress={() => setHours(Math.max(1, hours - 1))}><Ionicons name=\"remove\" size={24} color=\"#3B82F6\" /></TouchableOpacity>\n                    <View style={styles.hoursDisplay}><Text style={styles.hoursValue}>{hours}</Text><Text style={styles.hoursLabel}>hours</Text></View>\n                    <TouchableOpacity style={styles.hourButton} onPress={() => setHours(Math.min(24, hours + 1))}><Ionicons name=\"add\" size={24} color=\"#3B82F6\" /></TouchableOpacity>\n                </View>\n\n                <Text style={styles.label}>Sleep Quality</Text>\n                <View style={styles.qualityRow}>\n                    {qualities.map((q) => (\n                        <TouchableOpacity key={q} style={[styles.qualityButton, quality === q && styles.qualityButtonActive]} onPress={() => setQuality(q)}>\n                            <Text style={[styles.qualityText, quality === q && styles.qualityTextActive]}>{q}</Text>\n                        </TouchableOpacity>\n                    ))}\n                </View>\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !quality && styles.buttonDisabled]} onPress={handleSubmit} disabled={!quality}>\n                    <Text style={styles.buttonText}>Save Sleep</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 16 },\n    hoursSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 32 },\n    hourButton: { padding: 16 },\n    hoursDisplay: { alignItems: 'center', paddingHorizontal: 40 },\n    hoursValue: { fontSize: 48, fontWeight: 'bold', color: '#1A1A1A' },\n    hoursLabel: { fontSize: 16, color: '#6B7280' },\n    qualityRow: { flexDirection: 'row', justifyContent: 'space-between' },\n    qualityButton: { flex: 1, paddingVertical: 12, alignItems: 'center', backgroundColor: '#FFFFFF', marginHorizontal: 4, borderRadius: 12 },\n    qualityButtonActive: { backgroundColor: '#6366F1' },\n    qualityText: { fontSize: 14, fontWeight: '600', color: '#6B7280' },\n    qualityTextActive: { color: '#FFFFFF' },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#6366F1', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});\n\n=== Operation 2 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { Appointment } from '../types';\n\nconst types: Appointment['type'][] = ['In Person', 'Virtual', 'Telephone'];\n\nexport default function AddAppointmentScreen() {\n    const router = useRouter();\n    const addAppointment = useHealthStore((state) => state.addAppointment);\n    const [reason, setReason] = useState('');\n    const [location, setLocation] = useState('');\n    const [type, setType] = useState<Appointment['type']>('In Person');\n    const [reminder, setReminder] = useState('30 min before');\n\n    const handleSubmit = () => {\n        if (!reason.trim()) return;\n        addAppointment({\n            id: Date.now().toString(),\n            dateTime: new Date().toISOString(),\n            location,\n            type,\n            durationMinutes: 30,\n            reminder,\n            reason,\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Add Appointment</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Reason</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., Annual Checkup\" value={reason} onChangeText={setReason} />\n\n                <Text style={styles.label}>Location</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., City Hospital\" value={location} onChangeText={setLocation} />\n\n                <Text style={styles.label}>Type</Text>\n                <View style={styles.typeRow}>\n                    {types.map((t) => (\n                        <TouchableOpacity key={t} style={[styles.typeButton, type === t && styles.typeButtonActive]} onPress={() => setType(t)}>\n                            <Text style={[styles.typeText, type === t && styles.typeTextActive]}>{t}</Text>\n                        </TouchableOpacity>\n                    ))}\n                </View>\n\n                <Text style={styles.label}>Reminder</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., 30 min before\" value={reminder} onChangeText={setReminder} />\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !reason.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!reason.trim()}>\n                    <Text style={styles.buttonText}>Save Appointment</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    typeRow: { flexDirection: 'row', marginBottom: 20 },\n    typeButton: { flex: 1, paddingVertical: 12, alignItems: 'center', backgroundColor: '#FFFFFF', marginHorizontal: 4, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },\n    typeButtonActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },\n    typeText: { fontSize: 14, fontWeight: '600', color: '#6B7280' },\n    typeTextActive: { color: '#FFFFFF' },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#3B82F6', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});\n\n=== Operation 3 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\n\nconst measurementTypes = ['Blood Pressure', 'Heart Rate', 'Weight', 'BMI', 'Blood Sugar', 'Temperature', 'Cholesterol', 'Other'];\n\nexport default function AddMeasurementScreen() {\n    const router = useRouter();\n    const addMeasurement = useHealthStore((state) => state.addMeasurement);\n    const [type, setType] = useState('Blood Pressure');\n    const [reading, setReading] = useState('');\n    const [unit, setUnit] = useState('mmHg');\n\n    const handleSubmit = () => {\n        if (!reading.trim()) return;\n        addMeasurement({\n            id: Date.now().toString(),\n            type,\n            unit,\n            reading,\n            dateTime: new Date().toISOString(),\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Add Measurement</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Type</Text>\n                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>\n                    {measurementTypes.map((t) => (\n                        <TouchableOpacity\n                            key={t}\n                            style={[styles.chip, type === t && styles.chipActive]}\n                            onPress={() => { setType(t); setUnit(t === 'Blood Pressure' ? 'mmHg' : t === 'Heart Rate' ? 'bpm' : t === 'Weight' ? 'kg' : t === 'Temperature' ? '°C' : 'unit'); }}\n                        >\n                            <Text style={[styles.chipText, type === t && styles.chipTextActive]}>{t}</Text>\n                        </TouchableOpacity>\n                    ))}\n                </ScrollView>\n\n                <Text style={styles.label}>Reading ({unit})</Text>\n                <TextInput\n                    style={styles.input}\n                    placeholder=\"Enter value\"\n                    value={reading}\n                    onChangeText={setReading}\n                    keyboardType=\"numeric\"\n                />\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !reading.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!reading.trim()}>\n                    <Text style={styles.buttonText}>Save Measurement</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    chipContainer: { marginBottom: 20 },\n    chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#FFFFFF', marginRight: 10, borderWidth: 1, borderColor: '#E5E7EB' },\n    chipActive: { backgroundColor: '#10B981', borderColor: '#10B981' },\n    chipText: { fontSize: 14, color: '#6B7280' },\n    chipTextActive: { color: '#FFFFFF' },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#10B981', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});\n\n=== Operation 4 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { FoodEntry } from '../types';\n\nconst foodTypes: FoodEntry['type'][] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];\n\nexport default function AddNutritionScreen() {\n    const router = useRouter();\n    const addFoodEntry = useHealthStore((state) => state.addFoodEntry);\n    const [name, setName] = useState('');\n    const [calories, setCalories] = useState('');\n    const [type, setType] = useState<FoodEntry['type']>('Breakfast');\n\n    const handleSubmit = () => {\n        if (!name.trim()) return;\n        addFoodEntry({\n            id: Date.now().toString(),\n            name,\n            calories: parseInt(calories) || 0,\n            dateTime: new Date().toISOString(),\n            type,\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Log Food</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Meal Type</Text>\n                <View style={styles.typeRow}>\n                    {foodTypes.map((t) => (\n                        <TouchableOpacity key={t} style={[styles.typeButton, type === t && styles.typeButtonActive]} onPress={() => setType(t)}>\n                            <Text style={[styles.typeText, type === t && styles.typeTextActive]}>{t}</Text>\n                        </TouchableOpacity>\n                    ))}\n                </View>\n\n                <Text style={styles.label}>Food Name</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., Oatmeal, Chicken Salad\" value={name} onChangeText={setName} />\n\n                <Text style={styles.label}>Calories</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., 350\" value={calories} onChangeText={setCalories} keyboardType=\"numeric\" />\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !name.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!name.trim()}>\n                    <Text style={styles.buttonText}>Save Food</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    typeRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },\n    typeButton: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#FFFFFF', marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: '#E5E7EB' },\n    typeButtonActive: { backgroundColor: '#F59E0B', borderColor: '#F59E0B' },\n    typeText: { fontSize: 14, color: '#6B7280' },\n    typeTextActive: { color: '#FFFFFF' },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#F59E0B', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});"
+                  }
+                ],
+                "status": "Success"
+              }
+            ]
+          }
+        },
+        "timestamp": null,
+        "images": null
+      },
+      "assistant": {
+        "ToolUse": {
+          "message_id": "8faa122f-743d-4a63-8e95-e954ef383c14",
+          "content": "\n\nLet me check the types and remaining add screens:\n\n",
+          "tool_uses": [
+            {
+              "id": "tooluse_Xsp3YAGKIZoJLfLP8ntwj4",
+              "name": "fs_read",
+              "orig_name": "fs_read",
+              "args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/types/index.ts"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-medication.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-diagnosis.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-mood.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-activity.tsx"
+                  }
+                ]
+              },
+              "orig_args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/types/index.ts"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-medication.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-diagnosis.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-mood.tsx"
+                  },
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/app/add-activity.tsx"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "request_metadata": {
+        "request_id": "afec9ac9-a81a-4f8c-ba22-74a4a48ac564",
+        "context_usage_percentage": 10.881633,
+        "message_id": "8faa122f-743d-4a63-8e95-e954ef383c14",
+        "request_start_timestamp_ms": 1771338800447,
+        "stream_end_timestamp_ms": 1771338807683,
+        "time_to_first_chunk": {
+          "secs": 2,
+          "nanos": 431976604
+        },
+        "time_between_chunks": [
+          {
+            "secs": 0,
+            "nanos": 39677
+          },
+          {
+            "secs": 0,
+            "nanos": 45789403
+          },
+          {
+            "secs": 0,
+            "nanos": 273065326
+          },
+          {
+            "secs": 0,
+            "nanos": 162063777
+          },
+          {
+            "secs": 0,
+            "nanos": 208153489
+          },
+          {
+            "secs": 0,
+            "nanos": 215141847
+          },
+          {
+            "secs": 0,
+            "nanos": 217680073
+          },
+          {
+            "secs": 0,
+            "nanos": 210436717
+          },
+          {
+            "secs": 0,
+            "nanos": 222973596
+          },
+          {
+            "secs": 0,
+            "nanos": 205012682
+          },
+          {
+            "secs": 0,
+            "nanos": 200387758
+          },
+          {
+            "secs": 0,
+            "nanos": 258179024
+          },
+          {
+            "secs": 0,
+            "nanos": 169586557
+          },
+          {
+            "secs": 0,
+            "nanos": 18858877
+          },
+          {
+            "secs": 0,
+            "nanos": 215361931
+          },
+          {
+            "secs": 0,
+            "nanos": 2637851
+          },
+          {
+            "secs": 2,
+            "nanos": 175768415
+          },
+          {
+            "secs": 0,
+            "nanos": 130321
+          },
+          {
+            "secs": 0,
+            "nanos": 248900
+          },
+          {
+            "secs": 0,
+            "nanos": 922596
+          },
+          {
+            "secs": 0,
+            "nanos": 50308
+          },
+          {
+            "secs": 0,
+            "nanos": 558442
+          },
+          {
+            "secs": 0,
+            "nanos": 286
+          }
+        ],
+        "user_prompt_length": 0,
+        "response_size": 487,
+        "chat_conversation_type": "ToolUse",
+        "tool_use_ids_and_names": [
+          [
+            "tooluse_Xsp3YAGKIZoJLfLP8ntwj4",
+            "fs_read"
+          ]
+        ],
+        "model_id": "minimax-m2.1",
+        "message_meta_tags": []
+      }
+    },
+    {
+      "user": {
+        "additional_context": "",
+        "env_context": {
+          "env_state": {
+            "operating_system": "linux",
+            "current_working_directory": "/home/evaristo/Documents/me&health",
+            "environment_variables": []
+          }
+        },
+        "content": {
+          "ToolUseResults": {
+            "tool_use_results": [
+              {
+                "tool_use_id": "tooluse_Xsp3YAGKIZoJLfLP8ntwj4",
+                "content": [
+                  {
+                    "Text": "=== Operation 1 Result (Text) ===\nexport type FrequencyType = 'Daily' | 'Specific Days of the Week' | 'Days Interval' | 'As Required';\n\nexport interface UserProfile {\n    name: string;\n    email: string;\n    dob: string;\n    gender: 'Male' | 'Female' | 'Other';\n    ethnicity: string;\n}\n\nexport interface Symptom {\n    id: string;\n    name: string;\n    intensity: number;\n    intensityLabel: 'Mild' | 'Moderate' | 'Severe' | 'Very Severe';\n    dateStarted: string;\n    duration?: string;\n    notes?: string;\n    images?: string[];\n    place?: string;\n}\n\nexport interface Medication {\n    id: string;\n    name: string;\n    preparation: 'Tablet' | 'Liquid' | 'Capsule' | 'Inhaler' | 'Injection' | 'Patch' | 'Powder' | 'Topical' | 'Drop' | 'Gummies' | 'Implant';\n    formulation?: 'Uncoated' | 'Coated' | 'Soluble' | 'Dispersible' | 'Chewable' | 'Other';\n    dosageUnit: 'mg' | 'unit' | 'piece' | 'puffs' | 'breaths';\n    startDate: string;\n    endDate?: string;\n    frequency: FrequencyType;\n    timesPerDay: number;\n    schedule: { time: string; dosage: number }[];\n    displayName?: string;\n    notes?: string;\n    status: 'Current' | 'As Required' | 'Completed';\n}\n\nexport interface Measurement {\n    id: string;\n    type: string;\n    unit: string;\n    reading: number | string;\n    dateTime: string;\n    notes?: string;\n}\n\nexport interface Diagnosis {\n    id: string;\n    condition: string;\n    dateOfDiagnosis: string;\n}\n\nexport interface MoodLog {\n    id: string;\n    dateTime: string;\n    feeling: 'Angry' | 'Anxious' | 'Bored' | 'Happy' | 'Sad' | 'Neutral';\n    notes?: string;\n}\n\nexport interface DietPlan {\n    id: string;\n    type: string;\n    startDate: string;\n    endDate?: string;\n    notes?: string;\n}\n\nexport interface Investigation {\n    id: string;\n    type: string;\n    dateTime: string;\n    notes?: string;\n}\n\nexport interface Activity {\n    id: string;\n    category: 'Basic Activities' | 'Cognitive' | 'Daily Living' | 'Endurance';\n    specificActivity: string;\n    dateTime: string;\n    durationHours: number;\n    durationMinutes: number;\n    notes?: string;\n}\n\nexport interface SleepLog {\n    id: string;\n    dateTime: string;\n    hours: number;\n    quality: 'Poor' | 'Fair' | 'Good' | 'Excellent';\n    notes?: string;\n}\n\nexport interface FoodEntry {\n    id: string;\n    name: string;\n    calories: number;\n    dateTime: string;\n    type: 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack';\n    notes?: string;\n}\n\nexport interface Document {\n    id: string;\n    name: string;\n    type: string;\n    dateTime: string;\n    notes?: string;\n}\n\nexport interface Appointment {\n    id: string;\n    dateTime: string;\n    location: string;\n    type: 'In Person' | 'Virtual' | 'Telephone';\n    hcpId?: string;\n    durationMinutes: number;\n    reminder: string | 'No Reminder';\n    reason?: string;\n}\n\nexport interface HCP {\n    id: string;\n    firstName: string;\n    lastName: string;\n    locationName: string;\n    role: string;\n    contactDetails?: string;\n}\n\nexport interface AppSettings {\n    notifications: boolean;\n    reminderTime: string;\n    darkMode: boolean;\n    units: 'metric' | 'imperial';\n}\n\n=== Operation 2 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { Medication } from '../types';\n\nconst preparations: Medication['preparation'][] = ['Tablet', 'Capsule', 'Liquid', 'Injection', 'Inhaler', 'Patch'];\n\nexport default function AddMedicationScreen() {\n    const router = useRouter();\n    const addMedication = useHealthStore((state) => state.addMedication);\n    const [name, setName] = useState('');\n    const [preparation, setPreparation] = useState<Medication['preparation']>('Tablet');\n    const [dosage, setDosage] = useState('');\n    const [timesPerDay, setTimesPerDay] = useState(1);\n\n    const handleSubmit = () => {\n        if (!name.trim()) return;\n        addMedication({\n            id: Date.now().toString(),\n            name,\n            preparation,\n            dosageUnit: 'mg',\n            startDate: new Date().toISOString(),\n            frequency: 'Daily',\n            timesPerDay,\n            schedule: [{ time: '08:00', dosage: parseFloat(dosage) || 1 }],\n            status: 'Current',\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Add Medication</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Medication Name *</Text>\n                <TextInput\n                    style={styles.input}\n                    placeholder=\"e.g., Aspirin\"\n                    value={name}\n                    onChangeText={setName}\n                />\n\n                <Text style={styles.label}>Preparation</Text>\n                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>\n                    {preparations.map((prep) => (\n                        <TouchableOpacity\n                            key={prep}\n                            style={[styles.chip, preparation === prep && styles.chipActive]}\n                            onPress={() => setPreparation(prep)}\n                        >\n                            <Text style={[styles.chipText, preparation === prep && styles.chipTextActive]}>\n                                {prep}\n                            </Text>\n                        </TouchableOpacity>\n                    ))}\n                </ScrollView>\n\n                <Text style={styles.label}>Dosage</Text>\n                <View style={styles.dosageRow}>\n                    <TextInput\n                        style={[styles.input, styles.dosageInput]}\n                        placeholder=\"Amount\"\n                        value={dosage}\n                        onChangeText={setDosage}\n                        keyboardType=\"numeric\"\n                    />\n                    <View style={styles.unitBadge}>\n                        <Text style={styles.unitText}>mg</Text>\n                    </View>\n                </View>\n\n                <Text style={styles.label}>Times per day</Text>\n                <View style={styles.frequencyRow}>\n                    {[1, 2, 3, 4].map((num) => (\n                        <TouchableOpacity\n                            key={num}\n                            style={[styles.frequencyButton, timesPerDay === num && styles.frequencyButtonActive]}\n                            onPress={() => setTimesPerDay(num)}\n                        >\n                            <Text style={[styles.frequencyText, timesPerDay === num && styles.frequencyTextActive]}>\n                                {num}x\n                            </Text>\n                        </TouchableOpacity>\n                    ))}\n                </View>\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity\n                    style={[styles.button, !name.trim() && styles.buttonDisabled]}\n                    onPress={handleSubmit}\n                    disabled={!name.trim()}\n                >\n                    <Text style={styles.buttonText}>Add Medication</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: {\n        flex: 1,\n        backgroundColor: '#F8F9FA',\n    },\n    header: {\n        flexDirection: 'row',\n        alignItems: 'center',\n        paddingHorizontal: 16,\n        paddingVertical: 12,\n        backgroundColor: '#FFFFFF',\n        borderBottomWidth: 1,\n        borderBottomColor: '#F3F4F6',\n    },\n    backButton: {\n        padding: 4,\n    },\n    headerTitle: {\n        flex: 1,\n        fontSize: 20,\n        fontWeight: '600',\n        color: '#1A1A1A',\n        marginLeft: 12,\n    },\n    scrollView: {\n        flex: 1,\n    },\n    scrollContent: {\n        padding: 20,\n    },\n    label: {\n        fontSize: 14,\n        fontWeight: '600',\n        color: '#1A1A1A',\n        marginBottom: 8,\n    },\n    input: {\n        backgroundColor: '#FFFFFF',\n        padding: 16,\n        borderRadius: 12,\n        fontSize: 16,\n        borderWidth: 1,\n        borderColor: '#E5E7EB',\n    },\n    chipContainer: {\n        marginBottom: 20,\n    },\n    chip: {\n        paddingHorizontal: 16,\n        paddingVertical: 10,\n        borderRadius: 20,\n        backgroundColor: '#FFFFFF',\n        marginRight: 10,\n        borderWidth: 1,\n        borderColor: '#E5E7EB',\n    },\n    chipActive: {\n        backgroundColor: '#3B82F6',\n        borderColor: '#3B82F6',\n    },\n    chipText: {\n        fontSize: 14,\n        color: '#6B7280',\n    },\n    chipTextActive: {\n        color: '#FFFFFF',\n    },\n    dosageRow: {\n        flexDirection: 'row',\n        marginBottom: 20,\n    },\n    dosageInput: {\n        flex: 1,\n        marginRight: 12,\n    },\n    unitBadge: {\n        backgroundColor: '#FFFFFF',\n        paddingHorizontal: 16,\n        justifyContent: 'center',\n        borderRadius: 12,\n        borderWidth: 1,\n        borderColor: '#E5E7EB',\n    },\n    unitText: {\n        fontSize: 16,\n        color: '#1A1A1A',\n    },\n    frequencyRow: {\n        flexDirection: 'row',\n        backgroundColor: '#FFFFFF',\n        borderRadius: 12,\n        padding: 4,\n        marginBottom: 20,\n    },\n    frequencyButton: {\n        flex: 1,\n        paddingVertical: 12,\n        alignItems: 'center',\n        borderRadius: 10,\n    },\n    frequencyButtonActive: {\n        backgroundColor: '#3B82F6',\n    },\n    frequencyText: {\n        fontSize: 14,\n        fontWeight: '600',\n        color: '#6B7280',\n    },\n    frequencyTextActive: {\n        color: '#FFFFFF',\n    },\n    footer: {\n        padding: 20,\n        paddingBottom: 32,\n    },\n    button: {\n        backgroundColor: '#3B82F6',\n        padding: 16,\n        borderRadius: 12,\n        alignItems: 'center',\n    },\n    buttonDisabled: {\n        backgroundColor: '#D1D5DB',\n    },\n    buttonText: {\n        color: '#FFFFFF',\n        fontSize: 16,\n        fontWeight: '600',\n    },\n});\n\n=== Operation 3 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\n\nexport default function AddDiagnosisScreen() {\n    const router = useRouter();\n    const addDiagnosis = useHealthStore((state) => state.addDiagnosis);\n    const [condition, setCondition] = useState('');\n    const [date, setDate] = useState('');\n\n    const handleSubmit = () => {\n        if (!condition.trim()) return;\n        addDiagnosis({\n            id: Date.now().toString(),\n            condition,\n            dateOfDiagnosis: date || 'Unknown',\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Add Diagnosis</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Condition</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., Type 2 Diabetes\" value={condition} onChangeText={setCondition} />\n\n                <Text style={styles.label}>Date of Diagnosis</Text>\n                <TextInput style={styles.input} placeholder=\"DD/MM/YYYY\" value={date} onChangeText={setDate} />\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !condition.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!condition.trim()}>\n                    <Text style={styles.buttonText}>Save Diagnosis</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#EF4444', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});\n\n=== Operation 4 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { MoodLog } from '../types';\n\nconst moods: { label: MoodLog['feeling']; emoji: string; color: string }[] = [\n    { label: 'Happy', emoji: '😊', color: '#10B981' },\n    { label: 'Neutral', emoji: '😐', color: '#6B7280' },\n    { label: 'Anxious', emoji: '😰', color: '#F59E0B' },\n    { label: 'Sad', emoji: '😢', color: '#3B82F6' },\n    { label: 'Angry', emoji: '😠', color: '#EF4444' },\n    { label: 'Bored', emoji: '😑', color: '#8B5CF6' },\n];\n\nexport default function AddMoodScreen() {\n    const router = useRouter();\n    const addMoodLog = useHealthStore((state) => state.addMoodLog);\n    const [selectedMood, setSelectedMood] = useState<MoodLog['feeling'] | null>(null);\n    const [notes, setNotes] = useState('');\n\n    const handleSubmit = () => {\n        if (!selectedMood) return;\n        addMoodLog({\n            id: Date.now().toString(),\n            dateTime: new Date().toISOString(),\n            feeling: selectedMood,\n            notes,\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>How are you feeling?</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <View style={styles.moodGrid}>\n                    {moods.map((m) => (\n                        <TouchableOpacity\n                            key={m.label}\n                            style={[styles.moodCard, selectedMood === m.label && { backgroundColor: m.color + '20', borderColor: m.color }]}\n                            onPress={() => setSelectedMood(m.label)}\n                        >\n                            <Text style={styles.emoji}>{m.emoji}</Text>\n                            <Text style={[styles.moodLabel, selectedMood === m.label && { color: m.color }]}>{m.label}</Text>\n                        </TouchableOpacity>\n                    ))}\n                </View>\n\n                <Text style={styles.label}>Notes (optional)</Text>\n                <TextInput style={[styles.input, styles.textArea]} placeholder=\"What's on your mind?\" value={notes} onChangeText={setNotes} multiline textAlignVertical=\"top\" />\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !selectedMood && styles.buttonDisabled]} onPress={handleSubmit} disabled={!selectedMood}>\n                    <Text style={styles.buttonText}>Save Mood</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    moodGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 20 },\n    moodCard: { width: '30%', backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16, alignItems: 'center', marginBottom: 12, borderWidth: 2, borderColor: 'transparent' },\n    emoji: { fontSize: 40, marginBottom: 8 },\n    moodLabel: { fontSize: 14, fontWeight: '600', color: '#1A1A1A' },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    textArea: { minHeight: 100 },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#EC4899', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});\n\n=== Operation 5 Result (Text) ===\nimport { useState } from 'react';\nimport { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { Activity } from '../types';\n\nconst categories: Activity['category'][] = ['Basic Activities', 'Cognitive', 'Daily Living', 'Endurance'];\n\nexport default function AddActivityScreen() {\n    const router = useRouter();\n    const addActivity = useHealthStore((state) => state.addActivity);\n    const [category, setCategory] = useState<Activity['category']>('Basic Activities');\n    const [activity, setActivity] = useState('');\n    const [hours, setHours] = useState(0);\n    const [minutes, setMinutes] = useState(30);\n\n    const handleSubmit = () => {\n        if (!activity.trim()) return;\n        addActivity({\n            id: Date.now().toString(),\n            category,\n            specificActivity: activity,\n            dateTime: new Date().toISOString(),\n            durationHours: hours,\n            durationMinutes: minutes,\n        });\n        router.back();\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>\n                    <Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" />\n                </TouchableOpacity>\n                <Text style={styles.headerTitle}>Log Activity</Text>\n            </View>\n\n            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>\n                <Text style={styles.label}>Category</Text>\n                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>\n                    {categories.map((c) => (\n                        <TouchableOpacity key={c} style={[styles.chip, category === c && styles.chipActive]} onPress={() => setCategory(c)}>\n                            <Text style={[styles.chipText, category === c && styles.chipTextActive]}>{c}</Text>\n                        </TouchableOpacity>\n                    ))}\n                </ScrollView>\n\n                <Text style={styles.label}>Activity</Text>\n                <TextInput style={styles.input} placeholder=\"e.g., Walking, Yoga\" value={activity} onChangeText={setActivity} />\n\n                <Text style={styles.label}>Duration</Text>\n                <View style={styles.durationRow}>\n                    <View style={styles.durationItem}>\n                        <Text style={styles.durationLabel}>Hours</Text>\n                        <View style={styles.durationControl}>\n                            <TouchableOpacity onPress={() => setHours(Math.max(0, hours - 1))}><Ionicons name=\"remove\" size={20} color=\"#3B82F6\" /></TouchableOpacity>\n                            <Text style={styles.durationValue}>{hours}</Text>\n                            <TouchableOpacity onPress={() => setHours(hours + 1)}><Ionicons name=\"add\" size={20} color=\"#3B82F6\" /></TouchableOpacity>\n                        </View>\n                    </View>\n                    <View style={styles.durationItem}>\n                        <Text style={styles.durationLabel}>Minutes</Text>\n                        <View style={styles.durationControl}>\n                            <TouchableOpacity onPress={() => setMinutes(Math.max(0, minutes - 15))}><Ionicons name=\"remove\" size={20} color=\"#3B82F6\" /></TouchableOpacity>\n                            <Text style={styles.durationValue}>{minutes}</Text>\n                            <TouchableOpacity onPress={() => setMinutes(Math.min(59, minutes + 15))}><Ionicons name=\"add\" size={20} color=\"#3B82F6\" /></TouchableOpacity>\n                        </View>\n                    </View>\n                </View>\n            </ScrollView>\n\n            <View style={styles.footer}>\n                <TouchableOpacity style={[styles.button, !activity.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!activity.trim()}>\n                    <Text style={styles.buttonText}>Save Activity</Text>\n                </TouchableOpacity>\n            </View>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    backButton: { padding: 4 },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    scrollView: { flex: 1 },\n    scrollContent: { padding: 20 },\n    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },\n    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },\n    chipContainer: { marginBottom: 20 },\n    chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#FFFFFF', marginRight: 10, borderWidth: 1, borderColor: '#E5E7EB' },\n    chipActive: { backgroundColor: '#8B5CF6', borderColor: '#8B5CF6' },\n    chipText: { fontSize: 14, color: '#6B7280' },\n    chipTextActive: { color: '#FFFFFF' },\n    durationRow: { flexDirection: 'row', marginBottom: 20 },\n    durationItem: { flex: 1, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginHorizontal: 4 },\n    durationLabel: { fontSize: 12, color: '#6B7280', marginBottom: 8, textAlign: 'center' },\n    durationControl: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },\n    durationValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A', marginHorizontal: 16 },\n    footer: { padding: 20, paddingBottom: 32 },\n    button: { backgroundColor: '#8B5CF6', padding: 16, borderRadius: 12, alignItems: 'center' },\n    buttonDisabled: { backgroundColor: '#D1D5DB' },\n    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },\n});"
+                  }
+                ],
+                "status": "Success"
+              }
+            ]
+          }
+        },
+        "timestamp": null,
+        "images": null
+      },
+      "assistant": {
+        "ToolUse": {
+          "message_id": "80eb7d0a-109d-4db0-aaf8-79632618ce75",
+          "content": "\n\n\n",
+          "tool_uses": [
+            {
+              "id": "tooluse_gQjwfpSAOu8WR4Rb2URlmf",
+              "name": "fs_read",
+              "orig_name": "fs_read",
+              "args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/stores/useHealthStore.ts"
+                  }
+                ]
+              },
+              "orig_args": {
+                "operations": [
+                  {
+                    "mode": "Line",
+                    "path": "/home/evaristo/Documents/me&health/stores/useHealthStore.ts"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "request_metadata": {
+        "request_id": "81a34381-04d3-44e2-a578-e299edf0d389",
+        "context_usage_percentage": 13.9045925,
+        "message_id": "80eb7d0a-109d-4db0-aaf8-79632618ce75",
+        "request_start_timestamp_ms": 1771338807780,
+        "stream_end_timestamp_ms": 1771338811897,
+        "time_to_first_chunk": {
+          "secs": 2,
+          "nanos": 770352360
+        },
+        "time_between_chunks": [
+          {
+            "secs": 0,
+            "nanos": 12990
+          },
+          {
+            "secs": 0,
+            "nanos": 248175686
+          },
+          {
+            "secs": 0,
+            "nanos": 36838570
+          },
+          {
+            "secs": 0,
+            "nanos": 46121419
+          },
+          {
+            "secs": 0,
+            "nanos": 111522652
+          },
+          {
+            "secs": 0,
+            "nanos": 23700
+          },
+          {
+            "secs": 0,
+            "nanos": 837033303
+          },
+          {
+            "secs": 0,
+            "nanos": 49926
+          },
+          {
+            "secs": 0,
+            "nanos": 8229232
+          },
+          {
+            "secs": 0,
+            "nanos": 65471
+          },
+          {
+            "secs": 0,
+            "nanos": 15812858
+          },
+          {
+            "secs": 0,
+            "nanos": 42996544
+          },
+          {
+            "secs": 0,
+            "nanos": 631
+          }
+        ],
+        "user_prompt_length": 0,
+        "response_size": 108,
+        "chat_conversation_type": "ToolUse",
+        "tool_use_ids_and_names": [
+          [
+            "tooluse_gQjwfpSAOu8WR4Rb2URlmf",
+            "fs_read"
+          ]
+        ],
+        "model_id": "minimax-m2.1",
+        "message_meta_tags": []
+      }
+    },
+    {
+      "user": {
+        "additional_context": "",
+        "env_context": {
+          "env_state": {
+            "operating_system": "linux",
+            "current_working_directory": "/home/evaristo/Documents/me&health",
+            "environment_variables": []
+          }
+        },
+        "content": {
+          "ToolUseResults": {
+            "tool_use_results": [
+              {
+                "tool_use_id": "tooluse_gQjwfpSAOu8WR4Rb2URlmf",
+                "content": [
+                  {
+                    "Text": "import { create } from 'zustand';\nimport { createJSONStorage, persist } from 'zustand/middleware';\nimport AsyncStorage from '@react-native-async-storage/async-storage';\nimport {\n    Symptom, Medication, Measurement, Diagnosis, MoodLog,\n    DietPlan, Investigation, Activity, SleepLog, FoodEntry,\n    Document, Appointment, HCP\n} from '../types';\n\ninterface HealthState {\n    symptoms: Symptom[];\n    addSymptom: (s: Symptom) => void;\n    removeSymptom: (id: string) => void;\n    \n    medications: Medication[];\n    addMedication: (m: Medication) => void;\n    removeMedication: (id: string) => void;\n    \n    measurements: Measurement[];\n    addMeasurement: (m: Measurement) => void;\n    removeMeasurement: (id: string) => void;\n    \n    diagnoses: Diagnosis[];\n    addDiagnosis: (d: Diagnosis) => void;\n    removeDiagnosis: (id: string) => void;\n    \n    moodLogs: MoodLog[];\n    addMoodLog: (m: MoodLog) => void;\n    removeMoodLog: (id: string) => void;\n    \n    dietPlans: DietPlan[];\n    addDietPlan: (d: DietPlan) => void;\n    removeDietPlan: (id: string) => void;\n    \n    investigations: Investigation[];\n    addInvestigation: (i: Investigation) => void;\n    removeInvestigation: (id: string) => void;\n    \n    activities: Activity[];\n    addActivity: (a: Activity) => void;\n    removeActivity: (id: string) => void;\n    \n    sleepLogs: SleepLog[];\n    addSleepLog: (s: SleepLog) => void;\n    removeSleepLog: (id: string) => void;\n    \n    foodEntries: FoodEntry[];\n    addFoodEntry: (f: FoodEntry) => void;\n    removeFoodEntry: (id: string) => void;\n    \n    documents: Document[];\n    addDocument: (d: Document) => void;\n    removeDocument: (id: string) => void;\n    \n    appointments: Appointment[];\n    addAppointment: (a: Appointment) => void;\n    removeAppointment: (id: string) => void;\n    \n    hcps: HCP[];\n    addHCP: (h: HCP) => void;\n    removeHCP: (id: string) => void;\n}\n\nexport const useHealthStore = create<HealthState>()(\n    persist(\n        (set) => ({\n            symptoms: [],\n            addSymptom: (s) => set((state) => ({ symptoms: [...state.symptoms, s] })),\n            removeSymptom: (id) => set((state) => ({ symptoms: state.symptoms.filter((s) => s.id !== id) })),\n            \n            medications: [],\n            addMedication: (m) => set((state) => ({ medications: [...state.medications, m] })),\n            removeMedication: (id) => set((state) => ({ medications: state.medications.filter((m) => m.id !== id) })),\n            \n            measurements: [],\n            addMeasurement: (m) => set((state) => ({ measurements: [...state.measurements, m] })),\n            removeMeasurement: (id) => set((state) => ({ measurements: state.measurements.filter((m) => m.id !== id) })),\n            \n            diagnoses: [],\n            addDiagnosis: (d) => set((state) => ({ diagnoses: [...state.diagnoses, d] })),\n            removeDiagnosis: (id) => set((state) => ({ diagnoses: state.diagnoses.filter((d) => d.id !== id) })),\n            \n            moodLogs: [],\n            addMoodLog: (m) => set((state) => ({ moodLogs: [...state.moodLogs, m] })),\n            removeMoodLog: (id) => set((state) => ({ moodLogs: state.moodLogs.filter((m) => m.id !== id) })),\n            \n            dietPlans: [],\n            addDietPlan: (d) => set((state) => ({ dietPlans: [...state.dietPlans, d] })),\n            removeDietPlan: (id) => set((state) => ({ dietPlans: state.dietPlans.filter((d) => d.id !== id) })),\n            \n            investigations: [],\n            addInvestigation: (i) => set((state) => ({ investigations: [...state.investigations, i] })),\n            removeInvestigation: (id) => set((state) => ({ investigations: state.investigations.filter((i) => i.id !== id) })),\n            \n            activities: [],\n            addActivity: (a) => set((state) => ({ activities: [...state.activities, a] })),\n            removeActivity: (id) => set((state) => ({ activities: state.activities.filter((a) => a.id !== id) })),\n            \n            sleepLogs: [],\n            addSleepLog: (s) => set((state) => ({ sleepLogs: [...state.sleepLogs, s] })),\n            removeSleepLog: (id) => set((state) => ({ sleepLogs: state.sleepLogs.filter((s) => s.id !== id) })),\n            \n            foodEntries: [],\n            addFoodEntry: (f) => set((state) => ({ foodEntries: [...state.foodEntries, f] })),\n            removeFoodEntry: (id) => set((state) => ({ foodEntries: state.foodEntries.filter((f) => f.id !== id) })),\n            \n            documents: [],\n            addDocument: (d) => set((state) => ({ documents: [...state.documents, d] })),\n            removeDocument: (id) => set((state) => ({ documents: state.documents.filter((d) => d.id !== id) })),\n            \n            appointments: [],\n            addAppointment: (a) => set((state) => ({ appointments: [...state.appointments, a] })),\n            removeAppointment: (id) => set((state) => ({ appointments: state.appointments.filter((a) => a.id !== id) })),\n            \n            hcps: [],\n            addHCP: (h) => set((state) => ({ hcps: [...state.hcps, h] })),\n            removeHCP: (id) => set((state) => ({ hcps: state.hcps.filter((h) => h.id !== id) })),\n        }),\n        {\n            name: 'health-storage',\n            storage: createJSONStorage(() => AsyncStorage),\n        }\n    )\n);"
+                  }
+                ],
+                "status": "Success"
+              }
+            ]
+          }
+        },
+        "timestamp": null,
+        "images": null
+      },
+      "assistant": {
+        "ToolUse": {
+          "message_id": "7e74e209-d2dd-4ddb-aba8-56ed91c3ad5d",
+          "content": "\n\nNow I understand the pattern. I'll create log screens for other functionalities following the same structure as `symptoms-log.tsx`. Let me create them:\n",
+          "tool_uses": [
+            {
+              "id": "tooluse_NYUbot2I2g8EqzFURGEfTO",
+              "name": "fs_write",
+              "orig_name": "fs_write",
+              "args": {
+                "path": "/home/evaristo/Documents/me&health/app/sleep-log.tsx",
+                "file_text": "import { useState, useMemo } from 'react';\nimport { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';\n\ntype FilterType = 'all' | 'week' | 'month' | 'year';\ntype SortBy = 'date' | 'hours' | 'quality';\n\nfunction CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void }) {\n    const [currentMonth, setCurrentMonth] = useState(new Date());\n    const days = eachDayOfInterval({ start: startOfWeek(startOfMonth(currentMonth)), end: endOfWeek(endOfMonth(currentMonth)) });\n\n    return (\n        <View style={styles.calendarContainer}>\n            <View style={styles.calendarHeader}>\n                <TouchableOpacity onPress={() => setCurrentMonth(subMonths(currentMonth, 1))}><Ionicons name=\"chevron-back\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n                <Text style={styles.calendarMonth}>{format(currentMonth, 'MMMM yyyy')}</Text>\n                <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name=\"chevron-forward\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n            </View>\n            <View style={styles.weekDays}>\n                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{d}</Text>)}\n            </View>\n            <View style={styles.daysGrid}>\n                {days.map(day => {\n                    const dateStr = format(day, 'yyyy-MM-dd');\n                    const isSelected = selectedDate === dateStr;\n                    const isMarked = markedDates[dateStr];\n                    return (\n                        <TouchableOpacity key={dateStr} style={[styles.day, isSelected && styles.daySelected]} onPress={() => onSelectDate(dateStr)}>\n                            <Text style={[styles.dayText, isSelected && styles.dayTextSelected]}>{format(day, 'd')}</Text>\n                            {isMarked && <View style={[styles.dayDot, { backgroundColor: isMarked.dotColor || '#6366F1' }]} />}\n                        </TouchableOpacity>\n                    );\n                })}\n            </View>\n            <View style={styles.calendarFooter}>\n                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>Done</Text></TouchableOpacity>\n            </View>\n        </View>\n    );\n}\n\nexport default function SleepLogScreen() {\n    const router = useRouter();\n    const { sleepLogs, removeSleepLog } = useHealthStore();\n    const [search, setSearch] = useState('');\n    const [filterType, setFilterType] = useState<FilterType>('all');\n    const [minHours, setMinHours] = useState(0);\n    const [sortBy, setSortBy] = useState<SortBy>('date');\n    const [showCalendar, setShowCalendar] = useState(false);\n    const [selectedDate, setSelectedDate] = useState<string | null>(null);\n    const [showFilters, setShowFilters] = useState(false);\n\n    const qualityColors = { Poor: '#EF4444', Fair: '#F59E0B', Good: '#10B981', Excellent: '#059669' };\n\n    const filteredLogs = useMemo(() => {\n        let result = [...sleepLogs];\n        const now = new Date();\n\n        if (filterType === 'week') {\n            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\n            result = result.filter(s => new Date(s.dateTime) >= weekAgo);\n        } else if (filterType === 'month') {\n            result = result.filter(s => isWithinInterval(new Date(s.dateTime), { start: startOfMonth(now), end: endOfMonth(now) }));\n        } else if (filterType === 'year') {\n            result = result.filter(s => new Date(s.dateTime).getFullYear() === now.getFullYear());\n        }\n\n        if (selectedDate) {\n            result = result.filter(s => format(parseISO(s.dateTime), 'yyyy-MM-dd') === selectedDate);\n        }\n\n        if (search) {\n            result = result.filter(s => s.quality.toLowerCase().includes(search.toLowerCase()));\n        }\n\n        if (minHours > 0) {\n            result = result.filter(s => s.hours >= minHours);\n        }\n\n        result.sort((a, b) => {\n            if (sortBy === 'date') return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();\n            if (sortBy === 'hours') return b.hours - a.hours;\n            return a.quality.localeCompare(b.quality);\n        });\n\n        return result;\n    }, [sleepLogs, filterType, selectedDate, search, minHours, sortBy]);\n\n    const qualityStats = useMemo(() => {\n        const total = filteredLogs.length;\n        if (total === 0) return { Poor: 0, Fair: 0, Good: 0, Excellent: 0 };\n        const stats = { Poor: 0, Fair: 0, Good: 0, Excellent: 0 };\n        filteredLogs.forEach(s => stats[s.quality]++);\n        return stats;\n    }, [filteredLogs]);\n\n    const markedDates = sleepLogs.reduce((acc, s) => {\n        const date = format(parseISO(s.dateTime), 'yyyy-MM-dd');\n        acc[date] = { marked: true, dotColor: qualityColors[s.quality] };\n        return acc;\n    }, {} as Record<string, any>);\n\n    const avgHours = filteredLogs.length > 0 ? (filteredLogs.reduce((sum, s) => sum + s.hours, 0) / filteredLogs.length).toFixed(1) : 0;\n\n    const handleDateSelect = (date: string) => {\n        if (selectedDate === date) {\n            setSelectedDate(null);\n        } else {\n            setSelectedDate(date);\n        }\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()}><Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n                <Text style={styles.headerTitle}>Sleep Log</Text>\n                <TouchableOpacity onPress={() => router.push('/add-sleep')}><Ionicons name=\"add\" size={24} color=\"#6366F1\" /></TouchableOpacity>\n            </View>\n\n            <View style={styles.searchRow}>\n                <View style={styles.searchContainer}>\n                    <Ionicons name=\"search\" size={20} color=\"#9CA3AF\" />\n                    <TextInput style={styles.searchInput} placeholder=\"Search sleep logs...\" value={search} onChangeText={setSearch} />\n                </View>\n                <TouchableOpacity style={[styles.filterButton, showFilters && styles.filterButtonActive]} onPress={() => setShowFilters(!showFilters)}>\n                    <Ionicons name=\"options\" size={20} color={showFilters ? '#6366F1' : '#6B7280'} />\n                </TouchableOpacity>\n                <TouchableOpacity style={[styles.filterButton, selectedDate && styles.filterButtonActive]} onPress={() => setShowCalendar(true)}>\n                    <Ionicons name=\"calendar\" size={20} color={selectedDate ? '#6366F1' : '#6B7280'} />\n                </TouchableOpacity>\n            </View>\n\n            {showFilters && (\n                <View style={styles.filterPanel}>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Period:</Text>\n                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(t => (\n                            <TouchableOpacity key={t} style={[styles.filterChip, filterType === t && styles.filterChipActive]} onPress={() => setFilterType(t)}>\n                                <Text style={[styles.filterChipText, filterType === t && styles.filterChipTextActive]}>{t.charAt(0).toUpperCase() + t.slice(1)}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Min Hours:</Text>\n                        {[0, 5, 6, 7, 8].map(i => (\n                            <TouchableOpacity key={i} style={[styles.filterChip, minHours === i && styles.filterChipActive]} onPress={() => setMinHours(i)}>\n                                <Text style={[styles.filterChipText, minHours === i && styles.filterChipTextActive]}>{i === 0 ? 'All' : `${i}+`}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Sort:</Text>\n                        {(['date', 'hours', 'quality'] as SortBy[]).map(s => (\n                            <TouchableOpacity key={s} style={[styles.filterChip, sortBy === s && styles.filterChipActive]} onPress={() => setSortBy(s)}>\n                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{s.charAt(0).toUpperCase() + s.slice(1)}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                </View>\n            )}\n\n            {filteredLogs.length > 0 && (\n                <View style={styles.chartSection}>\n                    <Text style={styles.chartTitle}>Quality Distribution</Text>\n                    <View style={styles.pieContainer}>\n                        {Object.entries(qualityStats).map(([label, count]) => {\n                            const total = filteredLogs.length;\n                            const percentage = total > 0 ? (count / total) * 100 : 0;\n                            if (count === 0) return null;\n                            return (\n                                <View key={label} style={styles.pieItem}>\n                                    <View style={[styles.pieSlice, { backgroundColor: qualityColors[label as keyof typeof qualityColors] }]} />\n                                    <Text style={styles.pieLabel}>{label}</Text>\n                                    <Text style={styles.pieValue}>{count} ({percentage.toFixed(0)}%)</Text>\n                                </View>\n                            );\n                        })}\n                    </View>\n                </View>\n            )}\n\n            <View style={styles.statsRow}>\n                <View style={styles.statItem}><Text style={styles.statValue}>{filteredLogs.length}</Text><Text style={styles.statLabel}>Total</Text></View>\n                <View style={styles.statDivider} />\n                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#6366F1' }]}>{avgHours}h</Text><Text style={styles.statLabel}>Avg Sleep</Text></View>\n                <View style={styles.statDivider} />\n                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{qualityStats.Good + qualityStats.Excellent}</Text><Text style={styles.statLabel}>Good+</Text></View>\n            </View>\n\n            <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>\n                {filteredLogs.length === 0 ? (\n                    <View style={styles.emptyState}><Ionicons name=\"bed\" size={48} color=\"#9CA3AF\" /><Text style={styles.emptyText}>No sleep logs found</Text></View>\n                ) : (\n                    filteredLogs.map(s => (\n                        <View key={s.id} style={styles.sleepCard}>\n                            <View style={styles.sleepHeader}>\n                                <View style={[styles.qualityDot, { backgroundColor: qualityColors[s.quality] }]} />\n                                <Text style={styles.sleepName}>{s.quality}</Text>\n                                <View style={[styles.qualityBadge, { backgroundColor: qualityColors[s.quality] + '20' }]}>\n                                    <Text style={[styles.qualityText, { color: qualityColors[s.quality] }]}>{s.hours}h</Text>\n                                </View>\n                            </View>\n                            <View style={styles.sleepDetails}>\n                                <View style={styles.detailItem}><Ionicons name=\"calendar-outline\" size={16} color=\"#6B7280\" /><Text style={styles.detailText}>{format(parseISO(s.dateTime), 'MMM d, yyyy h:mm a')}</Text></View>\n                            </View>\n                            {s.notes && <Text style={styles.notes}>{s.notes}</Text>}\n                            <View style={styles.cardActions}>\n                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeSleepLog(s.id)}><Ionicons name=\"trash-outline\" size={18} color=\"#EF4444\" /><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>\n                            </View>\n                        </View>\n                    ))\n                )}\n            </ScrollView>\n\n            <Modal visible={showCalendar} animationType=\"slide\" transparent>\n                <View style={styles.modalOverlay}>\n                    <View style={styles.modalContent}>\n                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} />\n                    </View>\n                </View>\n            </Modal>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    searchRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' },\n    searchContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: 12, borderRadius: 10, marginRight: 8 },\n    searchInput: { flex: 1, paddingVertical: 10, marginLeft: 8, fontSize: 16 },\n    filterButton: { padding: 10, marginLeft: 4, borderRadius: 8, backgroundColor: '#FFFFFF' },\n    filterButtonActive: { backgroundColor: '#E0E7FF' },\n    filterPanel: { backgroundColor: '#FFFFFF', padding: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    filterRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },\n    filterLabel: { fontSize: 14, color: '#6B7280', marginRight: 12, width: 100 },\n    filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F3F4F6', marginRight: 8 },\n    filterChipActive: { backgroundColor: '#6366F1' },\n    filterChipText: { fontSize: 13, color: '#6B7280' },\n    filterChipTextActive: { color: '#FFFFFF' },\n    chartSection: { backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },\n    chartTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },\n    pieContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' },\n    pieItem: { alignItems: 'center', width: '45%', marginBottom: 12 },\n    pieSlice: { width: 16, height: 16, borderRadius: 8, marginBottom: 4 },\n    pieLabel: { fontSize: 13, fontWeight: '500', color: '#1A1A1A' },\n    pieValue: { fontSize: 12, color: '#6B7280' },\n    statsRow: { flexDirection: 'row', backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },\n    statItem: { flex: 1, alignItems: 'center' },\n    statDivider: { width: 1, backgroundColor: '#E5E7EB' },\n    statValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A' },\n    statLabel: { fontSize: 12, color: '#6B7280', marginTop: 4 },\n    listSection: { flex: 1, marginTop: 16 },\n    listContent: { paddingHorizontal: 16, paddingBottom: 20 },\n    emptyState: { alignItems: 'center', paddingVertical: 60 },\n    emptyText: { fontSize: 16, color: '#6B7280', marginTop: 12 },\n    sleepCard: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12 },\n    sleepHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },\n    qualityDot: { width: 12, height: 12, borderRadius: 6, marginRight: 10 },\n    sleepName: { flex: 1, fontSize: 16, fontWeight: '600', color: '#1A1A1A' },\n    qualityBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },\n    qualityText: { fontSize: 12, fontWeight: '500' },\n    sleepDetails: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },\n    detailItem: { flexDirection: 'row', alignItems: 'center', marginRight: 16, marginTop: 4 },\n    detailText: { fontSize: 13, color: '#6B7280', marginLeft: 4 },\n    notes: { fontSize: 14, color: '#4B5563', fontStyle: 'italic', marginBottom: 8 },\n    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 8, marginTop: 8 },\n    deleteButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6 },\n    deleteText: { fontSize: 14, color: '#EF4444', marginLeft: 4 },\n    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },\n    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },\n    calendarContainer: { padding: 8 },\n    calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },\n    calendarMonth: { fontSize: 18, fontWeight: '600', color: '#1A1A1A' },\n    weekDays: { flexDirection: 'row', marginBottom: 8 },\n    weekDay: { flex: 1, textAlign: 'center', fontSize: 12, color: '#6B7280', fontWeight: '500' },\n    daysGrid: { flexDirection: 'row', flexWrap: 'wrap' },\n    day: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },\n    daySelected: { backgroundColor: '#6366F1' },\n    dayText: { fontSize: 14, color: '#1A1A1A' },\n    dayTextSelected: { color: '#FFFFFF', fontWeight: '600' },\n    dayDot: { width: 4, height: 4, borderRadius: 2, marginTop: 2 },\n    calendarFooter: { marginTop: 16, alignItems: 'flex-end' },\n    clearButton: { paddingHorizontal: 20, paddingVertical: 10 },\n    clearButtonText: { color: '#6366F1', fontSize: 16, fontWeight: '600' },\n});"
+              },
+              "orig_args": {
+                "path": "/home/evaristo/Documents/me&health/app/sleep-log.tsx",
+                "file_text": "import { useState, useMemo } from 'react';\nimport { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';\nimport { SafeAreaView } from 'react-native-safe-area-context';\nimport { useRouter } from 'expo-router';\nimport { Ionicons } from '@expo/vector-icons';\nimport { useHealthStore } from '../stores/useHealthStore';\nimport { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';\n\ntype FilterType = 'all' | 'week' | 'month' | 'year';\ntype SortBy = 'date' | 'hours' | 'quality';\n\nfunction CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void }) {\n    const [currentMonth, setCurrentMonth] = useState(new Date());\n    const days = eachDayOfInterval({ start: startOfWeek(startOfMonth(currentMonth)), end: endOfWeek(endOfMonth(currentMonth)) });\n\n    return (\n        <View style={styles.calendarContainer}>\n            <View style={styles.calendarHeader}>\n                <TouchableOpacity onPress={() => setCurrentMonth(subMonths(currentMonth, 1))}><Ionicons name=\"chevron-back\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n                <Text style={styles.calendarMonth}>{format(currentMonth, 'MMMM yyyy')}</Text>\n                <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name=\"chevron-forward\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n            </View>\n            <View style={styles.weekDays}>\n                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{d}</Text>)}\n            </View>\n            <View style={styles.daysGrid}>\n                {days.map(day => {\n                    const dateStr = format(day, 'yyyy-MM-dd');\n                    const isSelected = selectedDate === dateStr;\n                    const isMarked = markedDates[dateStr];\n                    return (\n                        <TouchableOpacity key={dateStr} style={[styles.day, isSelected && styles.daySelected]} onPress={() => onSelectDate(dateStr)}>\n                            <Text style={[styles.dayText, isSelected && styles.dayTextSelected]}>{format(day, 'd')}</Text>\n                            {isMarked && <View style={[styles.dayDot, { backgroundColor: isMarked.dotColor || '#6366F1' }]} />}\n                        </TouchableOpacity>\n                    );\n                })}\n            </View>\n            <View style={styles.calendarFooter}>\n                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>Done</Text></TouchableOpacity>\n            </View>\n        </View>\n    );\n}\n\nexport default function SleepLogScreen() {\n    const router = useRouter();\n    const { sleepLogs, removeSleepLog } = useHealthStore();\n    const [search, setSearch] = useState('');\n    const [filterType, setFilterType] = useState<FilterType>('all');\n    const [minHours, setMinHours] = useState(0);\n    const [sortBy, setSortBy] = useState<SortBy>('date');\n    const [showCalendar, setShowCalendar] = useState(false);\n    const [selectedDate, setSelectedDate] = useState<string | null>(null);\n    const [showFilters, setShowFilters] = useState(false);\n\n    const qualityColors = { Poor: '#EF4444', Fair: '#F59E0B', Good: '#10B981', Excellent: '#059669' };\n\n    const filteredLogs = useMemo(() => {\n        let result = [...sleepLogs];\n        const now = new Date();\n\n        if (filterType === 'week') {\n            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\n            result = result.filter(s => new Date(s.dateTime) >= weekAgo);\n        } else if (filterType === 'month') {\n            result = result.filter(s => isWithinInterval(new Date(s.dateTime), { start: startOfMonth(now), end: endOfMonth(now) }));\n        } else if (filterType === 'year') {\n            result = result.filter(s => new Date(s.dateTime).getFullYear() === now.getFullYear());\n        }\n\n        if (selectedDate) {\n            result = result.filter(s => format(parseISO(s.dateTime), 'yyyy-MM-dd') === selectedDate);\n        }\n\n        if (search) {\n            result = result.filter(s => s.quality.toLowerCase().includes(search.toLowerCase()));\n        }\n\n        if (minHours > 0) {\n            result = result.filter(s => s.hours >= minHours);\n        }\n\n        result.sort((a, b) => {\n            if (sortBy === 'date') return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();\n            if (sortBy === 'hours') return b.hours - a.hours;\n            return a.quality.localeCompare(b.quality);\n        });\n\n        return result;\n    }, [sleepLogs, filterType, selectedDate, search, minHours, sortBy]);\n\n    const qualityStats = useMemo(() => {\n        const total = filteredLogs.length;\n        if (total === 0) return { Poor: 0, Fair: 0, Good: 0, Excellent: 0 };\n        const stats = { Poor: 0, Fair: 0, Good: 0, Excellent: 0 };\n        filteredLogs.forEach(s => stats[s.quality]++);\n        return stats;\n    }, [filteredLogs]);\n\n    const markedDates = sleepLogs.reduce((acc, s) => {\n        const date = format(parseISO(s.dateTime), 'yyyy-MM-dd');\n        acc[date] = { marked: true, dotColor: qualityColors[s.quality] };\n        return acc;\n    }, {} as Record<string, any>);\n\n    const avgHours = filteredLogs.length > 0 ? (filteredLogs.reduce((sum, s) => sum + s.hours, 0) / filteredLogs.length).toFixed(1) : 0;\n\n    const handleDateSelect = (date: string) => {\n        if (selectedDate === date) {\n            setSelectedDate(null);\n        } else {\n            setSelectedDate(date);\n        }\n    };\n\n    return (\n        <SafeAreaView style={styles.container}>\n            <View style={styles.header}>\n                <TouchableOpacity onPress={() => router.back()}><Ionicons name=\"arrow-back\" size={24} color=\"#1A1A1A\" /></TouchableOpacity>\n                <Text style={styles.headerTitle}>Sleep Log</Text>\n                <TouchableOpacity onPress={() => router.push('/add-sleep')}><Ionicons name=\"add\" size={24} color=\"#6366F1\" /></TouchableOpacity>\n            </View>\n\n            <View style={styles.searchRow}>\n                <View style={styles.searchContainer}>\n                    <Ionicons name=\"search\" size={20} color=\"#9CA3AF\" />\n                    <TextInput style={styles.searchInput} placeholder=\"Search sleep logs...\" value={search} onChangeText={setSearch} />\n                </View>\n                <TouchableOpacity style={[styles.filterButton, showFilters && styles.filterButtonActive]} onPress={() => setShowFilters(!showFilters)}>\n                    <Ionicons name=\"options\" size={20} color={showFilters ? '#6366F1' : '#6B7280'} />\n                </TouchableOpacity>\n                <TouchableOpacity style={[styles.filterButton, selectedDate && styles.filterButtonActive]} onPress={() => setShowCalendar(true)}>\n                    <Ionicons name=\"calendar\" size={20} color={selectedDate ? '#6366F1' : '#6B7280'} />\n                </TouchableOpacity>\n            </View>\n\n            {showFilters && (\n                <View style={styles.filterPanel}>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Period:</Text>\n                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(t => (\n                            <TouchableOpacity key={t} style={[styles.filterChip, filterType === t && styles.filterChipActive]} onPress={() => setFilterType(t)}>\n                                <Text style={[styles.filterChipText, filterType === t && styles.filterChipTextActive]}>{t.charAt(0).toUpperCase() + t.slice(1)}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Min Hours:</Text>\n                        {[0, 5, 6, 7, 8].map(i => (\n                            <TouchableOpacity key={i} style={[styles.filterChip, minHours === i && styles.filterChipActive]} onPress={() => setMinHours(i)}>\n                                <Text style={[styles.filterChipText, minHours === i && styles.filterChipTextActive]}>{i === 0 ? 'All' : `${i}+`}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                    <View style={styles.filterRow}>\n                        <Text style={styles.filterLabel}>Sort:</Text>\n                        {(['date', 'hours', 'quality'] as SortBy[]).map(s => (\n                            <TouchableOpacity key={s} style={[styles.filterChip, sortBy === s && styles.filterChipActive]} onPress={() => setSortBy(s)}>\n                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{s.charAt(0).toUpperCase() + s.slice(1)}</Text>\n                            </TouchableOpacity>\n                        ))}\n                    </View>\n                </View>\n            )}\n\n            {filteredLogs.length > 0 && (\n                <View style={styles.chartSection}>\n                    <Text style={styles.chartTitle}>Quality Distribution</Text>\n                    <View style={styles.pieContainer}>\n                        {Object.entries(qualityStats).map(([label, count]) => {\n                            const total = filteredLogs.length;\n                            const percentage = total > 0 ? (count / total) * 100 : 0;\n                            if (count === 0) return null;\n                            return (\n                                <View key={label} style={styles.pieItem}>\n                                    <View style={[styles.pieSlice, { backgroundColor: qualityColors[label as keyof typeof qualityColors] }]} />\n                                    <Text style={styles.pieLabel}>{label}</Text>\n                                    <Text style={styles.pieValue}>{count} ({percentage.toFixed(0)}%)</Text>\n                                </View>\n                            );\n                        })}\n                    </View>\n                </View>\n            )}\n\n            <View style={styles.statsRow}>\n                <View style={styles.statItem}><Text style={styles.statValue}>{filteredLogs.length}</Text><Text style={styles.statLabel}>Total</Text></View>\n                <View style={styles.statDivider} />\n                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#6366F1' }]}>{avgHours}h</Text><Text style={styles.statLabel}>Avg Sleep</Text></View>\n                <View style={styles.statDivider} />\n                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{qualityStats.Good + qualityStats.Excellent}</Text><Text style={styles.statLabel}>Good+</Text></View>\n            </View>\n\n            <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>\n                {filteredLogs.length === 0 ? (\n                    <View style={styles.emptyState}><Ionicons name=\"bed\" size={48} color=\"#9CA3AF\" /><Text style={styles.emptyText}>No sleep logs found</Text></View>\n                ) : (\n                    filteredLogs.map(s => (\n                        <View key={s.id} style={styles.sleepCard}>\n                            <View style={styles.sleepHeader}>\n                                <View style={[styles.qualityDot, { backgroundColor: qualityColors[s.quality] }]} />\n                                <Text style={styles.sleepName}>{s.quality}</Text>\n                                <View style={[styles.qualityBadge, { backgroundColor: qualityColors[s.quality] + '20' }]}>\n                                    <Text style={[styles.qualityText, { color: qualityColors[s.quality] }]}>{s.hours}h</Text>\n                                </View>\n                            </View>\n                            <View style={styles.sleepDetails}>\n                                <View style={styles.detailItem}><Ionicons name=\"calendar-outline\" size={16} color=\"#6B7280\" /><Text style={styles.detailText}>{format(parseISO(s.dateTime), 'MMM d, yyyy h:mm a')}</Text></View>\n                            </View>\n                            {s.notes && <Text style={styles.notes}>{s.notes}</Text>}\n                            <View style={styles.cardActions}>\n                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeSleepLog(s.id)}><Ionicons name=\"trash-outline\" size={18} color=\"#EF4444\" /><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>\n                            </View>\n                        </View>\n                    ))\n                )}\n            </ScrollView>\n\n            <Modal visible={showCalendar} animationType=\"slide\" transparent>\n                <View style={styles.modalOverlay}>\n                    <View style={styles.modalContent}>\n                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} />\n                    </View>\n                </View>\n            </Modal>\n        </SafeAreaView>\n    );\n}\n\nconst styles = StyleSheet.create({\n    container: { flex: 1, backgroundColor: '#F8F9FA' },\n    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },\n    searchRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' },\n    searchContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: 12, borderRadius: 10, marginRight: 8 },\n    searchInput: { flex: 1, paddingVertical: 10, marginLeft: 8, fontSize: 16 },\n    filterButton: { padding: 10, marginLeft: 4, borderRadius: 8, backgroundColor: '#FFFFFF' },\n    filterButtonActive: { backgroundColor: '#E0E7FF' },\n    filterPanel: { backgroundColor: '#FFFFFF', padding: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },\n    filterRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },\n    filterLabel: { fontSize: 14, color: '#6B7280', marginRight: 12, width: 100 },\n    filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F3F4F6', marginRight: 8 },\n    filterChipActive: { backgroundColor: '#6366F1' },\n    filterChipText: { fontSize: 13, color: '#6B7280' },\n    filterChipTextActive: { color: '#FFFFFF' },\n    chartSection: { backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },\n    chartTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },\n    pieContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' },\n    pieItem: { alignItems: 'center', width: '45%', marginBottom: 12 },\n    pieSlice: { width: 16, height: 16, borderRadius: 8, marginBottom: 4 },\n    pieLabel: { fontSize: 13, fontWeight: '500', color: '#1A1A1A' },\n    pieValue: { fontSize: 12, color: '#6B7280' },\n    statsRow: { flexDirection: 'row', backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },\n    statItem: { flex: 1, alignItems: 'center' },\n    statDivider: { width: 1, backgroundColor: '#E5E7EB' },\n    statValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A' },\n    statLabel: { fontSize: 12, color: '#6B7280', marginTop: 4 },\n    listSection: { flex: 1, marginTop: 16 },\n    listContent: { paddingHorizontal: 16, paddingBottom: 20 },\n    emptyState: { alignItems: 'center', paddingVertical: 60 },\n    emptyText: { fontSize: 16, color: '#6B7280', marginTop: 12 },\n    sleepCard: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12 },\n    sleepHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },\n    qualityDot: { width: 12, height: 12, borderRadius: 6, marginRight: 10 },\n    sleepName: { flex: 1, fontSize: 16, fontWeight: '600', color: '#1A1A1A' },\n    qualityBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },\n    qualityText: { fontSize: 12, fontWeight: '500' },\n    sleepDetails: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },\n    detailItem: { flexDirection: 'row', alignItems: 'center', marginRight: 16, marginTop: 4 },\n    detailText: { fontSize: 13, color: '#6B7280', marginLeft: 4 },\n    notes: { fontSize: 14, color: '#4B5563', fontStyle: 'italic', marginBottom: 8 },\n    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 8, marginTop: 8 },\n    deleteButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6 },\n    deleteText: { fontSize: 14, color: '#EF4444', marginLeft: 4 },\n    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },\n    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },\n    calendarContainer: { padding: 8 },\n    calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },\n    calendarMonth: { fontSize: 18, fontWeight: '600', color: '#1A1A1A' },\n    weekDays: { flexDirection: 'row', marginBottom: 8 },\n    weekDay: { flex: 1, textAlign: 'center', fontSize: 12, color: '#6B7280', fontWeight: '500' },\n    daysGrid: { flexDirection: 'row', flexWrap: 'wrap' },\n    day: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },\n    daySelected: { backgroundColor: '#6366F1' },\n    dayText: { fontSize: 14, color: '#1A1A1A' },\n    dayTextSelected: { color: '#FFFFFF', fontWeight: '600' },\n    dayDot: { width: 4, height: 4, borderRadius: 2, marginTop: 2 },\n    calendarFooter: { marginTop: 16, alignItems: 'flex-end' },\n    clearButton: { paddingHorizontal: 20, paddingVertical: 10 },\n    clearButtonText: { color: '#6366F1', fontSize: 16, fontWeight: '600' },\n});"
+              }
+            },
+            {
+              "id": "tooluse_dYe3E0qhmmmf4PUzDCilYk",
+              "name": "fs_write",
+              "orig_name": "fs_write",
+              "args": {
+                "key": "WARNING: the actual tool use arguments were too complicated to be generated"
+              },
+              "orig_args": {
+                "key": "WARNING: the actual tool use arguments were too complicated to be generated"
+              }
+            }
+          ]
+        }
+      },
+      "request_metadata": {
+        "request_id": "527716ba-7c14-429f-81ef-c4f69b8971d0",
+        "context_usage_percentage": 18.785713,
+        "message_id": "7e74e209-d2dd-4ddb-aba8-56ed91c3ad5d",
+        "request_start_timestamp_ms": 1771338811936,
+        "stream_end_timestamp_ms": 1771338929134,
+        "time_to_first_chunk": {
+          "secs": 3,
+          "nanos": 96716243
+        },
+        "time_between_chunks": [
+          {
+            "secs": 0,
+            "nanos": 44568
+          },
+          {
+            "secs": 0,
+            "nanos": 49048
+          },
+          {
+            "secs": 0,
+            "nanos": 45728642
+          },
+          {
+            "secs": 0,
+            "nanos": 208914628
+          },
+          {
+            "secs": 0,
+            "nanos": 261359504
+          },
+          {
+            "secs": 0,
+            "nanos": 141758276
+          },
+          {
+            "secs": 0,
+            "nanos": 309029044
+          },
+          {
+            "secs": 0,
+            "nanos": 104330226
+          },
+          {
+            "secs": 0,
+            "nanos": 197879347
+          },
+          {
+            "secs": 0,
+            "nanos": 201998122
+          },
+          {
+            "secs": 0,
+            "nanos": 204852393
+          },
+          {
+            "secs": 0,
+            "nanos": 205929951
+          },
+          {
+            "secs": 0,
+            "nanos": 278911595
+          },
+          {
+            "secs": 0,
+            "nanos": 126030650
+          },
+          {
+            "secs": 0,
+            "nanos": 205952087
+          },
+          {
+            "secs": 0,
+            "nanos": 203452330
+          },
+          {
+            "secs": 0,
+            "nanos": 10619913
+          },
+          {
+            "secs": 0,
+            "nanos": 210404976
+          },
+          {
+            "secs": 0,
+            "nanos": 209751922
+          },
+          {
+            "secs": 0,
+            "nanos": 239042348
+          },
+          {
+            "secs": 0,
+            "nanos": 77840
+          },
+          {
+            "secs": 0,
+            "nanos": 196667860
+          },
+          {
+            "secs": 63,
+            "nanos": 455143371
+          },
+          {
+            "secs": 0,
+            "nanos": 15060
+          },
+          {
+            "secs": 0,
+            "nanos": 57348
+          },
+          {
+            "secs": 0,
+            "nanos": 38218
+          },
+          {
+            "secs": 0,
+            "nanos": 12268
+          },
+          {
+            "secs": 0,
+            "nanos": 100189018
+          },
+          {
+            "secs": 46,
+            "nanos": 975593813
+          },
+          {
+            "secs": 0,
+            "nanos": 16282
+          },
+          {
+            "secs": 0,
+            "nanos": 3742484
+          },
+          {
+            "secs": 0,
+            "nanos": 2745329
+          }
+        ],
+        "user_prompt_length": 0,
+        "response_size": 18837,
+        "chat_conversation_type": null,
+        "tool_use_ids_and_names": [
+          [
+            "tooluse_NYUbot2I2g8EqzFURGEfTO",
+            "fs_write"
+          ],
+          [
+            "tooluse_dYe3E0qhmmmf4PUzDCilYk",
+            "fs_write"
+          ]
+        ],
+        "model_id": "minimax-m2.1",
+        "message_meta_tags": []
+      }
+    }
+  ],
+  "valid_history_range": [
+    0,
+    6
+  ],
+  "transcript": [
+    "> /model",
+    "> as you can see for the symptomps we have its logs and add . can you give a similar approach to other functionalities as well with a simliar view and structure and pattern? we will see how it will look. ",
+    "\n\nLet me first explore the codebase to understand the symptoms functionality and its structure.\n\n[Tool uses: glob,glob]",
+    "\n\n\n\n[Tool uses: fs_read]",
+    "\n\nNow let me check the other add screens to understand their data structures:\n\n[Tool uses: fs_read]",
+    "\n\nLet me check the types and remaining add screens:\n\n\n[Tool uses: fs_read]",
+    "\n\n\n\n[Tool uses: fs_read]",
+    "\n\nNow I understand the pattern. I'll create log screens for other functionalities following the same structure as `symptoms-log.tsx`. Let me create them:\n\n[Tool uses: fs_write,fs_write]",
+    "Kiro is having trouble responding right now: \n   0: Failed to send the request: An unknown error occurred: ValidationException\n   1: An unknown error occurred: ValidationException\n   2: unhandled error (ValidationException)\n   3: service error\n   4: unhandled error (ValidationException)\n   5: Error { code: \"ValidationException\", message: \"Improperly formed request.\", aws_request_id: \"0b5114f5-8a55-40ce-84a5-6197b1f07d97\" }\n\nLocation:\n   crates/chat-cli/src/cli/chat/mod.rs:1460\n\nBacktrace omitted. Run with RUST_BACKTRACE=1 environment variable to display it.\nRun with RUST_BACKTRACE=full to include source snippets.\n",
+    "> /chat save <health>"
+  ],
+  "tools": {
+    "native___": [
+      {
+        "ToolSpecification": {
+          "name": "grep",
+          "description": "Fast text pattern search in files using regex. ALWAYS use this tool instead of 'grep', 'rg', or 'ag' commands in bash. Respects .gitignore.\n\n## Text Discovery Only\nUse grep for literal text/pattern matching: error messages, TODOs, config values, regex patterns.\n\n## For Semantic Code Understanding → Use 'code' tool if available\n- Finding symbol definitions or usages → code tool (search_symbols, goto_definition, find_references)\n- Understanding code structure/relationships → code tool\n- Distinguishing definition vs call vs import → code tool\n\n## Fallback\nIf the 'code' tool is available but returns insufficient symbol info, use grep to discover candidate files/lines, then return to 'code' for precise navigation.\n\nWhen you use this tool, prefer to show the user a small list of representative matches (including file paths and line numbers) instead of only giving a high-level summary.",
+          "input_schema": {
+            "json": {
+              "properties": {
+                "include": {
+                  "type": "string",
+                  "description": "File filter glob. Examples: \"*.rs\", \"*.{ts,tsx}\", \"*.py\""
+                },
+                "max_files": {
+                  "description": "Max number of files returned (output limit). Increase for comprehensive codebase searches.",
+                  "type": "integer"
+                },
+                "output_mode": {
+                  "description": "Output format: 'content' returns matches as 'file:line:content' (default, best for seeing actual matches), 'files_with_matches' returns only file paths, 'count' returns match counts per file.",
+                  "enum": [
+                    "content",
+                    "files_with_matches",
+                    "count"
+                  ],
+                  "type": "string"
+                },
+                "case_sensitive": {
+                  "type": "boolean",
+                  "description": "Case-sensitive search. Defaults to false (case-insensitive)."
+                },
+                "path": {
+                  "type": "string",
+                  "description": "Directory to search from. Defaults to current working directory."
+                },
+                "max_matches_per_file": {
+                  "type": "integer",
+                  "description": "Max matches returned per file (output limit). Increase to see all occurrences in a file."
+                },
+                "max_total_lines": {
+                  "type": "integer",
+                  "description": "Max total matched lines returned across all files (output limit). Increase when searching for many occurrences."
+                },
+                "max_depth": {
+                  "type": "integer",
+                  "description": "Max directory depth to traverse when searching (search limit). Increase for deeply nested structures."
+                },
+                "pattern": {
+                  "type": "string",
+                  "description": "Regex pattern to search for. Examples: \"fn main\", \"class.*Component\", \"TODO|FIXME\". Start with simple patterns first (e.g. just the word you're looking for), then refine if needed."
+                }
+              },
+              "type": "object",
+              "required": [
+                "pattern"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "use_subagent",
+          "description": "⚠️ CRITICAL DELEGATION TOOL ⚠️\n\n🔍 BEFORE attempting ANY task, CHECK if you have the required tools in YOUR current tool list.\n\n❌ If you DON'T have the necessary tools → YOU MUST use this tool to delegate to a subagent that does.\n✅ If you DO have the tools → Handle the task yourself.\n\n## When to Use (MANDATORY scenarios):\n\n1. **MISSING TOOLS**: The user asks you to do something but you don't see the required tool in your available tools list\n   - Example: User asks to read a file, but you don't have 'fs_read' → USE THIS TOOL\n   - Example: User asks to search code, but you don't have 'code' tool → USE THIS TOOL\n   - Example: User asks to run bash command, but you don't have 'execute_bash' → USE THIS TOOL\n\n2. **PARALLEL PROCESSING**: A complex task can be split into independent subtasks that different specialized agents can handle simultaneously\n\n3. **CAPABILITY CHECK**: Use ListAgents command first to see what specialized agents and their toolsets are available\n\n## How Subagents Are Different:\n- Subagents have DIFFERENT, SPECIALIZED toolsets than you\n- Each subagent may have tools you don't have access to\n- They operate independently with their own context\n- Up to 4 subagents can work in parallel\n\n## Decision Flow:\n```\nUser makes request → Check YOUR tools list → Missing required tool? → USE use_subagent\n                                          → Have required tool? → Handle it yourself\n```\n\n⚡ Remember: Don't apologize about lacking tools - just delegate to a subagent that has them! Also note that subagents that are spawned together could not communicate with each other. If they are to perform tasks that are dependent on each other. Spawn them with a different tool call!",
+          "input_schema": {
+            "json": {
+              "required": [
+                "command"
+              ],
+              "type": "object",
+              "properties": {
+                "content": {
+                  "description": "Required for `InvokeSubagents` command. Contains subagents array and optional conversation ID.",
+                  "required": [
+                    "subagents"
+                  ],
+                  "properties": {
+                    "subagents": {
+                      "items": {
+                        "required": [
+                          "query"
+                        ],
+                        "type": "object",
+                        "properties": {
+                          "relevant_context": {
+                            "type": "string",
+                            "description": "Optional additional context that should be provided to the subagent to help it understand the task better"
+                          },
+                          "query": {
+                            "type": "string",
+                            "description": "The query or task to be handled by the subagent"
+                          },
+                          "agent_name": {
+                            "description": "Optional name of the specific agent to use. If not provided, uses the default agent",
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "description": "Array of subagent invocations to execute in parallel. Each invocation specifies a query, optional agent name, and optional context.",
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                },
+                "command": {
+                  "description": "The commands to run. Allowed options are `ListAgents` to query available agents, or `InvokeSubagents` to invoke one or more subagents",
+                  "type": "string",
+                  "enum": [
+                    "ListAgents",
+                    "InvokeSubagents"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "fs_read",
+          "description": "Tool for reading files, directories and images. Always provide an 'operations' array.\n\nFor single operation: provide array with one element.\nFor batch operations: provide array with multiple elements.\n\nAvailable modes:\n- Line: Read lines from a file\n- Directory: List directory contents\n- Search: Search for patterns in files\n- Image: Read and process images\n\nExamples:\n1. Single: {\"operations\": [{\"mode\": \"Line\", \"path\": \"/file.txt\"}]}\n2. Batch: {\"operations\": [{\"mode\": \"Line\", \"path\": \"/file1.txt\"}, {\"mode\": \"Search\", \"path\": \"/file2.txt\", \"pattern\": \"test\"}]}",
+          "input_schema": {
+            "json": {
+              "properties": {
+                "summary": {
+                  "description": "Optional description of the purpose of this batch operation (mainly useful for multiple operations)",
+                  "type": "string"
+                },
+                "operations": {
+                  "type": "array",
+                  "description": "Array of operations to execute. Provide one element for single operation, multiple for batch.",
+                  "items": {
+                    "required": [
+                      "mode"
+                    ],
+                    "properties": {
+                      "end_line": {
+                        "description": "Ending line number (optional, for Line mode). A negative index represents a line number starting from the end of the file.",
+                        "type": "integer",
+                        "default": -1
+                      },
+                      "mode": {
+                        "enum": [
+                          "Line",
+                          "Directory",
+                          "Search",
+                          "Image"
+                        ],
+                        "type": "string",
+                        "description": "The operation mode to run in: `Line`, `Directory`, `Search`. `Line` and `Search` are only for text files, and `Directory` is only for directories. `Image` is for image files, in this mode `image_paths` is required."
+                      },
+                      "context_lines": {
+                        "type": "integer",
+                        "description": "Number of context lines around search results (optional, for Search mode)",
+                        "default": 2
+                      },
+                      "depth": {
+                        "default": 0,
+                        "type": "integer",
+                        "description": "Depth of a recursive directory listing (optional, for Directory mode)"
+                      },
+                      "offset": {
+                        "default": 0,
+                        "type": "integer",
+                        "description": "Number of entries to skip for pagination (optional, for Directory mode). Use with max_entries to iterate through large directories. Entries are sorted by last modified time (most recent first). Default: 0"
+                      },
+                      "path": {
+                        "description": "Path to the file or directory. The path should be absolute, or otherwise start with ~ for the user's home (required for Line, Directory, Search modes).",
+                        "type": "string"
+                      },
+                      "start_line": {
+                        "type": "integer",
+                        "description": "Starting line number (optional, for Line mode). A negative index represents a line number starting from the end of the file.",
+                        "default": 1
+                      },
+                      "exclude_patterns": {
+                        "description": "Glob patterns to exclude from directory listing (optional, for Directory mode). If omitted, uses defaults. If empty array [] is provided, no exclusions are applied (shows everything). If patterns are provided, they completely override the defaults. Examples: '**/target/**', '*.log'",
+                        "type": "array",
+                        "default": [
+                          "node_modules",
+                          ".git",
+                          "dist",
+                          "build",
+                          "out",
+                          ".cache",
+                          "target"
+                        ],
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "pattern": {
+                        "type": "string",
+                        "description": "Pattern to search for (required, for Search mode). Case insensitive. The pattern matching is performed per line."
+                      },
+                      "max_entries": {
+                        "type": "integer",
+                        "description": "Maximum number of entries to return (optional, for Directory mode). When limit is reached, results are truncated and metadata shows 'showing X of Y entries'. Use to prevent context window overflow. Default: 1000",
+                        "default": 1000
+                      },
+                      "image_paths": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array",
+                        "description": "List of paths to the images. This is currently supported by the Image mode."
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "operations"
+              ],
+              "type": "object"
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "fs_write",
+          "description": "A tool for creating and editing files\n * The `create` command will override the file at `path` if it already exists as a file, and otherwise create a new file\n * The `append` command will add content to the end of an existing file, automatically adding a newline if the file doesn't end with one. The file must exist.\n Notes for using the `str_replace` command:\n * The `old_str` parameter should match EXACTLY one or more consecutive lines from the original file. Be mindful of whitespaces!\n * If the `old_str` parameter is not unique in the file, the replacement will not be performed. Make sure to include enough context in `old_str` to make it unique\n * The `new_str` parameter should contain the edited lines that should replace the `old_str`.",
+          "input_schema": {
+            "json": {
+              "properties": {
+                "summary": {
+                  "description": "A brief explanation of what the file change does or why it's being made.",
+                  "type": "string"
+                },
+                "old_str": {
+                  "description": "Required parameter of `str_replace` command containing the string in `path` to replace.",
+                  "type": "string"
+                },
+                "insert_line": {
+                  "description": "Required parameter of `insert` command. The `new_str` will be inserted AFTER the line `insert_line` of `path`.",
+                  "type": "integer"
+                },
+                "new_str": {
+                  "type": "string",
+                  "description": "Required parameter of `str_replace` command containing the new string. Required parameter of `insert` command containing the string to insert. Required parameter of `append` command containing the content to append to the file."
+                },
+                "command": {
+                  "enum": [
+                    "create",
+                    "str_replace",
+                    "insert",
+                    "append"
+                  ],
+                  "description": "The commands to run. Allowed options are: `create`, `str_replace`, `insert`, `append`.",
+                  "type": "string"
+                },
+                "file_text": {
+                  "description": "Required parameter of `create` command, with the content of the file to be created.",
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string",
+                  "description": "Absolute path to file or directory, e.g. `/repo/file.py` or `/repo`."
+                }
+              },
+              "required": [
+                "command",
+                "path"
+              ],
+              "type": "object"
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "report_issue",
+          "description": "Opens the browser to a pre-filled gh (GitHub) issue template to report chat issues, bugs, or feature requests. Pre-filled information includes the conversation transcript, chat context, and chat request IDs from the service.",
+          "input_schema": {
+            "json": {
+              "properties": {
+                "steps_to_reproduce": {
+                  "type": "string",
+                  "description": "Optional: Previous user chat requests or steps that were taken that may have resulted in the issue or error response."
+                },
+                "title": {
+                  "description": "The title of the GitHub issue.",
+                  "type": "string"
+                },
+                "expected_behavior": {
+                  "description": "Optional: The expected chat behavior or action that did not happen.",
+                  "type": "string"
+                },
+                "actual_behavior": {
+                  "type": "string",
+                  "description": "Optional: The actual chat behavior that happened and demonstrates the issue or lack of a feature."
+                }
+              },
+              "type": "object",
+              "required": [
+                "title"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "code",
+          "description": "Code intelligence to analyze code with AST parsing and fuzzy search. Language auto-detected from file extension.\n\nIMPORTANT: Prefer this tool over fs_read for code files. This tool intelligently provides structured code analysis.\n\nCORE FEATURES:\n• Fuzzy search for symbols (classes, functions, methods)\n• Extracts function/class signatures via AST\n• Structural AST search and rewrite (ast-grep)\n• Codebase overview and directory exploration\n\nNOTE: Use fs_read with line ranges for unsupported patterns.\n\n## Operations\n\n**search_symbols** - Find symbol definitions by name across workspace.\nParams: symbol_name (required), path, symbol_type, limit, language, exact_match\nUses fuzzy matching by default. Set exact_match=true for precise matching.\n\n**lookup_symbols** - Batch lookup specific symbols (max 10).\nParams: symbols (required), file_path, include_source\nSet include_source=false for large classes/structs to avoid context overflow.\nScoped lookup: Provide file_path to search within specific file only.\n\n**get_document_symbols** - List all symbols in a file.\nParams: file_path (required), top_level_only (recommended: true)\nUse this for understanding file structure without reading content.\nPrefer this over fs_read when you need symbol information.\n\n**pattern_search** - AST-based structural search using ast-grep.\nParams: pattern, language (required), file_path, limit\n\n**pattern_rewrite** - AST-based code transformation.\nParams: pattern, replacement, language (required), file_path, limit, dry_run\nUse dry_run=true first to preview changes.\n\n## Pattern Search & Rewrite\n\nMetavariables:\n• $VAR - Matches single node (identifier, expression)\n• $$$ - Matches zero or more nodes (statements, parameters)\n\nSimple patterns:\n• console.log($ARG) - Match any console.log call\n• function $NAME($$$PARAMS) {} - Match function declaration\n• $OBJ.$METHOD() - Match any method call\n\nStructural rules (YAML):\n• pattern - Match code structure\n• kind - Match AST node type (function_declaration, class_declaration)\n• has - Node contains descendant matching pattern\n• inside - Node is inside ancestor matching pattern\n• all/any/not - Logical operators\n\nCritical: For relational rules (has, inside), always use stopBy: end\n\nRewrite examples:\n• pattern='var $N = $V', replacement='const $N = $V'\n• pattern='$O.hasOwnProperty($P)', replacement='Object.hasOwn($O, $P)'\n\nWorkflow:\n1. Use pattern_search first to verify matches\n2. Review matches to ensure correctness\n3. Test rewrite on small subset\n4. Apply to full codebase after verification\n\n**generate_codebase_overview** - ONLY for explicit architecture questions. Not for bug fixes or finding code.\nParams: path (optional)\n\n**search_codebase_map** - Focused directory exploration.\nParams: file_path, path\n\n## Explore Unfamiliar Code\n1. search_symbols for domain-specific types/functions/methods/classes\n2. lookup_symbols with include_source=true on promising matches\n3. grep (max 2 searches) for literal text patterns\n4. Repeat 1-3 with refined terms if needed\n5. generate_codebase_overview ONLY for architecture review or full codebase understanding\n   - NOT for bug fixes, feature work, or finding specific code\n\n## Tool Selection Priority\n1. search_symbols or lookup_symbols for finding code - ALWAYS use for functions/methods/classes/structs/interfaces\n2. get_document_symbols for file structure\n3. grep - ONLY for literal text in comments/strings, config values, code\n4. fs_read - raw file content when needed\n\n## CRITICAL RULES\n- Start with search_symbols\n- Always follow search_symbols with lookup_symbols\n- When searching for multiple related symbols, call search_symbols in parallel\n\n## Quick Reference\n• \"What's in this file?\" → get_document_symbols\n• \"Show me X class\" → search_symbols, then lookup_symbol\n\n## LSP Operations (Not Available)\nThese require LSP initialization (/code init):\nfind_references, goto_definition, get_hover, get_completions, get_diagnostics, rename_symbol",
+          "input_schema": {
+            "json": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "description": "Maximum results (optional for search_symbols/pattern_search)",
+                  "type": "integer"
+                },
+                "symbols": {
+                  "description": "List of simple symbol names, not qualified (e.g. ['myFunction'] not ['MyClass.myFunction']). Required for lookup_symbols, max 10",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "pattern": {
+                  "type": "string",
+                  "description": "AST pattern (required for pattern_search)"
+                },
+                "operation": {
+                  "type": "string",
+                  "enum": [
+                    "search_symbols",
+                    "lookup_symbols",
+                    "get_document_symbols",
+                    "pattern_search",
+                    "generate_codebase_overview",
+                    "search_codebase_map",
+                    "pattern_rewrite"
+                  ],
+                  "description": "The code intelligence operation to perform"
+                },
+                "language": {
+                  "type": "string",
+                  "description": "Programming language (required for pattern_search, optional for search_symbols)"
+                },
+                "include_source": {
+                  "description": "Include source code in results (optional for lookup_symbols)",
+                  "type": "boolean"
+                },
+                "symbol_name": {
+                  "type": "string",
+                  "description": "Simple symbol name, not qualified (e.g. 'myFunction' not 'MyClass.myFunction'). Required for search_symbols"
+                },
+                "file_path": {
+                  "type": "string",
+                  "description": "File path (required for get_document_symbols, optional for pattern_search/search_codebase_map)"
+                },
+                "path": {
+                  "type": "string",
+                  "description": "Directory path (optional, for generate_codebase_overview: workspace root, for search_codebase_map: path filter, for search_symbols: scope search to file or directory)"
+                }
+              },
+              "required": [
+                "operation"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "introspect",
+          "description": "Use ONLY when the user is asking about this chat application's own features, slash commands, settings, or capabilities. Do NOT use for general coding questions, AWS help, or tasks the user wants you to perform. When mentioning commands in your response, always prefix them with '/' (e.g., '/save', '/load', '/context'). CRITICAL: Only provide information explicitly documented. If details about any tool, feature, or command are not documented, clearly state the information is not available rather than generating assumptions.",
+          "input_schema": {
+            "json": {
+              "required": [],
+              "type": "object",
+              "properties": {
+                "query": {
+                  "description": "The user's question about this assistant's usage, features, or capabilities",
+                  "type": "string"
+                },
+                "doc_path": {
+                  "type": "string",
+                  "description": "Path to a specific doc to retrieve (e.g., \"features/tangent-mode.md\"). Use this to get full content of a doc from the index."
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "web_search",
+          "description": "WebSearch looks up information that is outside the model's training data or cannot be reliably inferred from the current codebase/context.\nTool performs basic compliance wrt content licensing and restriction.\nAs an agent you are responsible for adhering to compliance and attribution requirements.\nIMPORTANT: The snippets often contain enough information to answer questions - only use web_fetch if you need more detailed content from a specific webpage.\n\n## When to Use\n- When the user asks for current or up-to-date information (e.g., pricing, versions, technical specs) or explicitly requests a web search.\n- When verifying information that may have changed recently, or when the user provides a specific URL to inspect.\n\n## When NOT to Use\n- When the question involves basic concepts, historical facts, or well-established programming syntax/technical documentation.\n- When the topic does not require current or evolving information.\n\nFor any code-related tasks, follow this order:\n1. Search within the repository (if tools are available) and check if it can be inferred from existing code or documentation.\n2. Use this tool only if still unresolved and the library/data is likely new/unseen.\n\n## Content Compliance Requirements\nYou MUST adhere to strict licensing restrictions and attribution requirements when using search results:\n\n### Attribution Requirements\n- ALWAYS provide inline links to original sources using format: [description](url)\n- If not possible to provide inline link, add sources at the end of file\n- Ensure attribution is visible and accessible\n\n### Verbatim Reproduction Limits\n- NEVER reproduce more than 30 consecutive words from any single source\n- Track word count per source to ensure compliance\n- Always paraphrase and summarize rather than quote directly\n- Add compliance note when the content from the source is rephrased: \"Content was rephrased for compliance with licensing restrictions\"\n\n### Content Modification Guidelines\n- You MAY paraphrase, summarize, and reformat content\n- You MUST NOT materially change the underlying substance or meaning\n- Preserve factual accuracy while condensing information\n- Avoid altering core arguments, data, or conclusions\n\n## Usage Details\n- You may rephrase user queries to improve search effectiveness\n- You can make multiple queries to gather comprehensive information\n- Consider breaking complex questions into focused searches\n- Refine queries based on initial results if needed\n\n## Output Usage\n- Prioritize latest published sources based on publishedDate\n- Prefer official documentation to blogs and news posts\n- Use domain information to assess source authority and reliability\n\n## Error Handling\n- If unable to comply with content restrictions, explain limitations to user\n- Suggest alternative approaches when content cannot be reproduced\n- Prioritize compliance over completeness when conflicts arise\n\n## Output\nThe tool returns a JSON object with a \"results\" array containing search results:\n\n{\n  \"results\": [\n    {\n      \"title\": \"Example Page Title\",\n      \"url\": \"https://example.com/page\",\n      \"snippet\": \"Brief excerpt from the page...\",\n      \"publishedDate\": \"2025-11-20T10:30:00Z\",\n      \"domain\": \"example.com\",\n      \"id\": \"unique-id-123\",\n      \"maxVerbatimWordLimit\": 30,\n      \"publicDomain\": false\n    }\n  ]\n}\n\n## UI FROM LLM (You) back to the user\nCRITICAL: Always start your response with \"Here's what I found:\" and then start from a newline.\nALWAYS end your response with a blank line followed by 'References:' and list the sources you used in sequential order [1], [2], [3], etc. with NO gaps in numbering. Format: '[N] Title - URL' one per line. Truncate long titles to 80 characters and long URLs to 100 characters, adding '...' if truncated.",
+          "input_schema": {
+            "json": {
+              "properties": {
+                "query": {
+                  "description": "Search query - can be keywords, questions, or specific topics",
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "glob",
+          "description": "Find files and directories whose paths match a glob pattern. Respects .gitignore. Prefer this over the bash 'find' command for listing or discovering paths. Returns JSON with totalFiles (count found), truncated (true if limited), and filePaths array. When truncated is true, just mention results are truncated, don't state the limit number.",
+          "input_schema": {
+            "json": {
+              "required": [
+                "pattern"
+              ],
+              "type": "object",
+              "properties": {
+                "max_depth": {
+                  "description": "Maximum directory depth to traverse. Increase for deep nested structures.",
+                  "type": "integer"
+                },
+                "pattern": {
+                  "description": "Glob pattern, e.g. \"**/*.rs\", \"src/**/*.{ts,tsx}\" or \"**/test*\".",
+                  "type": "string"
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum files to return. If totalFiles exceeds this, truncated will be true."
+                },
+                "path": {
+                  "type": "string",
+                  "description": "Root directory to search from. Only set this when the user explicitly mentions a directory path. In all other cases, omit this so the tool searches from the current working directory (the project root)."
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "use_aws",
+          "description": "Make an AWS CLI api call with the specified service, operation, and parameters. All arguments MUST conform to the AWS CLI specification. Should the output of the invocation indicate a malformed command, invoke help to obtain the the correct command.",
+          "input_schema": {
+            "json": {
+              "type": "object",
+              "required": [
+                "region",
+                "service_name",
+                "operation_name",
+                "label"
+              ],
+              "properties": {
+                "service_name": {
+                  "type": "string",
+                  "pattern": "^[^-].*",
+                  "description": "The name of the AWS service. If you want to query s3, you should use s3api if possible. Must not start with a dash (-)."
+                },
+                "operation_name": {
+                  "type": "string",
+                  "description": "The name of the operation to perform."
+                },
+                "positional_args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Positional arguments for high-level commands (e.g., s3 cp, s3 mv, s3 sync, s3 rm). These are passed directly without -- prefix. Use this for source/destination paths in S3 commands."
+                },
+                "parameters": {
+                  "type": "object",
+                  "description": "The parameters for the operation. The parameter keys MUST conform to the AWS CLI specification. You should prefer to use JSON Syntax over shorthand syntax wherever possible. For parameters that are booleans, prioritize using flags with no value. Denote these flags with flag names as key and an empty string as their value. You should also prefer kebab case."
+                },
+                "region": {
+                  "type": "string",
+                  "description": "Region name for calling the operation on AWS."
+                },
+                "profile_name": {
+                  "description": "Optional: AWS profile name to use from ~/.aws/credentials. Defaults to default profile if not specified.",
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Human readable description of the api that is being called."
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "execute_bash",
+          "description": "Execute the specified bash command.",
+          "input_schema": {
+            "json": {
+              "required": [
+                "command"
+              ],
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string",
+                  "description": "Bash command to execute"
+                },
+                "summary": {
+                  "description": "A brief explanation of what the command does",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "web_fetch",
+          "description": "Fetch and extract content from a specific URL. Supports three modes: 'selective' (default, extracts relevant sections around search terms), 'truncated' (first 8000 chars), 'full' (complete content). Use 'selective' mode to read specific parts of a page multiple times without filling context. Provide 'search_terms' in selective mode to find relevant sections (e.g., 'pricing', 'installation').",
+          "input_schema": {
+            "json": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "description": "URL to fetch content from",
+                  "type": "string"
+                },
+                "search_terms": {
+                  "type": "string",
+                  "description": "Optional: Keywords to find in selective mode (e.g., 'pricing cost', 'installation setup'). Returns ~10 lines before and after matches. If not provided, returns beginning of page."
+                },
+                "mode": {
+                  "enum": [
+                    "selective",
+                    "truncated",
+                    "full"
+                  ],
+                  "type": "string",
+                  "description": "Extraction mode: 'selective' for smart extraction (default), 'truncated' for first 8000 chars, 'full' for complete content"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "ToolSpecification": {
+          "name": "dummy",
+          "description": "This is a dummy tool. If you are seeing this that means the tool associated with this tool call is not in the list of available tools. This could be because a wrong tool name was supplied or the list of tools has changed since the conversation has started. Do not show this when user asks you to list tools.",
+          "input_schema": {
+            "json": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      }
+    ]
+  },
+  "context_manager": {
+    "max_context_files_size": 150000,
+    "current_profile": "kiro_default",
+    "paths": [
+      "AmazonQ.md",
+      "AGENTS.md",
+      "README.md"
+    ],
+    "hooks": {}
+  },
+  "context_message_length": 1746,
+  "latest_summary": null,
+  "model_info": {
+    "model_name": "minimax-m2.1",
+    "description": "Experimental preview of MiniMax M2.1",
+    "model_id": "minimax-m2.1",
+    "context_window_tokens": 196000,
+    "rate_multiplier": 0.15,
+    "rate_unit": "Credit"
+  },
+  "file_line_tracker": {},
+  "checkpoint_manager": null,
+  "mcp_enabled": true,
+  "mcp_last_checked": [
+    2026,
+    48,
+    14,
+    30,
+    42,
+    48173094,
+    0,
+    0,
+    0
+  ],
+  "mcp_server_versions": {},
+  "mcp_disabled_due_to_api_failure": false,
+  "user_turn_metadata": {
+    "continuation_id": "dc06bf05-86d7-401d-a9cd-818956fd25af",
+    "requests": [],
+    "usage_info": []
+  }
+}

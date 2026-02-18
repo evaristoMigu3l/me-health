@@ -1,0 +1,199 @@
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Platform, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useHealthStore } from '../stores/useHealthStore';
+import { format, parseISO } from 'date-fns';
+import * as Sharing from 'expo-sharing';
+// Using legacy import to access getContentUriAsync which is deprecated/removed in newer SDKs
+import * as FileSystem from 'expo-file-system/legacy';
+import * as IntentLauncher from 'expo-intent-launcher';
+
+// ... imports
+
+export default function ExamDetailsScreen() {
+    const router = useRouter();
+    const params = useLocalSearchParams();
+    const { investigations, appointments } = useHealthStore();
+
+    const exam = investigations.find(i => i.id === params.id);
+    const linkedAppt = exam?.linkedAppointmentId ? appointments.find(a => a.id === exam.linkedAppointmentId) : null;
+
+    if (!exam) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                    <Text style={styles.headerTitle}>Exam Not Found</Text>
+                </View>
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>The requested exam details could not be found.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    const handleOpenFile = async (uri: string) => {
+        try {
+            if (Platform.OS === 'android') {
+                const extension = uri.split('.').pop()?.toLowerCase();
+                let mimeType = '*/*';
+                if (extension === 'pdf') mimeType = 'application/pdf';
+                else if (['jpg', 'jpeg', 'png'].includes(extension || '')) mimeType = 'image/*';
+                else if (['doc', 'docx'].includes(extension || '')) mimeType = 'application/msword';
+
+                // If it's already a content URI, use it directly (common from document picker)
+                // Otherwise convert file URI to content URI
+                const contentUri = uri.startsWith('content://')
+                    ? uri
+                    : await FileSystem.getContentUriAsync(uri);
+
+                await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+                    data: contentUri,
+                    type: mimeType,
+                    flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+                });
+            } else {
+                if (!(await Sharing.isAvailableAsync())) {
+                    alert('Sharing is not available on this platform');
+                    return;
+                }
+                await Sharing.shareAsync(uri);
+            }
+        } catch (e: any) {
+            console.log('File open error:', e);
+            Alert.alert('Open Failed', `Error opening file: ${e.message || JSON.stringify(e)}`);
+            // Fallback commented out to verify error
+            // if (await Sharing.isAvailableAsync()) {
+            //    await Sharing.shareAsync(uri);
+            // }
+        }
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <Text style={styles.headerTitle}>Exam Details</Text>
+                <TouchableOpacity onPress={() => router.push({ pathname: '/add-investigation', params: { id: exam.id } })}>
+                    <Text style={styles.editLink}>Edit</Text>
+                </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Type</Text>
+                    <Text style={styles.value}>{exam.type}</Text>
+                </View>
+
+                <View style={styles.row}>
+                    <View style={styles.halfSection}>
+                        <Text style={styles.label}>Date</Text>
+                        <Text style={styles.value}>{format(parseISO(exam.dateTime), 'MMM d, yyyy')}</Text>
+                    </View>
+                    <View style={styles.halfSection}>
+                        <Text style={styles.label}>Status</Text>
+                        <View style={[styles.statusBadge, exam.status === 'Completed' ? styles.statusCompleted : exam.status === 'Pending' ? styles.statusPending : styles.statusScheduled]}>
+                            <Text style={[styles.statusText, exam.status === 'Completed' ? styles.statusTextCompleted : exam.status === 'Pending' ? styles.statusTextPending : styles.statusTextScheduled]}>{exam.status}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {exam.result ? (
+                    <View style={styles.section}>
+                        <Text style={styles.label}>Result</Text>
+                        <View style={styles.resultBox}>
+                            <Text style={styles.resultText}>{exam.result}</Text>
+                        </View>
+                    </View>
+                ) : null}
+
+                {exam.notes ? (
+                    <View style={styles.section}>
+                        <Text style={styles.label}>Notes</Text>
+                        <Text style={styles.value}>{exam.notes}</Text>
+                    </View>
+                ) : null}
+
+                {linkedAppt && (
+                    <View style={styles.section}>
+                        <Text style={styles.label}>Linked Appointment</Text>
+                        <TouchableOpacity style={styles.linkCard}>
+                            <Ionicons name="calendar" size={20} color="#3B82F6" />
+                            <View style={styles.linkInfo}>
+                                <Text style={styles.linkTitle}>{linkedAppt.reason || linkedAppt.doctorName || 'Appointment'}</Text>
+                                <Text style={styles.linkDate}>{format(parseISO(linkedAppt.dateTime), 'PPPP p')}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+                {exam.attachments && exam.attachments.length > 0 && (
+                    <View style={styles.section}>
+                        <Text style={styles.label}>Attachments</Text>
+                        {exam.attachments.map((uri, index) => {
+                            // Simple heuristic for images based on extension? 
+                            // URIs from document picker usually have accessible paths on Android/iOS
+                            const isImage = uri.match(/\.(jpg|jpeg|png|gif)$/i);
+                            return (
+                                <View key={index} style={styles.attachmentCard}>
+                                    {isImage ? (
+                                        <Image source={{ uri }} style={styles.attachmentImage} resizeMode="cover" />
+                                    ) : (
+                                        <View style={styles.fileIconContainer}>
+                                            <Ionicons name="document-text" size={32} color="#9CA3AF" />
+                                        </View>
+                                    )}
+                                    <View style={styles.attachmentInfo}>
+                                        <Text style={styles.attachmentName} numberOfLines={1}>{decodeURIComponent(uri).split('/').pop() || 'Attachment'}</Text>
+                                        <TouchableOpacity style={styles.shareButton} onPress={() => handleOpenFile(uri)}>
+                                            <Ionicons name="open-outline" size={16} color="#3B82F6" />
+                                            <Text style={styles.shareText}>Open</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            );
+                        })}
+                    </View>
+                )}
+            </ScrollView>
+        </SafeAreaView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#F8F9FA' },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
+    editLink: { fontSize: 16, color: '#3B82F6', fontWeight: '600' },
+    content: { flex: 1 },
+    scrollContent: { padding: 20 },
+    errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    errorText: { color: '#6B7280', fontSize: 16 },
+    section: { marginBottom: 24 },
+    row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
+    halfSection: { flex: 0.48 },
+    label: { fontSize: 14, fontWeight: '600', color: '#6B7280', marginBottom: 8 },
+    value: { fontSize: 16, color: '#1A1A1A', lineHeight: 24 },
+    statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
+    statusCompleted: { backgroundColor: '#ECFDF5' },
+    statusPending: { backgroundColor: '#FFFBEB' },
+    statusScheduled: { backgroundColor: '#EFF6FF' },
+    statusText: { fontSize: 14, fontWeight: '600' },
+    statusTextCompleted: { color: '#059669' },
+    statusTextPending: { color: '#D97706' },
+    statusTextScheduled: { color: '#3B82F6' },
+    resultBox: { backgroundColor: '#F9FAFB', padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB' },
+    resultText: { fontSize: 16, color: '#1F2937' },
+    linkCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
+    linkInfo: { marginLeft: 12 },
+    linkTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
+    linkDate: { fontSize: 14, color: '#6B7280', marginTop: 2 },
+    attachmentCard: { backgroundColor: '#FFFFFF', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 12 },
+    attachmentImage: { width: '100%', height: 200, backgroundColor: '#F3F4F6' },
+    fileIconContainer: { width: '100%', height: 100, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+    attachmentInfo: { padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    attachmentName: { flex: 1, fontSize: 14, color: '#1F2937', marginRight: 12 },
+    shareButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+    shareText: { fontSize: 14, color: '#3B82F6', fontWeight: '600', marginLeft: 4 },
+});

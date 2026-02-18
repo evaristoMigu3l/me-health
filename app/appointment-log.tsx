@@ -1,0 +1,254 @@
+import { useState, useMemo } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useHealthStore } from '../stores/useHealthStore';
+import { Appointment } from '../types';
+import { format, parseISO, isSameDay } from 'date-fns';
+import { Calendar } from 'react-native-calendars';
+
+export default function AppointmentLogScreen() {
+    const router = useRouter();
+    const { appointments, removeAppointment } = useHealthStore();
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+
+    // Marked Dates for Calendar
+    const markedDates = useMemo(() => {
+        const marks: Record<string, any> = {};
+        appointments.forEach(a => {
+            const date = a.dateTime.split('T')[0];
+            marks[date] = { marked: true, dotColor: '#14B8A6' };
+        });
+        // Highlight selected date
+        marks[selectedDate] = {
+            ...(marks[selectedDate] || {}),
+            selected: true,
+            selectedColor: '#14B8A6'
+        };
+        return marks;
+    }, [appointments, selectedDate]);
+
+    // Filter appointments by selected date
+    const selectedAppointments = useMemo(() => {
+        return appointments.filter(a => a.dateTime.split('T')[0] === selectedDate)
+            .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+    }, [appointments, selectedDate]);
+
+    // Upcoming appointments (next 3)
+    const upcomingAppointments = useMemo(() => {
+        const now = new Date();
+        return appointments
+            .filter(a => new Date(a.dateTime) >= now)
+            .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime())
+            .slice(0, 3);
+    }, [appointments]);
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <Text style={styles.headerTitle}>Appointments</Text>
+                <TouchableOpacity onPress={() => router.push('/add-appointment')}><Ionicons name="add" size={24} color="#14B8A6" /></TouchableOpacity>
+            </View>
+
+            <FlatList
+                data={selectedAppointments}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item: a }) => (
+                    <View style={[styles.card, { marginHorizontal: 16 }]}>
+                        <View style={styles.timeColumn}>
+                            <Text style={styles.timeText}>{format(parseISO(a.dateTime), 'h:mm a')}</Text>
+                            <View style={styles.verticalLine} />
+                        </View>
+                        <TouchableOpacity style={styles.cardContent} onPress={() => setSelectedAppointment(a)} activeOpacity={0.7}>
+                            <View style={styles.cardHeader}>
+                                <Text style={styles.cardTitle}>{a.reason}</Text>
+                                <TouchableOpacity onPress={() => removeAppointment(a.id)}>
+                                    <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                                </TouchableOpacity>
+                            </View>
+                            {a.doctorName ? <Text style={styles.doctorText}>with {a.doctorName}</Text> : null}
+                            <View style={styles.detailRow}>
+                                <Ionicons name="location-outline" size={14} color="#6B7280" />
+                                <Text style={styles.detailText}>{a.location}</Text>
+                            </View>
+                            <View style={styles.badgeRow}>
+                                <View style={styles.badge}><Text style={styles.badgeText}>{a.type}</Text></View>
+                                {a.recurrence && a.recurrence !== 'None' && (
+                                    <View style={[styles.badge, { backgroundColor: '#F3F4F6' }]}>
+                                        <Ionicons name="repeat" size={12} color="#6B7280" style={{ marginRight: 4 }} />
+                                        <Text style={[styles.badgeText, { color: '#6B7280' }]}>{a.recurrence}</Text>
+                                    </View>
+                                )}
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
+                ListHeaderComponent={
+                    <>
+                        <View style={styles.calendarContainer}>
+                            <Calendar
+                                onDayPress={(day: { dateString: string }) => setSelectedDate(day.dateString)}
+                                markedDates={markedDates}
+                                theme={{
+                                    todayTextColor: '#14B8A6',
+                                    arrowColor: '#14B8A6',
+                                    selectedDayBackgroundColor: '#14B8A6'
+                                }}
+                            />
+                        </View>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>
+                                {format(parseISO(selectedDate), 'MMMM d, yyyy')}
+                            </Text>
+                        </View>
+                    </>
+                }
+                ListEmptyComponent={<Text style={styles.emptyText}>No appointments for this day.</Text>}
+                ListFooterComponent={
+                    upcomingAppointments.length > 0 ? (
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Upcoming</Text>
+                            {upcomingAppointments.map(a => (
+                                <TouchableOpacity key={a.id} style={styles.miniCard} onPress={() => setSelectedDate(a.dateTime.split('T')[0])}>
+                                    <View style={styles.miniCardDate}>
+                                        <Text style={styles.miniDay}>{format(parseISO(a.dateTime), 'd')}</Text>
+                                        <Text style={styles.miniMonth}>{format(parseISO(a.dateTime), 'MMM')}</Text>
+                                    </View>
+                                    <View style={{ flex: 1, marginLeft: 12 }}>
+                                        <Text style={styles.miniTitle}>{a.reason}</Text>
+                                        <Text style={styles.miniSubtitle}>{format(parseISO(a.dateTime), 'h:mm a')} • {a.location}</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    ) : null
+                }
+                contentContainerStyle={{ paddingBottom: 20 }}
+            />
+            {/* Detail Modal */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={!!selectedAppointment}
+                onRequestClose={() => setSelectedAppointment(null)}
+            >
+                <TouchableWithoutFeedback onPress={() => setSelectedAppointment(null)}>
+                    <View style={styles.modalOverlay}>
+                        <TouchableWithoutFeedback>
+                            <View style={styles.modalContent}>
+                                {selectedAppointment && (
+                                    <>
+                                        <View style={styles.modalHeader}>
+                                            <Text style={styles.modalTitle}>{selectedAppointment.reason || 'Appointment'}</Text>
+                                            <View style={{ flexDirection: 'row', gap: 16 }}>
+                                                <TouchableOpacity onPress={() => {
+                                                    const id = selectedAppointment.id;
+                                                    setSelectedAppointment(null);
+                                                    router.push({ pathname: '/add-appointment', params: { id } });
+                                                }}>
+                                                    <Ionicons name="pencil" size={24} color="#14B8A6" />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => setSelectedAppointment(null)}>
+                                                    <Ionicons name="close" size={24} color="#6B7280" />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+
+                                        <View style={styles.modalBody}>
+                                            <View style={styles.modalRow}>
+                                                <Ionicons name="time-outline" size={20} color="#14B8A6" />
+                                                <View style={styles.modalRowContent}>
+                                                    <Text style={styles.modalLabel}>Date & Time</Text>
+                                                    <Text style={styles.modalValue}>
+                                                        {format(parseISO(selectedAppointment.dateTime), 'PPPP')} at {format(parseISO(selectedAppointment.dateTime), 'h:mm a')}
+                                                    </Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={styles.modalRow}>
+                                                <Ionicons name="person-outline" size={20} color="#14B8A6" />
+                                                <View style={styles.modalRowContent}>
+                                                    <Text style={styles.modalLabel}>Doctor</Text>
+                                                    <Text style={styles.modalValue}>{selectedAppointment.doctorName || 'Not specified'}</Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={styles.modalRow}>
+                                                <Ionicons name="location-outline" size={20} color="#14B8A6" />
+                                                <View style={styles.modalRowContent}>
+                                                    <Text style={styles.modalLabel}>Location</Text>
+                                                    <Text style={styles.modalValue}>{selectedAppointment.location}</Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={styles.modalRow}>
+                                                <Ionicons name="videocam-outline" size={20} color="#14B8A6" />
+                                                <View style={styles.modalRowContent}>
+                                                    <Text style={styles.modalLabel}>Type</Text>
+                                                    <Text style={styles.modalValue}>{selectedAppointment.type}</Text>
+                                                </View>
+                                            </View>
+
+                                            {selectedAppointment.reminder && selectedAppointment.reminder !== 'No Reminder' && (
+                                                <View style={styles.modalRow}>
+                                                    <Ionicons name="alarm-outline" size={20} color="#14B8A6" />
+                                                    <View style={styles.modalRowContent}>
+                                                        <Text style={styles.modalLabel}>Reminder</Text>
+                                                        <Text style={styles.modalValue}>{selectedAppointment.reminder}</Text>
+                                                    </View>
+                                                </View>
+                                            )}
+                                        </View>
+                                    </>
+                                )}
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+        </SafeAreaView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#F8F9FA' },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
+    content: { flex: 1 },
+    calendarContainer: { backgroundColor: '#FFFFFF', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    section: { padding: 16 },
+    sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },
+    emptyText: { color: '#9CA3AF', fontStyle: 'italic', marginLeft: 4, textAlign: 'center', marginTop: 20 },
+    card: { flexDirection: 'row', marginBottom: 16 },
+    timeColumn: { alignItems: 'center', marginRight: 16, width: 60 },
+    timeText: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 4 },
+    verticalLine: { flex: 1, width: 2, backgroundColor: '#E5E7EB', borderRadius: 1 },
+    cardContent: { flex: 1, backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+    cardTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A', marginBottom: 4 },
+    doctorText: { fontSize: 14, color: '#4B5563', marginBottom: 4 },
+    detailRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+    detailText: { fontSize: 13, color: '#6B7280', marginLeft: 4 },
+    badgeRow: { flexDirection: 'row', gap: 8 },
+    badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: '#CCFBF1' },
+    badgeText: { fontSize: 12, color: '#0F766E', fontWeight: '500' },
+    miniCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, marginBottom: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    miniCardDate: { alignItems: 'center', paddingRight: 12, borderRightWidth: 1, borderRightColor: '#F3F4F6', minWidth: 50 },
+    miniDay: { fontSize: 18, fontWeight: 'bold', color: '#1A1A1A' },
+    miniMonth: { fontSize: 12, color: '#6B7280', textTransform: 'uppercase' },
+    miniTitle: { fontSize: 15, fontWeight: '600', color: '#1A1A1A' },
+    miniSubtitle: { fontSize: 13, color: '#6B7280', marginTop: 2 },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, width: '100%', padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 },
+    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#F3F4F6', paddingBottom: 12 },
+    modalTitle: { fontSize: 20, fontWeight: '700', color: '#1A1A1A', flex: 1 },
+    modalBody: { gap: 16 },
+    modalRow: { flexDirection: 'row', alignItems: 'flex-start' },
+    modalRowContent: { marginLeft: 12, flex: 1 },
+    modalLabel: { fontSize: 13, color: '#6B7280', marginBottom: 2 },
+    modalValue: { fontSize: 16, color: '#1A1A1A', fontWeight: '500' },
+});

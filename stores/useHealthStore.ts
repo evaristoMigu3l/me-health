@@ -1,0 +1,128 @@
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+    Symptom, Medication, Measurement, Diagnosis, MoodLog,
+    DietPlan, Investigation, Activity, SleepLog, FoodEntry,
+    Document, Appointment, HCP
+} from '../types';
+
+interface HealthState {
+    symptoms: Symptom[];
+    addSymptom: (s: Symptom) => void;
+    removeSymptom: (id: string) => void;
+
+    medications: Medication[];
+    addMedication: (m: Medication) => void;
+    removeMedication: (id: string) => void;
+
+    measurements: Measurement[];
+    addMeasurement: (m: Measurement) => void;
+    removeMeasurement: (id: string) => void;
+
+    diagnoses: Diagnosis[];
+    addDiagnosis: (d: Diagnosis) => void;
+    removeDiagnosis: (id: string) => void;
+
+    moodLogs: MoodLog[];
+    addMoodLog: (m: MoodLog) => void;
+    removeMoodLog: (id: string) => void;
+
+    dietPlans: DietPlan[];
+    addDietPlan: (d: DietPlan) => void;
+    removeDietPlan: (id: string) => void;
+
+    investigations: Investigation[];
+    addInvestigation: (i: Investigation) => void;
+    updateInvestigation: (i: Investigation) => void;
+    removeInvestigation: (id: string) => void;
+
+    activities: Activity[];
+    addActivity: (a: Activity) => void;
+    removeActivity: (id: string) => void;
+
+    sleepLogs: SleepLog[];
+    addSleepLog: (s: SleepLog) => void;
+    removeSleepLog: (id: string) => void;
+
+    foodEntries: FoodEntry[];
+    addFoodEntry: (f: FoodEntry) => void;
+    removeFoodEntry: (id: string) => void;
+
+    documents: Document[];
+    addDocument: (d: Document) => void;
+    removeDocument: (id: string) => void;
+
+    appointments: Appointment[];
+    addAppointment: (a: Appointment) => void;
+    updateAppointment: (a: Appointment) => void;
+    removeAppointment: (id: string) => void;
+
+    hcps: HCP[];
+    addHCP: (h: HCP) => void;
+    removeHCP: (id: string) => void;
+}
+
+export const useHealthStore = create<HealthState>()(
+    persist(
+        (set) => ({
+            symptoms: [],
+            addSymptom: (s) => set((state) => ({ symptoms: [...state.symptoms, s] })),
+            removeSymptom: (id) => set((state) => ({ symptoms: state.symptoms.filter((s) => s.id !== id) })),
+
+            medications: [],
+            addMedication: (m) => set((state) => ({ medications: [...state.medications, m] })),
+            removeMedication: (id) => set((state) => ({ medications: state.medications.filter((m) => m.id !== id) })),
+
+            measurements: [],
+            addMeasurement: (m) => set((state) => ({ measurements: [...state.measurements, m] })),
+            removeMeasurement: (id) => set((state) => ({ measurements: state.measurements.filter((m) => m.id !== id) })),
+
+            diagnoses: [],
+            addDiagnosis: (d) => set((state) => ({ diagnoses: [...state.diagnoses, d] })),
+            removeDiagnosis: (id) => set((state) => ({ diagnoses: state.diagnoses.filter((d) => d.id !== id) })),
+
+            moodLogs: [],
+            addMoodLog: (m) => set((state) => ({ moodLogs: [...state.moodLogs, m] })),
+            removeMoodLog: (id) => set((state) => ({ moodLogs: state.moodLogs.filter((m) => m.id !== id) })),
+
+            dietPlans: [],
+            addDietPlan: (d) => set((state) => ({ dietPlans: [...state.dietPlans, d] })),
+            removeDietPlan: (id) => set((state) => ({ dietPlans: state.dietPlans.filter((d) => d.id !== id) })),
+
+            investigations: [],
+            addInvestigation: (i) => set((state) => ({ investigations: [...state.investigations, i] })),
+            updateInvestigation: (updated) => set((state) => ({ investigations: state.investigations.map((i) => (i.id === updated.id ? updated : i)) })),
+            removeInvestigation: (id) => set((state) => ({ investigations: state.investigations.filter((i) => i.id !== id) })),
+
+            activities: [],
+            addActivity: (a) => set((state) => ({ activities: [...state.activities, a] })),
+            removeActivity: (id) => set((state) => ({ activities: state.activities.filter((a) => a.id !== id) })),
+
+            sleepLogs: [],
+            addSleepLog: (s) => set((state) => ({ sleepLogs: [...state.sleepLogs, s] })),
+            removeSleepLog: (id) => set((state) => ({ sleepLogs: state.sleepLogs.filter((s) => s.id !== id) })),
+
+            foodEntries: [],
+            addFoodEntry: (f) => set((state) => ({ foodEntries: [...state.foodEntries, f] })),
+            removeFoodEntry: (id) => set((state) => ({ foodEntries: state.foodEntries.filter((f) => f.id !== id) })),
+
+            documents: [],
+            addDocument: (d) => set((state) => ({ documents: [...state.documents, d] })),
+            removeDocument: (id) => set((state) => ({ documents: state.documents.filter((d) => d.id !== id) })),
+
+            appointments: [],
+            addAppointment: (a) => set((state) => ({ appointments: [...state.appointments, a] })),
+            updateAppointment: (updated) => set((state) => ({ appointments: state.appointments.map((a) => (a.id === updated.id ? updated : a)) })),
+            removeAppointment: (id) => set((state) => ({ appointments: state.appointments.filter((a) => a.id !== id) })),
+
+            hcps: [],
+            addHCP: (h) => set((state) => ({ hcps: [...state.hcps, h] })),
+            removeHCP: (id) => set((state) => ({ hcps: state.hcps.filter((h) => h.id !== id) })),
+        }),
+        {
+            name: 'health-storage',
+            storage: createJSONStorage(() => AsyncStorage),
+        }
+    )
+);
