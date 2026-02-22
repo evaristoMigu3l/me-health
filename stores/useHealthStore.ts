@@ -1,6 +1,11 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createJSONStorage, persist, StateStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+    scheduleMedicationReminder,
+    scheduleAppointmentReminder,
+    cancelNotification
+} from '../utils/notifications';
 import {
     Symptom, Medication, Measurement, Diagnosis, MoodLog,
     DietPlan, Investigation, Activity, SleepLog, FoodEntry,
@@ -80,9 +85,18 @@ export const useHealthStore = create<HealthState>()(
             removeSymptom: (id) => set((state) => ({ symptoms: state.symptoms.filter((s) => s.id !== id) })),
 
             medications: [],
-            addMedication: (m) => set((state) => ({ medications: [...state.medications, m] })),
-            updateMedication: (updated) => set((state) => ({ medications: state.medications.map((m) => (m.id === updated.id ? updated : m)) })),
-            removeMedication: (id) => set((state) => ({ medications: state.medications.filter((m) => m.id !== id) })),
+            addMedication: (m) => {
+                scheduleMedicationReminder(m);
+                set((state) => ({ medications: [...state.medications, m] }));
+            },
+            updateMedication: (updated) => {
+                scheduleMedicationReminder(updated);
+                set((state) => ({ medications: state.medications.map((m) => (m.id === updated.id ? updated : m)) }));
+            },
+            removeMedication: (id) => {
+                cancelNotification(id, 'med');
+                set((state) => ({ medications: state.medications.filter((m) => m.id !== id) }));
+            },
 
             measurements: [],
             addMeasurement: (m) => set((state) => ({ measurements: [...state.measurements, m] })),
@@ -128,9 +142,18 @@ export const useHealthStore = create<HealthState>()(
             removeDocument: (id) => set((state) => ({ documents: state.documents.filter((d) => d.id !== id) })),
 
             appointments: [],
-            addAppointment: (a) => set((state) => ({ appointments: [...state.appointments, a] })),
-            updateAppointment: (updated) => set((state) => ({ appointments: state.appointments.map((a) => (a.id === updated.id ? updated : a)) })),
-            removeAppointment: (id) => set((state) => ({ appointments: state.appointments.filter((a) => a.id !== id) })),
+            addAppointment: (a) => {
+                scheduleAppointmentReminder(a);
+                set((state) => ({ appointments: [...state.appointments, a] }));
+            },
+            updateAppointment: (updated) => {
+                scheduleAppointmentReminder(updated);
+                set((state) => ({ appointments: state.appointments.map((a) => (a.id === updated.id ? updated : a)) }));
+            },
+            removeAppointment: (id) => {
+                cancelNotification(id, 'appt');
+                set((state) => ({ appointments: state.appointments.filter((a) => a.id !== id) }));
+            },
 
             hcps: [],
             addHCP: (h) => set((state) => ({ hcps: [...state.hcps, h] })),

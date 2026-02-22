@@ -87,11 +87,14 @@ export default function MedicationLogScreen() {
                                 data={chartData}
                                 donut
                                 showText
-                                textColor="white"
+                                textColor={colors.text}
                                 radius={80}
                                 innerRadius={50}
                                 textSize={12}
-                                showTextBackground={false}
+                                fontWeight="bold"
+                                showTextBackground={true}
+                                textBackgroundColor={colors.surface}
+                                textBackgroundRadius={12}
                                 centerLabelComponent={() => <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.text }}>{medications.length}</Text>}
                             />
                         </View>

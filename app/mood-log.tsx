@@ -74,7 +74,7 @@ export default function MoodLogScreen() {
                             {moodLogs.length > 0 ? (
                                 <>
                                     <View style={{ alignItems: 'center' }}>
-                                        <PieChart innerCircleColor={colors.surface} data={chartData} donut radius={80} innerRadius={50} showText textColor="white" textSize={10} />
+                                        <PieChart innerCircleColor={colors.surface} data={chartData} donut radius={80} innerRadius={50} showText textColor={colors.text} showTextBackground={true} textBackgroundColor={colors.surface} textBackgroundRadius={12} textSize={11} fontWeight="bold" />
                                     </View>
                                     <View style={styles.legendContainer}>
                                         {chartData.map((d, i) => (

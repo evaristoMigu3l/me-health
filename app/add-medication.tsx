@@ -34,6 +34,7 @@ export default function AddMedicationScreen() {
     const [subType, setSubType] = useState('Other');
     const [color, setColor] = useState(tagColors[4]); // Default blue
     const [time, setTime] = useState('08:00');
+    const [remindersEnabled, setRemindersEnabled] = useState(true);
 
     // Modals
     const [showStartCalendar, setShowStartCalendar] = useState(false);
@@ -57,6 +58,9 @@ export default function AddMedicationScreen() {
                 setLocation(existing.location || 'Home');
                 setSubType(existing.type || 'Other');
                 setColor(existing.color || tagColors[4]);
+                if (existing.remindersEnabled !== undefined) {
+                    setRemindersEnabled(existing.remindersEnabled);
+                }
             }
         }
     }, [id, medications]);
@@ -79,6 +83,7 @@ export default function AddMedicationScreen() {
             location,
             type: subType,
             color,
+            remindersEnabled,
         };
 
         if (id) {
@@ -99,6 +104,11 @@ export default function AddMedicationScreen() {
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+                <View style={[styles.rowBetween, { alignItems: 'center', marginBottom: 20 }]}>
+                    <Text style={[styles.label, { marginBottom: 0 }]}>Enable Reminders</Text>
+                    <Switch value={remindersEnabled} onValueChange={setRemindersEnabled} trackColor={{ false: colors.border, true: '#3B82F6' }} />
+                </View>
+
                 <Text style={styles.label}>Medication Name *</Text>
                 <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Aspirin" value={name} onChangeText={setName} />
 

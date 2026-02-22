@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../stores/useThemeStore';
 import { useAppTheme } from '../hooks/useAppTheme';
+import { sendTestNotification } from '../utils/notifications';
 
 export default function SettingsScreen() {
     const { colors } = useAppTheme();
@@ -62,6 +63,16 @@ export default function SettingsScreen() {
                                 <Text style={[styles.unitText, { color: colors.textSecondary }, units === 'imperial' && { color: colors.text, fontWeight: '600' }]}>Imperial</Text>
                             </TouchableOpacity>
                         </View>
+                    </View>
+
+                    <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+                        <View style={styles.settingInfo}>
+                            <Ionicons name="chatbubble-ellipses-outline" size={22} color={colors.textSecondary} />
+                            <Text style={[styles.settingText, { color: colors.text }]}>Test Notifications</Text>
+                        </View>
+                        <TouchableOpacity style={[styles.unitToggle, { backgroundColor: colors.primary, paddingHorizontal: 16 }]} onPress={sendTestNotification}>
+                            <Text style={{ color: colors.surface, fontWeight: '600' }}>Send Test</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 

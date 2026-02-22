@@ -41,6 +41,7 @@ export interface Medication {
     type?: string; // e.g., 'Antibiotic', 'Analgesic', 'Supplement'
     color?: string;
     adherenceLog?: string[]; // Array of ISO date strings when taken
+    remindersEnabled?: boolean;
 }
 
 export interface Measurement {

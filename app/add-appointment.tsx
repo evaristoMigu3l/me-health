@@ -9,9 +9,6 @@ import { Appointment } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format } from 'date-fns';
 
-const types: Appointment['type'][] = ['In Person', 'Virtual', 'Telephone'];
-const recurrences: Appointment['recurrence'][] = ['None', 'Weekly', 'Monthly', 'Yearly'];
-
 export default function AddAppointmentScreen() {
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
@@ -25,10 +22,14 @@ export default function AddAppointmentScreen() {
     const [doctorName, setDoctorName] = useState('');
     const [type, setType] = useState<Appointment['type']>('In Person');
     const [recurrence, setRecurrence] = useState<Appointment['recurrence']>('None');
-    const [reminder, setReminder] = useState('30 min before');
+    const [reminder, setReminder] = useState<Appointment['reminder']>('30 min before');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState('09:00');
     const [showCalendar, setShowCalendar] = useState(false);
+
+    const types: Appointment['type'][] = ['In Person', 'Virtual', 'Telephone'];
+    const recurrences: Appointment['recurrence'][] = ['None', 'Weekly', 'Monthly', 'Yearly'];
+    const reminderOptions: Appointment['reminder'][] = ['None', '30 min before', '1 hour before', '1 day before'];
 
     useEffect(() => {
         if (params.id) {
@@ -125,8 +126,14 @@ export default function AddAppointmentScreen() {
                     ))}
                 </View>
 
-                <Text style={styles.label}>Reminder</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., 30 min before" value={reminder} onChangeText={setReminder} />
+                <Text style={styles.label}>Reminder Notification</Text>
+                <View style={styles.typeRow}>
+                    {reminderOptions.map((r) => (
+                        <TouchableOpacity key={r} style={[styles.typeButton, reminder === r && styles.typeButtonActive]} onPress={() => setReminder(r)}>
+                            <Text style={[styles.typeText, reminder === r && styles.typeTextActive]}>{r}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </ScrollView>
 
             <View style={styles.footer}>
@@ -146,7 +153,8 @@ export default function AddAppointmentScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#14B8A6' }
                             }}
-                            theme={{ calendarBackground: colors.surface,
+                            theme={{
+                                calendarBackground: colors.surface,
                                 textSectionTitleColor: colors.textSecondary,
                                 selectedDayBackgroundColor: colors.primary || '#14B8A6',
                                 selectedDayTextColor: colors.surface,
@@ -178,9 +186,9 @@ const getStyles = (colors: any) => StyleSheet.create({
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
     label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
-    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
-    typeRow: { flexDirection: 'row', marginBottom: 20 },
-    typeButton: { flex: 1, paddingVertical: 12, alignItems: 'center', backgroundColor: colors.surface, marginHorizontal: 4, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20, color: colors.text },
+    typeRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
+    typeButton: { paddingVertical: 12, paddingHorizontal: 16, alignItems: 'center', backgroundColor: colors.surface, marginRight: 8, marginBottom: 8, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
     typeButtonActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
     typeText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
     typeTextActive: { color: colors.surface },

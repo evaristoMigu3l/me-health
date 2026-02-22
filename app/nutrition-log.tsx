@@ -73,7 +73,8 @@ export default function NutritionLogScreen() {
                         <Calendar
                             onDayPress={(day: { dateString: string }) => setSelectedDate(day.dateString)}
                             markedDates={markedDates}
-                            theme={{ calendarBackground: colors.surface,
+                            theme={{
+                                calendarBackground: colors.surface,
                                 textSectionTitleColor: colors.textSecondary,
                                 selectedDayBackgroundColor: colors.primary || '#14B8A6',
                                 selectedDayTextColor: colors.surface,
@@ -106,7 +107,7 @@ export default function NutritionLogScreen() {
                     <View style={styles.chartContainer}>
                         <Text style={styles.sectionTitle}>Calories Breakdown</Text>
                         <View style={{ alignItems: 'center' }}>
-                            <PieChart innerCircleColor={colors.surface} data={chartData} donut radius={80} innerRadius={50} showText textColor="white" textSize={10} />
+                            <PieChart innerCircleColor={colors.surface} data={chartData} donut radius={80} innerRadius={50} showText textColor={colors.text} showTextBackground={true} textBackgroundColor={colors.surface} textBackgroundRadius={12} textSize={11} fontWeight="bold" />
                         </View>
                         <View style={styles.legendContainer}>
                             {chartData.map((d, i) => (
