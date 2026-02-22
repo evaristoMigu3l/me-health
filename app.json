@@ -11,10 +11,14 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0a4a49"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Used to set your profile picture",
+        "NSFaceIDUsageDescription": "Used to unlock the app with Face ID"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,13 +26,35 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.evarist0.meandhealth"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
-    ]
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/sounds/bell.ogg",
+            "./assets/sounds/chime.ogg",
+            "./assets/sounds/digital.ogg",
+            "./assets/sounds/hurt_again.mp3",
+            "./assets/sounds/your_power.mp3"
+          ]
+        }
+      ],
+      "expo-font",
+      "expo-asset"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8d589550-51c8-4279-bcf6-dcb18686f170"
+      }
+    }
   }
 }

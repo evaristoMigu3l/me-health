@@ -6,6 +6,7 @@ export interface UserProfile {
     dob: string;
     gender: 'Male' | 'Female' | 'Other';
     ethnicity: string;
+    avatarUri?: string;
 }
 
 export interface Symptom {

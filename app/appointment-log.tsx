@@ -85,6 +85,14 @@ export default function AppointmentLogScreen() {
                                         <Text style={[styles.badgeText, { color: colors.textSecondary }]}>{a.recurrence}</Text>
                                     </View>
                                 )}
+                                {a.reminder && a.reminder !== 'None' && (
+                                    <View style={[styles.badge, { backgroundColor: colors.border }]}>
+                                        <Ionicons name="alarm-outline" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
+                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>
+                                            {isNaN(new Date(a.reminder).getTime()) ? a.reminder : format(new Date(a.reminder), 'MMM d, h:mm a')}
+                                        </Text>
+                                    </View>
+                                )}
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -95,19 +103,20 @@ export default function AppointmentLogScreen() {
                             <Calendar
                                 onDayPress={(day: { dateString: string }) => setSelectedDate(day.dateString)}
                                 markedDates={markedDates}
-                                theme={{ calendarBackground: colors.surface,
-                                textSectionTitleColor: colors.textSecondary,
-                                selectedDayBackgroundColor: colors.primary || '#14B8A6',
-                                selectedDayTextColor: colors.surface,
-                                todayTextColor: colors.primary || '#14B8A6',
-                                dayTextColor: colors.text,
-                                textDisabledColor: colors.border,
-                                dotColor: colors.primary || '#14B8A6',
-                                selectedDotColor: colors.surface,
-                                arrowColor: colors.text,
-                                monthTextColor: colors.text,
-                                indicatorColor: colors.text,
-                            }}
+                                theme={{
+                                    calendarBackground: colors.surface,
+                                    textSectionTitleColor: colors.textSecondary,
+                                    selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                                    selectedDayTextColor: colors.surface,
+                                    todayTextColor: colors.primary || '#14B8A6',
+                                    dayTextColor: colors.text,
+                                    textDisabledColor: colors.border,
+                                    dotColor: colors.primary || '#14B8A6',
+                                    selectedDotColor: colors.surface,
+                                    arrowColor: colors.text,
+                                    monthTextColor: colors.text,
+                                    indicatorColor: colors.text,
+                                }}
                             />
                         </View>
                         <View style={styles.section}>
@@ -204,12 +213,14 @@ export default function AppointmentLogScreen() {
                                                 </View>
                                             </View>
 
-                                            {selectedAppointment.reminder && selectedAppointment.reminder !== 'No Reminder' && (
+                                            {selectedAppointment.reminder && selectedAppointment.reminder !== 'None' && selectedAppointment.reminder !== 'No Reminder' && (
                                                 <View style={styles.modalRow}>
                                                     <Ionicons name="alarm-outline" size={20} color="#14B8A6" />
                                                     <View style={styles.modalRowContent}>
                                                         <Text style={styles.modalLabel}>Reminder</Text>
-                                                        <Text style={styles.modalValue}>{selectedAppointment.reminder}</Text>
+                                                        <Text style={styles.modalValue}>
+                                                            {isNaN(new Date(selectedAppointment.reminder).getTime()) ? selectedAppointment.reminder : format(new Date(selectedAppointment.reminder), 'PP p')}
+                                                        </Text>
                                                     </View>
                                                 </View>
                                             )}
@@ -244,9 +255,9 @@ const getStyles = (colors: any) => StyleSheet.create({
     doctorText: { fontSize: 14, color: '#4B5563', marginBottom: 4 },
     detailRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
     detailText: { fontSize: 13, color: colors.textSecondary, marginLeft: 4 },
-    badgeRow: { flexDirection: 'row', gap: 8 },
-    badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: '#CCFBF1' },
-    badgeText: { fontSize: 12, color: '#0F766E', fontWeight: '500' },
+    badgeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: 'rgba(20, 184, 166, 0.15)' },
+    badgeText: { fontSize: 12, color: '#14B8A6', fontWeight: '500' },
     miniCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, marginBottom: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     miniCardDate: { alignItems: 'center', paddingRight: 12, borderRightWidth: 1, borderRightColor: colors.border, minWidth: 50 },
     miniDay: { fontSize: 18, fontWeight: 'bold', color: colors.text },

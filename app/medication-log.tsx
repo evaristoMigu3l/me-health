@@ -150,6 +150,19 @@ export default function MedicationLogScreen() {
                                 <View style={styles.cardFooter}>
                                     <View style={styles.badge}><Text style={styles.badgeText}>{m.frequency}</Text></View>
                                     {m.selfPrescribed && <View style={[styles.badge, { backgroundColor: '#FEF3C7' }]}><Text style={[styles.badgeText, { color: '#D97706' }]}>Self</Text></View>}
+                                    {m.remindersEnabled !== false && m.schedule && m.schedule.length > 0 ? (
+                                        <View style={[styles.badge, { backgroundColor: colors.border, flexDirection: 'row', alignItems: 'center' }]}>
+                                            <Ionicons name="alarm-outline" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
+                                            <Text style={[styles.badgeText, { color: colors.textSecondary }]}>
+                                                {m.schedule[0].time}{m.schedule.length > 1 ? ` +${m.schedule.length - 1}` : ''}
+                                            </Text>
+                                        </View>
+                                    ) : m.remindersEnabled === false ? (
+                                        <View style={[styles.badge, { backgroundColor: colors.border, flexDirection: 'row', alignItems: 'center' }]}>
+                                            <Ionicons name="notifications-off-outline" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
+                                            <Text style={[styles.badgeText, { color: colors.textSecondary }]}>Off</Text>
+                                        </View>
+                                    ) : null}
                                     <Text style={styles.dateText}>{format(parseISO(m.startDate), 'MMM d, yyyy')}</Text>
                                 </View>
                             </View>

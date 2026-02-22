@@ -1,6 +1,11 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { Medication, Appointment } from '../types';
+import { useThemeStore, NotificationSound } from '../stores/useThemeStore';
+
+function getSoundPayload(soundState: NotificationSound): boolean | string {
+    return soundState === 'default' ? true : soundState;
+}
 
 // Global background handler behavior
 Notifications.setNotificationHandler({
@@ -14,12 +19,17 @@ Notifications.setNotificationHandler({
 });
 
 export async function requestNotificationPermissions(): Promise<boolean> {
+    const { notificationSound } = useThemeStore.getState();
+
     if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('default', {
+        const channelId = notificationSound === 'default' ? 'default' : `custom-${notificationSound}`;
+
+        await Notifications.setNotificationChannelAsync(channelId, {
             name: 'Reminders',
             importance: Notifications.AndroidImportance.MAX,
             vibrationPattern: [0, 250, 250, 250],
             lightColor: '#3B82F6',
+            sound: notificationSound === 'default' ? undefined : notificationSound,
         });
     }
 
@@ -48,6 +58,10 @@ export async function scheduleMedicationReminder(medication: Medication) {
     const hasPermissions = await requestNotificationPermissions();
     if (!hasPermissions) return;
 
+    const { notificationSound } = useThemeStore.getState();
+    const androidChannelId = notificationSound === 'default' ? 'default' : `custom-${notificationSound}`;
+    const soundPayload = getSoundPayload(notificationSound);
+
     try {
         if (!medication.schedule || medication.schedule.length === 0) return;
 
@@ -63,7 +77,9 @@ export async function scheduleMedicationReminder(medication: Medication) {
                     content: {
                         title: '💊 Medication Reminder',
                         body: `It's time to take your ${medication.name} (${entry.dosage} ${medication.dosageUnit})`,
-                        sound: true,
+                        sound: soundPayload,
+                        // @ts-ignore
+                        channelId: androidChannelId,
                         data: { type: 'medication', id: medication.id },
                     },
                     trigger: {
@@ -83,7 +99,9 @@ export async function scheduleMedicationReminder(medication: Medication) {
                         content: {
                             title: '💊 Medication Reminder',
                             body: `It's time to take your ${medication.name} (${entry.dosage} ${medication.dosageUnit})`,
-                            sound: true,
+                            sound: soundPayload,
+                            // @ts-ignore
+                            channelId: androidChannelId,
                             data: { type: 'medication', id: medication.id },
                         },
                         trigger: {
@@ -106,6 +124,10 @@ export async function scheduleAppointmentReminder(appointment: Appointment) {
     const hasPermissions = await requestNotificationPermissions();
     if (!hasPermissions) return;
 
+    const { notificationSound } = useThemeStore.getState();
+    const androidChannelId = notificationSound === 'default' ? 'default' : `custom-${notificationSound}`;
+    const soundPayload = getSoundPayload(notificationSound);
+
     try {
         const appointmentDate = new Date(appointment.dateTime);
 
@@ -115,7 +137,13 @@ export async function scheduleAppointmentReminder(appointment: Appointment) {
         // Let's implement basic parsing for common relative offsets:
         let label = "Upcoming";
         if (appointment.reminder) {
-            if (appointment.reminder.includes('1 hour')) {
+            if (appointment.reminder === 'None') return;
+
+            const parsed = new Date(appointment.reminder);
+            if (!isNaN(parsed.getTime())) {
+                reminderTime.setTime(parsed.getTime());
+                label = "Scheduled";
+            } else if (appointment.reminder.includes('1 hour')) {
                 reminderTime.setHours(reminderTime.getHours() - 1);
                 label = "In 1 hour";
             } else if (appointment.reminder.includes('30 min')) {
@@ -136,7 +164,9 @@ export async function scheduleAppointmentReminder(appointment: Appointment) {
                 content: {
                     title: `📅 Appointment Reminder: ${label}`,
                     body: `You have an appointment with ${appointment.doctorName} at ${appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-                    sound: true,
+                    sound: soundPayload,
+                    // @ts-ignore
+                    channelId: androidChannelId,
                     data: { type: 'appointment', id: appointment.id },
                 },
                 trigger: {
@@ -167,11 +197,17 @@ export async function sendTestNotification() {
         return;
     }
 
+    const { notificationSound } = useThemeStore.getState();
+    const androidChannelId = notificationSound === 'default' ? 'default' : `custom-${notificationSound}`;
+    const soundPayload = getSoundPayload(notificationSound);
+
     await Notifications.scheduleNotificationAsync({
         content: {
             title: '🔔 Test Notification',
             body: 'Notifications are actively working! This is a test message.',
-            sound: true,
+            sound: soundPayload,
+            // @ts-ignore
+            channelId: androidChannelId,
         },
         trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

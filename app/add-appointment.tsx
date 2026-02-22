@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert, Switch } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -22,14 +22,17 @@ export default function AddAppointmentScreen() {
     const [doctorName, setDoctorName] = useState('');
     const [type, setType] = useState<Appointment['type']>('In Person');
     const [recurrence, setRecurrence] = useState<Appointment['recurrence']>('None');
-    const [reminder, setReminder] = useState<Appointment['reminder']>('30 min before');
+    const [remindersEnabled, setRemindersEnabled] = useState(true);
+    const [reminderDate, setReminderDate] = useState(new Date());
+    const [reminderTime, setReminderTime] = useState('08:00');
+    const [showReminderCalendar, setShowReminderCalendar] = useState(false);
+
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState('09:00');
     const [showCalendar, setShowCalendar] = useState(false);
 
     const types: Appointment['type'][] = ['In Person', 'Virtual', 'Telephone'];
     const recurrences: Appointment['recurrence'][] = ['None', 'Weekly', 'Monthly', 'Yearly'];
-    const reminderOptions: Appointment['reminder'][] = ['None', '30 min before', '1 hour before', '1 day before'];
 
     useEffect(() => {
         if (params.id) {
@@ -40,7 +43,18 @@ export default function AddAppointmentScreen() {
                 setDoctorName(appointment.doctorName || '');
                 setType(appointment.type);
                 setRecurrence(appointment.recurrence || 'None');
-                setReminder(appointment.reminder);
+
+                if (appointment.reminder && appointment.reminder !== 'None') {
+                    setRemindersEnabled(true);
+                    const parsed = new Date(appointment.reminder);
+                    if (!isNaN(parsed.getTime())) {
+                        setReminderDate(parsed);
+                        setReminderTime(format(parsed, 'HH:mm'));
+                    }
+                } else {
+                    setRemindersEnabled(false);
+                }
+
                 const dt = new Date(appointment.dateTime);
                 setDate(dt);
                 setTime(format(dt, 'HH:mm'));
@@ -55,6 +69,10 @@ export default function AddAppointmentScreen() {
         const appointmentDate = new Date(date);
         appointmentDate.setHours(hours || 0, minutes || 0);
 
+        const [rHours, rMinutes] = reminderTime.split(':').map(Number);
+        const remDate = new Date(reminderDate);
+        remDate.setHours(rHours || 0, rMinutes || 0);
+
         const appointmentData: Appointment = {
             id: isEditing ? (params.id as string) : Date.now().toString(),
             dateTime: appointmentDate.toISOString(),
@@ -63,7 +81,7 @@ export default function AddAppointmentScreen() {
             doctorName,
             recurrence,
             durationMinutes: 30, // Default for now
-            reminder,
+            reminder: remindersEnabled ? remDate.toISOString() : 'None',
             reason,
         };
 
@@ -126,14 +144,25 @@ export default function AddAppointmentScreen() {
                     ))}
                 </View>
 
-                <Text style={styles.label}>Reminder Notification</Text>
-                <View style={styles.typeRow}>
-                    {reminderOptions.map((r) => (
-                        <TouchableOpacity key={r} style={[styles.typeButton, reminder === r && styles.typeButtonActive]} onPress={() => setReminder(r)}>
-                            <Text style={[styles.typeText, reminder === r && styles.typeTextActive]}>{r}</Text>
-                        </TouchableOpacity>
-                    ))}
+                <View style={[styles.rowBetween, { alignItems: 'center', marginBottom: 20 }]}>
+                    <Text style={[styles.label, { marginBottom: 0 }]}>Enable Reminder</Text>
+                    <Switch value={remindersEnabled} onValueChange={setRemindersEnabled} trackColor={{ false: colors.border, true: '#14B8A6' }} />
                 </View>
+                {remindersEnabled && (
+                    <View style={styles.rowBetween}>
+                        <View style={styles.halfWidth}>
+                            <Text style={styles.label}>Reminder Date</Text>
+                            <TouchableOpacity style={styles.dateButton} onPress={() => setShowReminderCalendar(true)}>
+                                <Text style={styles.dateText}>{format(reminderDate, 'MMM d, yyyy')}</Text>
+                                <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.halfWidth}>
+                            <Text style={styles.label}>Reminder Time</Text>
+                            <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={reminderTime} onChangeText={setReminderTime} />
+                        </View>
+                    </View>
+                )}
             </ScrollView>
 
             <View style={styles.footer}>
@@ -169,6 +198,39 @@ export default function AddAppointmentScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
+                            <Text style={styles.closeText}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal visible={showReminderCalendar} animationType="slide" transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Calendar
+                            onDayPress={(day: { dateString: string }) => {
+                                setReminderDate(new Date(day.dateString));
+                                setShowReminderCalendar(false);
+                            }}
+                            markedDates={{
+                                [reminderDate.toISOString().split('T')[0]]: { selected: true, selectedColor: '#14B8A6' }
+                            }}
+                            theme={{
+                                calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                                selectedDayTextColor: colors.surface,
+                                todayTextColor: colors.primary || '#14B8A6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                dotColor: colors.primary || '#14B8A6',
+                                selectedDotColor: colors.surface,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
+                        />
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setShowReminderCalendar(false)}>
                             <Text style={styles.closeText}>Close</Text>
                         </TouchableOpacity>
                     </View>
