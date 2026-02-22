@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { SleepLog } from '../types';
@@ -11,21 +12,41 @@ import { format } from 'date-fns';
 const qualities: SleepLog['quality'][] = ['Poor', 'Fair', 'Good', 'Excellent'];
 
 export default function AddSleepScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
-    const addSleepLog = useHealthStore((state) => state.addSleepLog);
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const { addSleepLog, updateSleepLog, sleepLogs } = useHealthStore();
     const [hours, setHours] = useState(7);
     const [quality, setQuality] = useState<SleepLog['quality'] | null>(null);
     const [date, setDate] = useState(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
 
+    useEffect(() => {
+        if (id) {
+            const existing = sleepLogs.find(s => s.id === id);
+            if (existing) {
+                setHours(existing.hours);
+                setQuality(existing.quality);
+                setDate(new Date(existing.dateTime));
+            }
+        }
+    }, [id, sleepLogs]);
+
     const handleSubmit = () => {
         if (!quality) return;
-        addSleepLog({
-            id: Date.now().toString(),
+        const data = {
+            id: id || Date.now().toString(),
             dateTime: date.toISOString(),
             hours,
             quality,
-        });
+        };
+
+        if (id) {
+            updateSleepLog(data);
+        } else {
+            addSleepLog(data);
+        }
         router.back();
     };
 
@@ -33,9 +54,9 @@ export default function AddSleepScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Log Sleep</Text>
+                <Text style={styles.headerTitle}>{id ? 'Edit Sleep' : 'Log Sleep'}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -43,7 +64,7 @@ export default function AddSleepScreen() {
                     <Text style={styles.label}>Date</Text>
                     <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
                         <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
-                        <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                        <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
 
@@ -66,7 +87,7 @@ export default function AddSleepScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !quality && styles.buttonDisabled]} onPress={handleSubmit} disabled={!quality}>
-                    <Text style={styles.buttonText}>Save Sleep</Text>
+                    <Text style={styles.buttonText}>{id ? 'Update Sleep' : 'Save Sleep'}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -81,7 +102,19 @@ export default function AddSleepScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#6366F1' }
                             }}
-                            theme={{ todayTextColor: '#6366F1', arrowColor: '#6366F1', selectedDayBackgroundColor: '#6366F1' }}
+                            theme={{ calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                                selectedDayTextColor: colors.surface,
+                                todayTextColor: colors.primary || '#14B8A6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                dotColor: colors.primary || '#14B8A6',
+                                selectedDotColor: colors.surface,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
                             <Text style={styles.closeText}>Close</Text>
@@ -93,33 +126,33 @@ export default function AddSleepScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
     backButton: { padding: 4 },
-    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },
+    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 16 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 16 },
     hoursSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 32 },
     hourButton: { padding: 16 },
     hoursDisplay: { alignItems: 'center', paddingHorizontal: 40 },
-    hoursValue: { fontSize: 48, fontWeight: 'bold', color: '#1A1A1A' },
-    hoursLabel: { fontSize: 16, color: '#6B7280' },
+    hoursValue: { fontSize: 48, fontWeight: 'bold', color: colors.text },
+    hoursLabel: { fontSize: 16, color: colors.textSecondary },
     qualityRow: { flexDirection: 'row', justifyContent: 'space-between' },
-    qualityButton: { flex: 1, paddingVertical: 12, alignItems: 'center', backgroundColor: '#FFFFFF', marginHorizontal: 4, borderRadius: 12 },
+    qualityButton: { flex: 1, paddingVertical: 12, alignItems: 'center', backgroundColor: colors.surface, marginHorizontal: 4, borderRadius: 12 },
     qualityButtonActive: { backgroundColor: '#6366F1' },
-    qualityText: { fontSize: 14, fontWeight: '600', color: '#6B7280' },
-    qualityTextActive: { color: '#FFFFFF' },
+    qualityText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
+    qualityTextActive: { color: colors.surface },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#6366F1', padding: 16, borderRadius: 12, alignItems: 'center' },
     buttonDisabled: { backgroundColor: '#D1D5DB' },
-    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+    buttonText: { color: colors.surface, fontSize: 16, fontWeight: '600' },
     dateContainer: { marginBottom: 20 },
-    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
-    dateText: { fontSize: 14, color: '#1A1A1A' },
+    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+    dateText: { fontSize: 14, color: colors.text },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
-    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },
+    modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 16 },
     closeButton: { marginTop: 16, alignItems: 'center', padding: 12 },
     closeText: { color: '#6366F1', fontSize: 16, fontWeight: '600' },
 });

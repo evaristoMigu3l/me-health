@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,13 +8,15 @@ import { useHealthStore } from '../stores/useHealthStore';
 import { format, parseISO } from 'date-fns';
 
 export default function DiagnosisLogScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const { diagnoses, removeDiagnosis } = useHealthStore();
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Diagnoses</Text>
                 <TouchableOpacity onPress={() => router.push('/add-diagnosis')}><Ionicons name="add" size={24} color="#EF4444" /></TouchableOpacity>
             </View>
@@ -38,19 +41,26 @@ export default function DiagnosisLogScreen() {
                             {d.linkedAppointmentIds && d.linkedAppointmentIds.length > 0 && (
                                 <View style={styles.section}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Ionicons name="link" size={14} color="#6B7280" />
+                                        <Ionicons name="link" size={14} color={colors.textSecondary} />
                                         <Text style={[styles.sectionLabel, { marginLeft: 4 }]}>{d.linkedAppointmentIds.length} Linked Appointment{d.linkedAppointmentIds.length > 1 ? 's' : ''}</Text>
                                     </View>
                                 </View>
                             )}
                             <View style={styles.cardActions}>
-                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeDiagnosis(d.id)}><Ionicons name="trash-outline" size={18} color="#EF4444" /><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.editButton} onPress={() => router.push({ pathname: '/add-diagnosis', params: { id: d.id } })}>
+                                    <Ionicons name="create-outline" size={18} color="#3B82F6" />
+                                    <Text style={styles.editText}>Edit</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeDiagnosis(d.id)}>
+                                    <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                                    <Text style={styles.deleteText}>Delete</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))
                 ) : (
                     <View style={styles.emptyState}>
-                        <Ionicons name="medical-outline" size={48} color="#9CA3AF" />
+                        <Ionicons name="medical-outline" size={48} color={colors.textSecondary} />
                         <Text style={styles.emptyText}>No diagnoses recorded.</Text>
                     </View>
                 )}
@@ -59,28 +69,30 @@ export default function DiagnosisLogScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
-    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border, justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: colors.text },
     content: { flex: 1 },
     scrollContent: { padding: 16 },
-    card: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    card: { backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
-    condition: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', flex: 1, marginRight: 8 },
-    statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, backgroundColor: '#F3F4F6' },
+    condition: { fontSize: 18, fontWeight: '600', color: colors.text, flex: 1, marginRight: 8 },
+    statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, backgroundColor: colors.border },
     statusActive: { backgroundColor: '#FEF2F2' },
     statusResolved: { backgroundColor: '#ECFDF5' },
-    statusText: { fontSize: 12, fontWeight: '600', color: '#6B7280' },
+    statusText: { fontSize: 12, fontWeight: '600', color: colors.textSecondary },
     statusTextActive: { color: '#EF4444' },
     statusTextResolved: { color: '#10B981' },
-    dateText: { fontSize: 14, color: '#6B7280', marginBottom: 12 },
+    dateText: { fontSize: 14, color: colors.textSecondary, marginBottom: 12 },
     section: { marginBottom: 8 },
     sectionLabel: { fontSize: 12, fontWeight: '600', color: '#4B5563', marginBottom: 2 },
-    sectionText: { fontSize: 14, color: '#1A1A1A' },
-    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 8, marginTop: 8 },
+    sectionText: { fontSize: 14, color: colors.text },
+    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 8, marginTop: 8 },
+    editButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, marginRight: 8 },
+    editText: { fontSize: 14, color: '#3B82F6', marginLeft: 4 },
     deleteButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6 },
     deleteText: { fontSize: 14, color: '#EF4444', marginLeft: 4 },
     emptyState: { alignItems: 'center', paddingVertical: 60 },
-    emptyText: { fontSize: 16, color: '#6B7280', marginTop: 12 },
+    emptyText: { fontSize: 16, color: colors.textSecondary, marginTop: 12 },
 });

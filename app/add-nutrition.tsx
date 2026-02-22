@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { FoodEntry } from '../types';
@@ -11,8 +12,11 @@ import { format } from 'date-fns';
 const foodTypes: FoodEntry['type'][] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
 export default function AddNutritionScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
-    const addFoodEntry = useHealthStore((state) => state.addFoodEntry);
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const { addFoodEntry, updateFoodEntry, foodEntries } = useHealthStore();
     const [name, setName] = useState('');
     const [calories, setCalories] = useState('');
     const [type, setType] = useState<FoodEntry['type']>('Breakfast');
@@ -20,19 +24,39 @@ export default function AddNutritionScreen() {
     const [time, setTime] = useState(format(new Date(), 'HH:mm'));
     const [showCalendar, setShowCalendar] = useState(false);
 
+    useEffect(() => {
+        if (id) {
+            const existing = foodEntries.find(e => e.id === id);
+            if (existing) {
+                setName(existing.name);
+                setCalories(existing.calories.toString());
+                setType(existing.type);
+                const exDate = new Date(existing.dateTime);
+                setDate(exDate);
+                setTime(format(exDate, 'HH:mm'));
+            }
+        }
+    }, [id, foodEntries]);
+
     const handleSubmit = () => {
         if (!name.trim()) return;
         const [hours, minutes] = time.split(':').map(Number);
         const entryDate = new Date(date);
         entryDate.setHours(hours || 0, minutes || 0);
 
-        addFoodEntry({
-            id: Date.now().toString(),
+        const data = {
+            id: id || Date.now().toString(),
             name,
             calories: parseInt(calories) || 0,
             dateTime: entryDate.toISOString(),
             type,
-        });
+        };
+
+        if (id) {
+            updateFoodEntry(data);
+        } else {
+            addFoodEntry(data);
+        }
         router.back();
     };
 
@@ -40,9 +64,9 @@ export default function AddNutritionScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Log Food</Text>
+                <Text style={styles.headerTitle}>{id ? 'Edit Food' : 'Log Food'}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -54,31 +78,32 @@ export default function AddNutritionScreen() {
                         </TouchableOpacity>
                     ))}
                 </View>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom meal type" value={type} onChangeText={setType} />
 
                 <View style={styles.rowBetween}>
                     <View style={styles.halfWidth}>
                         <Text style={styles.label}>Date</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
                             <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
-                            <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                            <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.halfWidth}>
                         <Text style={styles.label}>Time</Text>
-                        <TextInput style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
+                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
                     </View>
                 </View>
 
                 <Text style={styles.label}>Food Name</Text>
-                <TextInput style={styles.input} placeholder="e.g., Oatmeal, Chicken Salad" value={name} onChangeText={setName} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Oatmeal, Chicken Salad" value={name} onChangeText={setName} />
 
                 <Text style={styles.label}>Calories</Text>
-                <TextInput style={styles.input} placeholder="e.g., 350" value={calories} onChangeText={setCalories} keyboardType="numeric" />
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., 350" value={calories} onChangeText={setCalories} keyboardType="numeric" />
             </ScrollView>
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !name.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!name.trim()}>
-                    <Text style={styles.buttonText}>Save Food</Text>
+                    <Text style={styles.buttonText}>{id ? 'Update Food' : 'Save Food'}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -93,7 +118,19 @@ export default function AddNutritionScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#F59E0B' }
                             }}
-                            theme={{ todayTextColor: '#F59E0B', arrowColor: '#F59E0B', selectedDayBackgroundColor: '#F59E0B' }}
+                            theme={{ calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                                selectedDayTextColor: colors.surface,
+                                todayTextColor: colors.primary || '#14B8A6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                dotColor: colors.primary || '#14B8A6',
+                                selectedDotColor: colors.surface,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
                             <Text style={styles.closeText}>Close</Text>
@@ -105,30 +142,30 @@ export default function AddNutritionScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
     backButton: { padding: 4 },
-    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },
+    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },
-    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
     typeRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
-    typeButton: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#FFFFFF', marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+    typeButton: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: colors.surface, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: colors.border },
     typeButtonActive: { backgroundColor: '#F59E0B', borderColor: '#F59E0B' },
-    typeText: { fontSize: 14, color: '#6B7280' },
-    typeTextActive: { color: '#FFFFFF' },
+    typeText: { fontSize: 14, color: colors.textSecondary },
+    typeTextActive: { color: colors.surface },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#F59E0B', padding: 16, borderRadius: 12, alignItems: 'center' },
     buttonDisabled: { backgroundColor: '#D1D5DB' },
-    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+    buttonText: { color: colors.surface, fontSize: 16, fontWeight: '600' },
     rowBetween: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
     halfWidth: { width: '48%' },
-    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
-    dateText: { fontSize: 14, color: '#1A1A1A' },
+    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+    dateText: { fontSize: 14, color: colors.text },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
-    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },
+    modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 16 },
     closeButton: { marginTop: 16, alignItems: 'center', padding: 12 },
     closeText: { color: '#F59E0B', fontSize: 16, fontWeight: '600' },
 });

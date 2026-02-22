@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Activity } from '../types';
@@ -9,23 +10,44 @@ import { Activity } from '../types';
 const categories: Activity['category'][] = ['Basic Activities', 'Cognitive', 'Daily Living', 'Endurance'];
 
 export default function AddActivityScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
-    const addActivity = useHealthStore((state) => state.addActivity);
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const { addActivity, updateActivity, activities } = useHealthStore();
     const [category, setCategory] = useState<Activity['category']>('Basic Activities');
     const [activity, setActivity] = useState('');
     const [hours, setHours] = useState(0);
     const [minutes, setMinutes] = useState(30);
 
+    useEffect(() => {
+        if (id) {
+            const existing = activities.find(a => a.id === id);
+            if (existing) {
+                setCategory(existing.category);
+                setActivity(existing.specificActivity);
+                setHours(existing.durationHours);
+                setMinutes(existing.durationMinutes);
+            }
+        }
+    }, [id, activities]);
+
     const handleSubmit = () => {
         if (!activity.trim()) return;
-        addActivity({
-            id: Date.now().toString(),
+        const data = {
+            id: id || Date.now().toString(),
             category,
             specificActivity: activity,
             dateTime: new Date().toISOString(),
             durationHours: hours,
             durationMinutes: minutes,
-        });
+        };
+
+        if (id) {
+            updateActivity(data);
+        } else {
+            addActivity(data);
+        }
         router.back();
     };
 
@@ -33,9 +55,9 @@ export default function AddActivityScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Log Activity</Text>
+                <Text style={styles.headerTitle}>{id ? 'Edit Activity' : 'Log Activity'}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -47,9 +69,10 @@ export default function AddActivityScreen() {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom category" value={category} onChangeText={setCategory} />
 
                 <Text style={styles.label}>Activity</Text>
-                <TextInput style={styles.input} placeholder="e.g., Walking, Yoga" value={activity} onChangeText={setActivity} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Walking, Yoga" value={activity} onChangeText={setActivity} />
 
                 <Text style={styles.label}>Duration</Text>
                 <View style={styles.durationRow}>
@@ -74,34 +97,34 @@ export default function AddActivityScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !activity.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!activity.trim()}>
-                    <Text style={styles.buttonText}>Save Activity</Text>
+                    <Text style={styles.buttonText}>{id ? 'Update Activity' : 'Save Activity'}</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
     backButton: { padding: 4 },
-    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },
+    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },
-    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
     chipContainer: { marginBottom: 20 },
-    chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#FFFFFF', marginRight: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+    chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: colors.surface, marginRight: 10, borderWidth: 1, borderColor: colors.border },
     chipActive: { backgroundColor: '#8B5CF6', borderColor: '#8B5CF6' },
-    chipText: { fontSize: 14, color: '#6B7280' },
-    chipTextActive: { color: '#FFFFFF' },
+    chipText: { fontSize: 14, color: colors.textSecondary },
+    chipTextActive: { color: colors.surface },
     durationRow: { flexDirection: 'row', marginBottom: 20 },
-    durationItem: { flex: 1, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginHorizontal: 4 },
-    durationLabel: { fontSize: 12, color: '#6B7280', marginBottom: 8, textAlign: 'center' },
+    durationItem: { flex: 1, backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginHorizontal: 4 },
+    durationLabel: { fontSize: 12, color: colors.textSecondary, marginBottom: 8, textAlign: 'center' },
     durationControl: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-    durationValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A', marginHorizontal: 16 },
+    durationValue: { fontSize: 24, fontWeight: 'bold', color: colors.text, marginHorizontal: 16 },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#8B5CF6', padding: 16, borderRadius: 12, alignItems: 'center' },
     buttonDisabled: { backgroundColor: '#D1D5DB' },
-    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+    buttonText: { color: colors.surface, fontSize: 16, fontWeight: '600' },
 });

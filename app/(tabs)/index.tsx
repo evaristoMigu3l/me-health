@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useAppTheme } from '../../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUserStore } from '../../stores/useUserStore';
@@ -8,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 const moodEmojis: Record<string, string> = { Happy: '😊', Neutral: '😐', Anxious: '😰', Sad: '😢', Angry: '😠', Bored: '😑' };
 
 export default function HomeScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const { profile } = useUserStore();
     const { symptoms, medications, measurements, moodLogs, sleepLogs, activities, foodEntries, appointments } = useHealthStore();
@@ -35,12 +38,12 @@ export default function HomeScreen() {
                     <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/add-symptom')}>
                         <View style={[styles.iconContainer, { backgroundColor: '#FEE2E2' }]}><Ionicons name="pulse" size={24} color="#EF4444" /></View>
                         <View style={styles.actionContent}><Text style={styles.actionTitle}>Log Symptoms</Text><Text style={styles.actionSubtitle}>Track how you feel</Text></View>
-                        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                        <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/add-medication')}>
                         <View style={[styles.iconContainer, { backgroundColor: '#DBEAFE' }]}><Ionicons name="medkit" size={24} color="#3B82F6" /></View>
                         <View style={styles.actionContent}><Text style={styles.actionTitle}>Add Medication</Text><Text style={styles.actionSubtitle}>Update your schedule</Text></View>
-                        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                        <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
 
@@ -83,7 +86,7 @@ export default function HomeScreen() {
                         <Text style={styles.sectionTitle}>Recent Mood</Text>
                         <View style={styles.moodRow}>
                             {moodLogs.slice(-7).map((m) => (
-                                <View key={m.id} style={styles.moodItem}><Text style={styles.moodEmoji}>{moodEmojis[m.feeling]}</Text><Text style={styles.moodDate}>{new Date(m.dateTime).getDate()}</Text></View>
+                                <View key={m.id} style={styles.moodItem}><Text style={styles.moodEmoji}>{moodEmojis[m.feeling] || m.emoji || '✨'}</Text><Text style={styles.moodDate}>{new Date(m.dateTime).getDate()}</Text></View>
                             ))}
                         </View>
                     </View>
@@ -103,7 +106,7 @@ export default function HomeScreen() {
 
                 {symptoms.length === 0 && medications.length === 0 && measurements.length === 0 && moodLogs.length === 0 && (
                     <View style={styles.emptyCard}>
-                        <Ionicons name="heart" size={48} color="#9CA3AF" />
+                        <Ionicons name="heart" size={48} color={colors.textSecondary} />
                         <Text style={styles.emptyTitle}>No data yet</Text>
                         <Text style={styles.emptySubtitle}>Start tracking your health!</Text>
                     </View>
@@ -113,40 +116,40 @@ export default function HomeScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
     header: { marginBottom: 20 },
-    greeting: { fontSize: 28, fontWeight: 'bold', color: '#1A1A1A' },
-    subtitle: { fontSize: 16, color: '#6B7280', marginTop: 4 },
+    greeting: { fontSize: 28, fontWeight: 'bold', color: colors.text },
+    subtitle: { fontSize: 16, color: colors.textSecondary, marginTop: 4 },
     statsRow: { flexDirection: 'row', marginBottom: 20 },
-    statCard: { flex: 1, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, alignItems: 'center', marginHorizontal: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
-    statValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A' },
-    statLabel: { fontSize: 12, color: '#6B7280', marginTop: 4 },
+    statCard: { flex: 1, backgroundColor: colors.surface, borderRadius: 12, padding: 16, alignItems: 'center', marginHorizontal: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    statValue: { fontSize: 24, fontWeight: 'bold', color: colors.text },
+    statLabel: { fontSize: 12, color: colors.textSecondary, marginTop: 4 },
     section: { marginBottom: 24 },
-    sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },
-    actionCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    sectionTitle: { fontSize: 18, fontWeight: '600', color: colors.text, marginBottom: 12 },
+    actionCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, padding: 16, borderRadius: 12, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     iconContainer: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
     actionContent: { flex: 1 },
-    actionTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
-    actionSubtitle: { fontSize: 13, color: '#6B7280', marginTop: 2 },
-    summaryGrid: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, justifyContent: 'space-around', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    actionTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
+    actionSubtitle: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
+    summaryGrid: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 12, padding: 16, justifyContent: 'space-around', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     summaryItem: { alignItems: 'center' },
-    summaryValue: { fontSize: 18, fontWeight: 'bold', color: '#1A1A1A', marginTop: 4 },
-    summaryLabel: { fontSize: 12, color: '#6B7280' },
-    entryCard: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    summaryValue: { fontSize: 18, fontWeight: 'bold', color: colors.text, marginTop: 4 },
+    summaryLabel: { fontSize: 12, color: colors.textSecondary },
+    entryCard: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     entryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    entryTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
-    entrySubtitle: { fontSize: 14, color: '#6B7280' },
-    entryDate: { fontSize: 13, color: '#9CA3AF', marginTop: 4 },
+    entryTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
+    entrySubtitle: { fontSize: 14, color: colors.textSecondary },
+    entryDate: { fontSize: 13, color: colors.textSecondary, marginTop: 4 },
     badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
     badgeText: { fontSize: 12, fontWeight: '500' },
-    moodRow: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, justifyContent: 'space-around', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    moodRow: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 12, padding: 16, justifyContent: 'space-around', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     moodItem: { alignItems: 'center' },
     moodEmoji: { fontSize: 24 },
-    moodDate: { fontSize: 10, color: '#9CA3AF', marginTop: 2 },
-    emptyCard: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 40, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
-    emptyTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', marginTop: 16 },
-    emptySubtitle: { fontSize: 14, color: '#6B7280', marginTop: 4 },
+    moodDate: { fontSize: 10, color: colors.textSecondary, marginTop: 2 },
+    emptyCard: { backgroundColor: colors.surface, borderRadius: 12, padding: 40, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    emptyTitle: { fontSize: 18, fontWeight: '600', color: colors.text, marginTop: 16 },
+    emptySubtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
 });

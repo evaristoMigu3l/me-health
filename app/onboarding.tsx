@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { useRouter } from 'expo-router';
 import { useUserStore } from '../stores/useUserStore';
 
 export default function OnboardingScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const setProfile = useUserStore((state) => state.setProfile);
     const [name, setName] = useState('');
@@ -22,7 +25,7 @@ export default function OnboardingScreen() {
                 <Text style={styles.subtitle}>Let's set up your health profile</Text>
 
                 <Text style={styles.label}>Name *</Text>
-                <TextInput
+                <TextInput placeholderTextColor={colors.textSecondary}
                     style={styles.input}
                     placeholder="Enter your name"
                     value={name}
@@ -30,7 +33,7 @@ export default function OnboardingScreen() {
                 />
 
                 <Text style={styles.label}>Email</Text>
-                <TextInput
+                <TextInput placeholderTextColor={colors.textSecondary}
                     style={styles.input}
                     placeholder="your@email.com"
                     value={email}
@@ -52,10 +55,10 @@ export default function OnboardingScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: colors.background,
     },
     content: {
         flex: 1,
@@ -65,28 +68,29 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#1A1A1A',
+        color: colors.text,
         marginBottom: 8,
     },
     subtitle: {
         fontSize: 16,
-        color: '#6B7280',
+        color: colors.textSecondary,
         marginBottom: 32,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: colors.text,
         marginBottom: 8,
     },
     input: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         padding: 16,
         borderRadius: 12,
         fontSize: 16,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
+        color: colors.text,
     },
     footer: {
         padding: 24,
@@ -102,7 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#D1D5DB',
     },
     buttonText: {
-        color: '#FFFFFF',
+        color: colors.surface,
         fontSize: 16,
         fontWeight: '600',
     },

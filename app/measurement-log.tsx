@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +12,8 @@ import { Calendar } from 'react-native-calendars';
 const measurementTypes = ['Blood Pressure', 'Heart Rate', 'Weight', 'BMI', 'Blood Sugar', 'Temperature', 'Cholesterol', 'Other'];
 
 export default function MeasurementLogScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const { measurements, removeMeasurement } = useHealthStore();
     const [selectedType, setSelectedType] = useState('Weight');
@@ -55,7 +58,7 @@ export default function MeasurementLogScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Measurements</Text>
                 <TouchableOpacity onPress={() => router.push('/add-measurement')}><Ionicons name="add" size={24} color="#10B981" /></TouchableOpacity>
             </View>
@@ -96,9 +99,14 @@ export default function MeasurementLogScreen() {
                                         <Text style={styles.cardValue}>{m.reading} <Text style={styles.cardUnit}>{m.unit}</Text></Text>
                                         <Text style={styles.cardDate}>{format(parseISO(m.dateTime), 'MMM d, yyyy h:mm a')}</Text>
                                     </View>
-                                    <TouchableOpacity onPress={() => removeMeasurement(m.id)}>
-                                        <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                                    </TouchableOpacity>
+                                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                                        <TouchableOpacity onPress={() => router.push({ pathname: '/add-measurement', params: { id: m.id } })}>
+                                            <Ionicons name="create-outline" size={20} color="#3B82F6" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => removeMeasurement(m.id)}>
+                                            <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         ))
@@ -109,22 +117,22 @@ export default function MeasurementLogScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
-    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
-    typeSelector: { backgroundColor: '#FFFFFF', paddingVertical: 12, paddingHorizontal: 16 },
-    typeChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#F3F4F6', marginRight: 8 },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border, justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: colors.text },
+    typeSelector: { backgroundColor: colors.surface, paddingVertical: 12, paddingHorizontal: 16 },
+    typeChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.border, marginRight: 8 },
     typeChipActive: { backgroundColor: '#10B981' },
-    typeText: { fontSize: 14, color: '#6B7280' },
-    typeTextActive: { color: '#FFFFFF' },
+    typeText: { fontSize: 14, color: colors.textSecondary },
+    typeTextActive: { color: colors.surface },
     content: { flex: 1 },
     listSection: { padding: 16 },
-    sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },
-    emptyText: { textAlign: 'center', color: '#9CA3AF', marginTop: 20 },
-    card: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    sectionTitle: { fontSize: 18, fontWeight: '600', color: colors.text, marginBottom: 12 },
+    emptyText: { textAlign: 'center', color: colors.textSecondary, marginTop: 20 },
+    card: { backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    cardValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A' },
-    cardUnit: { fontSize: 16, fontWeight: 'normal', color: '#6B7280' },
-    cardDate: { fontSize: 13, color: '#9CA3AF', marginTop: 4 },
+    cardValue: { fontSize: 24, fontWeight: 'bold', color: colors.text },
+    cardUnit: { fontSize: 16, fontWeight: 'normal', color: colors.textSecondary },
+    cardDate: { fontSize: 13, color: colors.textSecondary, marginTop: 4 },
 });

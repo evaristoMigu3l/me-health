@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useAppTheme } from '../../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +19,8 @@ const categories = [
 ];
 
 export default function TrackScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
 
     return (
@@ -45,13 +48,13 @@ export default function TrackScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
-    title: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A', marginBottom: 24 },
+    title: { fontSize: 24, fontWeight: 'bold', color: colors.text, marginBottom: 24 },
     grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-    categoryCard: { width: '47%', backgroundColor: '#FFFFFF', borderRadius: 16, padding: 20, alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    categoryCard: { width: '47%', backgroundColor: colors.surface, borderRadius: 16, padding: 20, alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     iconWrapper: { width: 56, height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-    categoryTitle: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', textAlign: 'center' },
+    categoryTitle: { fontSize: 14, fontWeight: '600', color: colors.text, textAlign: 'center' },
 });

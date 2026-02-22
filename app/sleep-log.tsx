@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,16 +10,16 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, addMonth
 type FilterType = 'all' | 'week' | 'month' | 'year';
 type SortBy = 'date' | 'hours' | 'quality';
 
-function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void }) {
+function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styles, colors }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void, styles: any, colors: any }) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const days = eachDayOfInterval({ start: startOfWeek(startOfMonth(currentMonth)), end: endOfWeek(endOfMonth(currentMonth)) });
 
     return (
         <View style={styles.calendarContainer}>
             <View style={styles.calendarHeader}>
-                <TouchableOpacity onPress={() => setCurrentMonth(subMonths(currentMonth, 1))}><Ionicons name="chevron-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => setCurrentMonth(subMonths(currentMonth, 1))}><Ionicons name="chevron-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.calendarMonth}>{format(currentMonth, 'MMMM yyyy')}</Text>
-                <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name="chevron-forward" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name="chevron-forward" size={24} color={colors.text} /></TouchableOpacity>
             </View>
             <View style={styles.weekDays}>
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{d}</Text>)}
@@ -44,6 +45,8 @@ function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose }: { 
 }
 
 export default function SleepLogScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const { sleepLogs, removeSleepLog } = useHealthStore();
     const [search, setSearch] = useState('');
@@ -117,21 +120,21 @@ export default function SleepLogScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Sleep Log</Text>
                 <TouchableOpacity onPress={() => router.push('/add-sleep')}><Ionicons name="add" size={24} color="#6366F1" /></TouchableOpacity>
             </View>
 
             <View style={styles.searchRow}>
                 <View style={styles.searchContainer}>
-                    <Ionicons name="search" size={20} color="#9CA3AF" />
-                    <TextInput style={styles.searchInput} placeholder="Search sleep logs..." value={search} onChangeText={setSearch} />
+                    <Ionicons name="search" size={20} color={colors.textSecondary} />
+                    <TextInput placeholderTextColor={colors.textSecondary} style={styles.searchInput} placeholder="Search sleep logs..." value={search} onChangeText={setSearch} />
                 </View>
                 <TouchableOpacity style={[styles.filterButton, showFilters && styles.filterButtonActive]} onPress={() => setShowFilters(!showFilters)}>
-                    <Ionicons name="options" size={20} color={showFilters ? '#6366F1' : '#6B7280'} />
+                    <Ionicons name="options" size={20} color={showFilters ? '#6366F1' : colors.textSecondary} />
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.filterButton, selectedDate && styles.filterButtonActive]} onPress={() => setShowCalendar(true)}>
-                    <Ionicons name="calendar" size={20} color={selectedDate ? '#6366F1' : '#6B7280'} />
+                    <Ionicons name="calendar" size={20} color={selectedDate ? '#6366F1' : colors.textSecondary} />
                 </TouchableOpacity>
             </View>
 
@@ -194,7 +197,7 @@ export default function SleepLogScreen() {
 
             <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
                 {filteredLogs.length === 0 ? (
-                    <View style={styles.emptyState}><Ionicons name="bed" size={48} color="#9CA3AF" /><Text style={styles.emptyText}>No sleep logs found</Text></View>
+                    <View style={styles.emptyState}><Ionicons name="bed" size={48} color={colors.textSecondary} /><Text style={styles.emptyText}>No sleep logs found</Text></View>
                 ) : (
                     filteredLogs.map(s => (
                         <View key={s.id} style={styles.sleepCard}>
@@ -206,11 +209,18 @@ export default function SleepLogScreen() {
                                 </View>
                             </View>
                             <View style={styles.sleepDetails}>
-                                <View style={styles.detailItem}><Ionicons name="calendar-outline" size={16} color="#6B7280" /><Text style={styles.detailText}>{format(parseISO(s.dateTime), 'MMM d, yyyy h:mm a')}</Text></View>
+                                <View style={styles.detailItem}><Ionicons name="calendar-outline" size={16} color={colors.textSecondary} /><Text style={styles.detailText}>{format(parseISO(s.dateTime), 'MMM d, yyyy h:mm a')}</Text></View>
                             </View>
                             {s.notes && <Text style={styles.notes}>{s.notes}</Text>}
                             <View style={styles.cardActions}>
-                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeSleepLog(s.id)}><Ionicons name="trash-outline" size={18} color="#EF4444" /><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.editButton} onPress={() => router.push({ pathname: '/add-sleep', params: { id: s.id } })}>
+                                    <Ionicons name="create-outline" size={18} color="#3B82F6" />
+                                    <Text style={styles.editText}>Edit</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.deleteButton} onPress={() => removeSleepLog(s.id)}>
+                                    <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                                    <Text style={styles.deleteText}>Delete</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))
@@ -220,7 +230,7 @@ export default function SleepLogScreen() {
             <Modal visible={showCalendar} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} />
+                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} styles={styles} colors={colors} />
                     </View>
                 </View>
             </Modal>
@@ -228,63 +238,65 @@ export default function SleepLogScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
+    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
     searchRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' },
-    searchContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: 12, borderRadius: 10, marginRight: 8 },
+    searchContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, paddingHorizontal: 12, borderRadius: 10, marginRight: 8 },
     searchInput: { flex: 1, paddingVertical: 10, marginLeft: 8, fontSize: 16 },
-    filterButton: { padding: 10, marginLeft: 4, borderRadius: 8, backgroundColor: '#FFFFFF' },
+    filterButton: { padding: 10, marginLeft: 4, borderRadius: 8, backgroundColor: colors.surface },
     filterButtonActive: { backgroundColor: '#E0E7FF' },
-    filterPanel: { backgroundColor: '#FFFFFF', padding: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+    filterPanel: { backgroundColor: colors.surface, padding: 16, borderBottomWidth: 1, borderBottomColor: colors.border },
     filterRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-    filterLabel: { fontSize: 14, color: '#6B7280', marginRight: 12, width: 100 },
-    filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F3F4F6', marginRight: 8 },
+    filterLabel: { fontSize: 14, color: colors.textSecondary, marginRight: 12, width: 100 },
+    filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: colors.border, marginRight: 8 },
     filterChipActive: { backgroundColor: '#6366F1' },
-    filterChipText: { fontSize: 13, color: '#6B7280' },
-    filterChipTextActive: { color: '#FFFFFF' },
-    chartSection: { backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },
-    chartTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },
+    filterChipText: { fontSize: 13, color: colors.textSecondary },
+    filterChipTextActive: { color: colors.surface },
+    chartSection: { backgroundColor: colors.surface, marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },
+    chartTitle: { fontSize: 16, fontWeight: '600', color: colors.text, marginBottom: 12 },
     pieContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' },
     pieItem: { alignItems: 'center', width: '45%', marginBottom: 12 },
     pieSlice: { width: 16, height: 16, borderRadius: 8, marginBottom: 4 },
-    pieLabel: { fontSize: 13, fontWeight: '500', color: '#1A1A1A' },
-    pieValue: { fontSize: 12, color: '#6B7280' },
-    statsRow: { flexDirection: 'row', backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },
+    pieLabel: { fontSize: 13, fontWeight: '500', color: colors.text },
+    pieValue: { fontSize: 12, color: colors.textSecondary },
+    statsRow: { flexDirection: 'row', backgroundColor: colors.surface, marginHorizontal: 16, marginTop: 16, borderRadius: 12, padding: 16 },
     statItem: { flex: 1, alignItems: 'center' },
-    statDivider: { width: 1, backgroundColor: '#E5E7EB' },
-    statValue: { fontSize: 24, fontWeight: 'bold', color: '#1A1A1A' },
-    statLabel: { fontSize: 12, color: '#6B7280', marginTop: 4 },
+    statDivider: { width: 1, backgroundColor: colors.border },
+    statValue: { fontSize: 24, fontWeight: 'bold', color: colors.text },
+    statLabel: { fontSize: 12, color: colors.textSecondary, marginTop: 4 },
     listSection: { flex: 1, marginTop: 16 },
     listContent: { paddingHorizontal: 16, paddingBottom: 20 },
     emptyState: { alignItems: 'center', paddingVertical: 60 },
-    emptyText: { fontSize: 16, color: '#6B7280', marginTop: 12 },
-    sleepCard: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12 },
+    emptyText: { fontSize: 16, color: colors.textSecondary, marginTop: 12 },
+    sleepCard: { backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 12 },
     sleepHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
     qualityDot: { width: 12, height: 12, borderRadius: 6, marginRight: 10 },
-    sleepName: { flex: 1, fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
+    sleepName: { flex: 1, fontSize: 16, fontWeight: '600', color: colors.text },
     qualityBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
     qualityText: { fontSize: 12, fontWeight: '500' },
     sleepDetails: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },
     detailItem: { flexDirection: 'row', alignItems: 'center', marginRight: 16, marginTop: 4 },
-    detailText: { fontSize: 13, color: '#6B7280', marginLeft: 4 },
+    detailText: { fontSize: 13, color: colors.textSecondary, marginLeft: 4 },
     notes: { fontSize: 14, color: '#4B5563', fontStyle: 'italic', marginBottom: 8 },
-    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 8, marginTop: 8 },
+    cardActions: { flexDirection: 'row', justifyContent: 'flex-end', borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 8, marginTop: 8 },
+    editButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, marginRight: 8 },
+    editText: { fontSize: 14, color: '#3B82F6', marginLeft: 4 },
     deleteButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6 },
     deleteText: { fontSize: 14, color: '#EF4444', marginLeft: 4 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
-    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },
+    modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 16 },
     calendarContainer: { padding: 8 },
     calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-    calendarMonth: { fontSize: 18, fontWeight: '600', color: '#1A1A1A' },
+    calendarMonth: { fontSize: 18, fontWeight: '600', color: colors.text },
     weekDays: { flexDirection: 'row', marginBottom: 8 },
-    weekDay: { flex: 1, textAlign: 'center', fontSize: 12, color: '#6B7280', fontWeight: '500' },
+    weekDay: { flex: 1, textAlign: 'center', fontSize: 12, color: colors.textSecondary, fontWeight: '500' },
     daysGrid: { flexDirection: 'row', flexWrap: 'wrap' },
     day: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },
     daySelected: { backgroundColor: '#6366F1' },
-    dayText: { fontSize: 14, color: '#1A1A1A' },
-    dayTextSelected: { color: '#FFFFFF', fontWeight: '600' },
+    dayText: { fontSize: 14, color: colors.text },
+    dayTextSelected: { color: colors.surface, fontWeight: '600' },
     dayDot: { width: 4, height: 4, borderRadius: 2, marginTop: 2 },
     calendarFooter: { marginTop: 16, alignItems: 'flex-end' },
     clearButton: { paddingHorizontal: 20, paddingVertical: 10 },

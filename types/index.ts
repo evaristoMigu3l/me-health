@@ -23,8 +23,8 @@ export interface Symptom {
 export interface Medication {
     id: string;
     name: string;
-    preparation: 'Tablet' | 'Liquid' | 'Capsule' | 'Inhaler' | 'Injection' | 'Patch' | 'Powder' | 'Topical' | 'Drop' | 'Gummies' | 'Implant';
-    formulation?: 'Uncoated' | 'Coated' | 'Soluble' | 'Dispersible' | 'Chewable' | 'Other';
+    preparation: 'Tablet' | 'Liquid' | 'Capsule' | 'Inhaler' | 'Injection' | 'Patch' | 'Powder' | 'Topical' | 'Drop' | 'Gummies' | 'Implant' | string;
+    formulation?: 'Uncoated' | 'Coated' | 'Soluble' | 'Dispersible' | 'Chewable' | 'Other' | string;
     dosageUnit: 'mg' | 'unit' | 'piece' | 'puffs' | 'breaths';
     startDate: string;
     endDate?: string;
@@ -65,7 +65,8 @@ export interface Diagnosis {
 export interface MoodLog {
     id: string;
     dateTime: string;
-    feeling: 'Angry' | 'Anxious' | 'Bored' | 'Happy' | 'Sad' | 'Neutral';
+    feeling: 'Angry' | 'Anxious' | 'Bored' | 'Happy' | 'Sad' | 'Neutral' | string;
+    emoji?: string;
     notes?: string;
 }
 
@@ -91,7 +92,7 @@ export interface Investigation {
 
 export interface Activity {
     id: string;
-    category: 'Basic Activities' | 'Cognitive' | 'Daily Living' | 'Endurance';
+    category: 'Basic Activities' | 'Cognitive' | 'Daily Living' | 'Endurance' | string;
     specificActivity: string;
     dateTime: string;
     durationHours: number;
@@ -112,7 +113,7 @@ export interface FoodEntry {
     name: string;
     calories: number;
     dateTime: string;
-    type: 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack';
+    type: 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack' | string;
     notes?: string;
 }
 

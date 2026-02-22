@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Platform, Alert } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,6 +13,8 @@ import * as IntentLauncher from 'expo-intent-launcher';
 // ... imports
 
 export default function ExamDetailsScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const params = useLocalSearchParams();
     const { investigations, appointments } = useHealthStore();
@@ -23,7 +26,7 @@ export default function ExamDetailsScreen() {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                     <Text style={styles.headerTitle}>Exam Not Found</Text>
                 </View>
                 <View style={styles.errorContainer}>
@@ -73,7 +76,7 @@ export default function ExamDetailsScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Exam Details</Text>
                 <TouchableOpacity onPress={() => router.push({ pathname: '/add-investigation', params: { id: exam.id } })}>
                     <Text style={styles.editLink}>Edit</Text>
@@ -141,7 +144,7 @@ export default function ExamDetailsScreen() {
                                         <Image source={{ uri }} style={styles.attachmentImage} resizeMode="cover" />
                                     ) : (
                                         <View style={styles.fileIconContainer}>
-                                            <Ionicons name="document-text" size={32} color="#9CA3AF" />
+                                            <Ionicons name="document-text" size={32} color={colors.textSecondary} />
                                         </View>
                                     )}
                                     <View style={styles.attachmentInfo}>
@@ -161,39 +164,39 @@ export default function ExamDetailsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
-    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border, justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: colors.text },
     editLink: { fontSize: 16, color: '#3B82F6', fontWeight: '600' },
     content: { flex: 1 },
     scrollContent: { padding: 20 },
     errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    errorText: { color: '#6B7280', fontSize: 16 },
+    errorText: { color: colors.textSecondary, fontSize: 16 },
     section: { marginBottom: 24 },
     row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
     halfSection: { flex: 0.48 },
-    label: { fontSize: 14, fontWeight: '600', color: '#6B7280', marginBottom: 8 },
-    value: { fontSize: 16, color: '#1A1A1A', lineHeight: 24 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.textSecondary, marginBottom: 8 },
+    value: { fontSize: 16, color: colors.text, lineHeight: 24 },
     statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
-    statusCompleted: { backgroundColor: '#ECFDF5' },
-    statusPending: { backgroundColor: '#FFFBEB' },
-    statusScheduled: { backgroundColor: '#EFF6FF' },
+    statusCompleted: { backgroundColor: 'rgba(16, 185, 129, 0.15)' },
+    statusPending: { backgroundColor: 'rgba(245, 158, 11, 0.15)' },
+    statusScheduled: { backgroundColor: 'rgba(59, 130, 246, 0.15)' },
     statusText: { fontSize: 14, fontWeight: '600' },
-    statusTextCompleted: { color: '#059669' },
-    statusTextPending: { color: '#D97706' },
+    statusTextCompleted: { color: '#10B981' },
+    statusTextPending: { color: '#F59E0B' },
     statusTextScheduled: { color: '#3B82F6' },
-    resultBox: { backgroundColor: '#F9FAFB', padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB' },
-    resultText: { fontSize: 16, color: '#1F2937' },
-    linkCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
+    resultBox: { backgroundColor: colors.surface, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: colors.border },
+    resultText: { fontSize: 16, color: colors.text },
+    linkCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
     linkInfo: { marginLeft: 12 },
-    linkTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
-    linkDate: { fontSize: 14, color: '#6B7280', marginTop: 2 },
-    attachmentCard: { backgroundColor: '#FFFFFF', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 12 },
-    attachmentImage: { width: '100%', height: 200, backgroundColor: '#F3F4F6' },
-    fileIconContainer: { width: '100%', height: 100, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+    linkTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
+    linkDate: { fontSize: 14, color: colors.textSecondary, marginTop: 2 },
+    attachmentCard: { backgroundColor: colors.surface, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: colors.border, marginBottom: 12 },
+    attachmentImage: { width: '100%', height: 200, backgroundColor: colors.border },
+    fileIconContainer: { width: '100%', height: 100, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' },
     attachmentInfo: { padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    attachmentName: { flex: 1, fontSize: 14, color: '#1F2937', marginRight: 12 },
-    shareButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+    attachmentName: { flex: 1, fontSize: 14, color: colors.text, marginRight: 12 },
+    shareButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.border, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
     shareText: { fontSize: 14, color: '#3B82F6', fontWeight: '600', marginLeft: 4 },
 });

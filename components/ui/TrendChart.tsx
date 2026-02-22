@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
+import { useAppTheme } from '../../hooks/useAppTheme';
 
 interface TrendChartProps {
     data: { value: number; label?: string; dataPointText?: string }[];
@@ -19,17 +20,19 @@ export default function TrendChart({
     width = Dimensions.get('window').width - 64,
     height = 220
 }: TrendChartProps) {
+    const { colors } = useAppTheme();
+
     if (!data || data.length === 0) {
         return (
-            <View style={[styles.container, { height }]}>
-                <Text style={styles.noDataText}>No data available for chart</Text>
+            <View style={[styles.container, { height, backgroundColor: colors.surface }]}>
+                <Text style={[styles.noDataText, { color: colors.textSecondary }]}>No data available for chart</Text>
             </View>
         );
     }
 
     return (
-        <View style={styles.container}>
-            {title && <Text style={styles.title}>{title}</Text>}
+        <View style={[styles.container, { backgroundColor: colors.surface }]}>
+            {title && <Text style={[styles.title, { color: colors.text }]}>{title}</Text>}
             <LineChart
                 data={data}
                 color={color}
@@ -40,16 +43,16 @@ export default function TrendChart({
                 startOpacity={0.2}
                 endOpacity={0.05}
                 areaChart
-                yAxisTextStyle={{ color: '#6B7280', fontSize: 12 }}
-                xAxisLabelTextStyle={{ color: '#6B7280', fontSize: 10 }}
+                yAxisTextStyle={{ color: colors.textSecondary, fontSize: 12 }}
+                xAxisLabelTextStyle={{ color: colors.textSecondary, fontSize: 10 }}
                 noOfSections={4}
                 width={width}
                 height={height}
-                rulesColor="#F3F4F6"
+                rulesColor={colors.border}
                 rulesType="solid"
                 yAxisThickness={0}
                 xAxisThickness={1}
-                xAxisColor="#E5E7EB"
+                xAxisColor={colors.border}
                 hideDataPoints={false}
                 dataPointsRadius={4}
                 pointerConfig={{

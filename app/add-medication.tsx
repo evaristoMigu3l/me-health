@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Switch, Modal } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Medication } from '../types';
@@ -11,11 +12,14 @@ import { format } from 'date-fns';
 const preparations: Medication['preparation'][] = ['Tablet', 'Capsule', 'Liquid', 'Injection', 'Inhaler', 'Patch', 'Topical', 'Drop', 'Gummies', 'Implant'];
 const medicationTypes = ['Antibiotic', 'Analgesic', 'Antidepressant', 'Supplement', 'Vitamin', 'Other'];
 const locations = ['Home', 'Work', 'School', 'Travel'];
-const colors = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', '#6B7280'];
 
 export default function AddMedicationScreen() {
+    const { colors } = useAppTheme();
+    const tagColors = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', colors.textSecondary];
+    const styles = getStyles(colors);
     const router = useRouter();
-    const addMedication = useHealthStore((state) => state.addMedication);
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const { addMedication, updateMedication, medications } = useHealthStore();
 
     // Form State
     const [name, setName] = useState('');
@@ -28,17 +32,39 @@ export default function AddMedicationScreen() {
     const [targetCondition, setTargetCondition] = useState('');
     const [location, setLocation] = useState('Home');
     const [subType, setSubType] = useState('Other');
-    const [color, setColor] = useState(colors[4]); // Default blue
+    const [color, setColor] = useState(tagColors[4]); // Default blue
     const [time, setTime] = useState('08:00');
 
     // Modals
     const [showStartCalendar, setShowStartCalendar] = useState(false);
     const [showEndCalendar, setShowEndCalendar] = useState(false);
 
+    useEffect(() => {
+        if (id) {
+            const existing = medications.find(m => m.id === id);
+            if (existing) {
+                setName(existing.name);
+                setPreparation(existing.preparation);
+                if (existing.schedule && existing.schedule.length > 0) {
+                    setDosage(existing.schedule[0].dosage.toString());
+                    setTime(existing.schedule[0].time);
+                }
+                setTimesPerDay(existing.timesPerDay);
+                setStartDate(new Date(existing.startDate));
+                if (existing.endDate) setEndDate(new Date(existing.endDate));
+                setSelfPrescribed(existing.selfPrescribed || false);
+                setTargetCondition(existing.targetCondition || '');
+                setLocation(existing.location || 'Home');
+                setSubType(existing.type || 'Other');
+                setColor(existing.color || tagColors[4]);
+            }
+        }
+    }, [id, medications]);
+
     const handleSubmit = () => {
         if (!name.trim()) return;
-        addMedication({
-            id: Date.now().toString(),
+        const data: Medication = {
+            id: id || Date.now().toString(),
             name,
             preparation,
             dosageUnit: 'mg',
@@ -53,7 +79,13 @@ export default function AddMedicationScreen() {
             location,
             type: subType,
             color,
-        });
+        };
+
+        if (id) {
+            updateMedication(data);
+        } else {
+            addMedication(data);
+        }
         router.back();
     };
 
@@ -61,14 +93,14 @@ export default function AddMedicationScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Add Medication</Text>
+                <Text style={styles.headerTitle}>{id ? 'Edit Medication' : 'Add Medication'}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <Text style={styles.label}>Medication Name *</Text>
-                <TextInput style={styles.input} placeholder="e.g., Aspirin" value={name} onChangeText={setName} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Aspirin" value={name} onChangeText={setName} />
 
                 <Text style={styles.label}>Preparation</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
@@ -78,6 +110,7 @@ export default function AddMedicationScreen() {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom preparation" value={preparation} onChangeText={setPreparation} />
 
                 <Text style={styles.label}>Type / Category</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
@@ -87,10 +120,11 @@ export default function AddMedicationScreen() {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom category" value={subType} onChangeText={setSubType} />
 
                 <Text style={styles.label}>Dosage</Text>
                 <View style={styles.dosageRow}>
-                    <TextInput style={[styles.input, styles.dosageInput]} placeholder="Amount" value={dosage} onChangeText={setDosage} keyboardType="numeric" />
+                    <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.dosageInput]} placeholder="Amount" value={dosage} onChangeText={setDosage} keyboardType="numeric" />
                     <View style={styles.unitBadge}><Text style={styles.unitText}>mg</Text></View>
                 </View>
 
@@ -99,20 +133,20 @@ export default function AddMedicationScreen() {
                         <Text style={styles.label}>Start Date</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowStartCalendar(true)}>
                             <Text style={styles.dateText}>{format(startDate, 'MMM d, yyyy')}</Text>
-                            <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                            <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.halfWidth}>
                         <Text style={styles.label}>End Date (Optional)</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowEndCalendar(true)}>
                             <Text style={styles.dateText}>{endDate ? format(endDate, 'MMM d, yyyy') : 'Set Date'}</Text>
-                            <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                            <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <Text style={styles.label}>Target Issue / Condition</Text>
-                <TextInput style={styles.input} placeholder="e.g., Headache, Infection" value={targetCondition} onChangeText={setTargetCondition} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Headache, Infection" value={targetCondition} onChangeText={setTargetCondition} />
 
                 <View style={styles.rowBetween}>
                     <View style={styles.halfWidth}>
@@ -127,7 +161,7 @@ export default function AddMedicationScreen() {
                     </View>
                     <View style={styles.halfWidth}>
                         <Text style={styles.label}>Time</Text>
-                        <TextInput style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
+                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
                     </View>
                 </View>
 
@@ -138,7 +172,7 @@ export default function AddMedicationScreen() {
 
                 <Text style={styles.label}>Color Tag</Text>
                 <View style={styles.colorGrid}>
-                    {colors.map((c) => (
+                    {tagColors.map((c) => (
                         <TouchableOpacity key={c} style={[styles.colorCircle, { backgroundColor: c }, color === c && styles.colorCircleActive]} onPress={() => setColor(c)}>
                             {color === c && <Ionicons name="checkmark" size={16} color="white" />}
                         </TouchableOpacity>
@@ -157,7 +191,7 @@ export default function AddMedicationScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !name.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!name.trim()}>
-                    <Text style={styles.buttonText}>Add Medication</Text>
+                    <Text style={styles.buttonText}>{id ? 'Update Medication' : 'Add Medication'}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -184,19 +218,19 @@ export default function AddMedicationScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: any) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: colors.background,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 12,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        borderBottomColor: colors.border,
     },
     backButton: {
         padding: 4,
@@ -205,7 +239,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 20,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: colors.text,
         marginLeft: 12,
     },
     scrollView: {
@@ -217,28 +251,29 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: colors.text,
         marginBottom: 8,
     },
     input: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         padding: 16,
         borderRadius: 12,
         fontSize: 16,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
+        color: colors.text,
     },
     chipContainer: {
-        marginBottom: 20,
+        marginBottom: 12,
     },
     chip: {
         paddingHorizontal: 16,
         paddingVertical: 10,
         borderRadius: 20,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         marginRight: 10,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
     },
     chipActive: {
         backgroundColor: '#3B82F6',
@@ -246,10 +281,10 @@ const styles = StyleSheet.create({
     },
     chipText: {
         fontSize: 14,
-        color: '#6B7280',
+        color: colors.textSecondary,
     },
     chipTextActive: {
-        color: '#FFFFFF',
+        color: colors.surface,
     },
     dosageRow: {
         flexDirection: 'row',
@@ -260,20 +295,20 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     unitBadge: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         paddingHorizontal: 16,
         justifyContent: 'center',
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
     },
     unitText: {
         fontSize: 16,
-        color: '#1A1A1A',
+        color: colors.text,
     },
     frequencyRow: {
         flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         borderRadius: 12,
         padding: 4,
         marginBottom: 20,
@@ -290,28 +325,28 @@ const styles = StyleSheet.create({
     frequencyText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6B7280',
+        color: colors.textSecondary,
     },
     frequencyTextActive: {
-        color: '#FFFFFF',
+        color: colors.surface,
     },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#3B82F6', padding: 16, borderRadius: 12, alignItems: 'center' },
     buttonDisabled: { backgroundColor: '#D1D5DB' },
-    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+    buttonText: { color: colors.surface, fontSize: 16, fontWeight: '600' },
     rowBetween: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
     halfWidth: { width: '48%' },
-    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
-    dateText: { fontSize: 14, color: '#1A1A1A' },
-    switchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB' },
-    labelNoMargin: { fontSize: 14, fontWeight: '600', color: '#1A1A1A' },
+    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+    dateText: { fontSize: 14, color: colors.text },
+    switchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, backgroundColor: colors.surface, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+    labelNoMargin: { fontSize: 14, fontWeight: '600', color: colors.text },
     colorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 20 },
     colorCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-    colorCircleActive: { borderWidth: 2, borderColor: '#1A1A1A' },
-    chipSmall: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F3F4F6', marginRight: 6 },
+    colorCircleActive: { borderWidth: 2, borderColor: colors.text },
+    chipSmall: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: colors.border, marginRight: 6 },
     chipTextSmall: { fontSize: 12 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
-    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },
+    modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 16 },
     closeButton: { marginTop: 16, alignItems: 'center', padding: 12 },
     closeText: { color: '#3B82F6', fontSize: 16, fontWeight: '600' },
 });

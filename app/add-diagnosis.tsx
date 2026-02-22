@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, FlatList } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Diagnosis } from '../types';
@@ -9,8 +10,11 @@ import { Calendar } from 'react-native-calendars';
 import { format, parseISO } from 'date-fns';
 
 export default function AddDiagnosisScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
-    const { addDiagnosis, appointments } = useHealthStore();
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const { addDiagnosis, updateDiagnosis, diagnoses, appointments } = useHealthStore();
     const [condition, setCondition] = useState('');
     const [date, setDate] = useState(new Date());
     const [status, setStatus] = useState<Diagnosis['status']>('Active');
@@ -19,16 +23,35 @@ export default function AddDiagnosisScreen() {
     const [showLinkModal, setShowLinkModal] = useState(false);
     const [linkedAppointmentIds, setLinkedAppointmentIds] = useState<string[]>([]);
 
+    useEffect(() => {
+        if (id) {
+            const existing = diagnoses.find(d => d.id === id);
+            if (existing) {
+                setCondition(existing.condition);
+                setDate(new Date(existing.dateOfDiagnosis));
+                setStatus(existing.status);
+                setTreatment(existing.treatment || '');
+                setLinkedAppointmentIds(existing.linkedAppointmentIds || []);
+            }
+        }
+    }, [id, diagnoses]);
+
     const handleSubmit = () => {
         if (!condition.trim()) return;
-        addDiagnosis({
-            id: Date.now().toString(),
+        const data = {
+            id: id || Date.now().toString(),
             condition,
             dateOfDiagnosis: date.toISOString(),
             status,
             treatment,
             linkedAppointmentIds,
-        });
+        };
+
+        if (id) {
+            updateDiagnosis(data);
+        } else {
+            addDiagnosis(data);
+        }
         router.back();
     };
 
@@ -44,19 +67,19 @@ export default function AddDiagnosisScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Add Diagnosis</Text>
+                <Text style={styles.headerTitle}>{id ? 'Edit Diagnosis' : 'Add Diagnosis'}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <Text style={styles.label}>Condition</Text>
-                <TextInput style={styles.input} placeholder="e.g., Type 2 Diabetes" value={condition} onChangeText={setCondition} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Type 2 Diabetes" value={condition} onChangeText={setCondition} />
 
                 <Text style={styles.label}>Date of Diagnosis</Text>
                 <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
                     <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
-                    <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                    <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
 
                 <Text style={styles.label}>Status</Text>
@@ -69,7 +92,7 @@ export default function AddDiagnosisScreen() {
                 </View>
 
                 <Text style={styles.label}>Treatment Plan (Optional)</Text>
-                <TextInput style={[styles.input, styles.textArea]} placeholder="Medication, therapy, lifestyle changes..." value={treatment} onChangeText={setTreatment} multiline textAlignVertical="top" />
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder="Medication, therapy, lifestyle changes..." value={treatment} onChangeText={setTreatment} multiline textAlignVertical="top" />
 
                 <Text style={styles.label}>Link to Appointments (Optional)</Text>
                 <TouchableOpacity style={styles.linkButton} onPress={() => setShowLinkModal(true)}>
@@ -80,7 +103,7 @@ export default function AddDiagnosisScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !condition.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!condition.trim()}>
-                    <Text style={styles.buttonText}>Save Diagnosis</Text>
+                    <Text style={styles.buttonText}>{id ? 'Update Diagnosis' : 'Save Diagnosis'}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -95,7 +118,19 @@ export default function AddDiagnosisScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#EF4444' }
                             }}
-                            theme={{ todayTextColor: '#EF4444', arrowColor: '#EF4444', selectedDayBackgroundColor: '#EF4444' }}
+                            theme={{ calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                                selectedDayTextColor: colors.surface,
+                                todayTextColor: colors.primary || '#14B8A6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                dotColor: colors.primary || '#14B8A6',
+                                selectedDotColor: colors.surface,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
                             <Text style={styles.closeText}>Close</Text>
@@ -108,7 +143,7 @@ export default function AddDiagnosisScreen() {
                 <SafeAreaView style={styles.modalContainer}>
                     <View style={styles.modalHeader}>
                         <Text style={styles.modalTitle}>Link Appointments</Text>
-                        <TouchableOpacity onPress={() => setShowLinkModal(false)}><Ionicons name="close" size={24} color="#1A1A1A" /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => setShowLinkModal(false)}><Ionicons name="close" size={24} color={colors.text} /></TouchableOpacity>
                     </View>
                     <FlatList
                         data={appointments}
@@ -136,40 +171,40 @@ export default function AddDiagnosisScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
     backButton: { padding: 4 },
-    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#1A1A1A', marginLeft: 12 },
+    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
-    label: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 8 },
-    input: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },
+    label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#EF4444', padding: 16, borderRadius: 12, alignItems: 'center' },
     buttonDisabled: { backgroundColor: '#D1D5DB' },
-    buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
-    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },
-    dateText: { fontSize: 14, color: '#1A1A1A' },
+    buttonText: { color: colors.surface, fontSize: 16, fontWeight: '600' },
+    dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border, marginBottom: 20 },
+    dateText: { fontSize: 14, color: colors.text },
     statusRow: { flexDirection: 'row', marginBottom: 20 },
-    statusChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#F3F4F6', marginRight: 8 },
+    statusChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.border, marginRight: 8 },
     statusChipActive: { backgroundColor: '#EF4444' },
-    statusText: { fontSize: 14, color: '#6B7280' },
-    statusTextActive: { color: '#FFFFFF' },
+    statusText: { fontSize: 14, color: colors.textSecondary },
+    statusTextActive: { color: colors.surface },
     textArea: { minHeight: 100 },
     linkButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FEF2F2', borderRadius: 12, marginBottom: 20 },
     linkButtonText: { marginLeft: 8, color: '#EF4444', fontWeight: '600' },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
-    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16 },
+    modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 16 },
     closeButton: { marginTop: 16, alignItems: 'center', padding: 12 },
     closeText: { color: '#EF4444', fontSize: 16, fontWeight: '600' },
-    modalContainer: { flex: 1, backgroundColor: '#F8F9FA' },
-    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-    modalTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A' },
-    apptItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', marginBottom: 1, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+    modalContainer: { flex: 1, backgroundColor: colors.background },
+    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
+    modalTitle: { fontSize: 18, fontWeight: '600', color: colors.text },
+    apptItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: colors.surface, marginBottom: 1, borderBottomWidth: 1, borderBottomColor: colors.border },
     apptItemSelected: { backgroundColor: '#FEF2F2' },
-    apptTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
-    apptDate: { fontSize: 13, color: '#6B7280', marginTop: 4 },
+    apptTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
+    apptDate: { fontSize: 13, color: colors.textSecondary, marginTop: 4 },
     listContent: { paddingBottom: 20 },
-    emptyText: { textAlign: 'center', color: '#9CA3AF', fontStyle: 'italic', marginTop: 20 },
+    emptyText: { textAlign: 'center', color: colors.textSecondary, fontStyle: 'italic', marginTop: 20 },
 });

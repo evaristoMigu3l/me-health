@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +10,8 @@ import { format, parseISO, isSameDay } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
 
 export default function AppointmentLogScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const { appointments, removeAppointment } = useHealthStore();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -48,7 +51,7 @@ export default function AppointmentLogScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Appointments</Text>
                 <TouchableOpacity onPress={() => router.push('/add-appointment')}><Ionicons name="add" size={24} color="#14B8A6" /></TouchableOpacity>
             </View>
@@ -71,15 +74,15 @@ export default function AppointmentLogScreen() {
                             </View>
                             {a.doctorName ? <Text style={styles.doctorText}>with {a.doctorName}</Text> : null}
                             <View style={styles.detailRow}>
-                                <Ionicons name="location-outline" size={14} color="#6B7280" />
+                                <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
                                 <Text style={styles.detailText}>{a.location}</Text>
                             </View>
                             <View style={styles.badgeRow}>
                                 <View style={styles.badge}><Text style={styles.badgeText}>{a.type}</Text></View>
                                 {a.recurrence && a.recurrence !== 'None' && (
-                                    <View style={[styles.badge, { backgroundColor: '#F3F4F6' }]}>
-                                        <Ionicons name="repeat" size={12} color="#6B7280" style={{ marginRight: 4 }} />
-                                        <Text style={[styles.badgeText, { color: '#6B7280' }]}>{a.recurrence}</Text>
+                                    <View style={[styles.badge, { backgroundColor: colors.border }]}>
+                                        <Ionicons name="repeat" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
+                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>{a.recurrence}</Text>
                                     </View>
                                 )}
                             </View>
@@ -92,11 +95,19 @@ export default function AppointmentLogScreen() {
                             <Calendar
                                 onDayPress={(day: { dateString: string }) => setSelectedDate(day.dateString)}
                                 markedDates={markedDates}
-                                theme={{
-                                    todayTextColor: '#14B8A6',
-                                    arrowColor: '#14B8A6',
-                                    selectedDayBackgroundColor: '#14B8A6'
-                                }}
+                                theme={{ calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                                selectedDayTextColor: colors.surface,
+                                todayTextColor: colors.primary || '#14B8A6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                dotColor: colors.primary || '#14B8A6',
+                                selectedDotColor: colors.surface,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
                             />
                         </View>
                         <View style={styles.section}>
@@ -121,7 +132,7 @@ export default function AppointmentLogScreen() {
                                         <Text style={styles.miniTitle}>{a.reason}</Text>
                                         <Text style={styles.miniSubtitle}>{format(parseISO(a.dateTime), 'h:mm a')} • {a.location}</Text>
                                     </View>
-                                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                                    <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -153,7 +164,7 @@ export default function AppointmentLogScreen() {
                                                     <Ionicons name="pencil" size={24} color="#14B8A6" />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => setSelectedAppointment(null)}>
-                                                    <Ionicons name="close" size={24} color="#6B7280" />
+                                                    <Ionicons name="close" size={24} color={colors.textSecondary} />
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
@@ -214,41 +225,41 @@ export default function AppointmentLogScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
-    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border, justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: colors.text },
     content: { flex: 1 },
-    calendarContainer: { backgroundColor: '#FFFFFF', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    calendarContainer: { backgroundColor: colors.surface, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     section: { padding: 16 },
-    sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },
-    emptyText: { color: '#9CA3AF', fontStyle: 'italic', marginLeft: 4, textAlign: 'center', marginTop: 20 },
+    sectionTitle: { fontSize: 18, fontWeight: '600', color: colors.text, marginBottom: 12 },
+    emptyText: { color: colors.textSecondary, fontStyle: 'italic', marginLeft: 4, textAlign: 'center', marginTop: 20 },
     card: { flexDirection: 'row', marginBottom: 16 },
     timeColumn: { alignItems: 'center', marginRight: 16, width: 60 },
-    timeText: { fontSize: 14, fontWeight: '600', color: '#1A1A1A', marginBottom: 4 },
-    verticalLine: { flex: 1, width: 2, backgroundColor: '#E5E7EB', borderRadius: 1 },
-    cardContent: { flex: 1, backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    timeText: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 4 },
+    verticalLine: { flex: 1, width: 2, backgroundColor: colors.border, borderRadius: 1 },
+    cardContent: { flex: 1, backgroundColor: colors.surface, padding: 16, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-    cardTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A', marginBottom: 4 },
+    cardTitle: { fontSize: 16, fontWeight: '600', color: colors.text, marginBottom: 4 },
     doctorText: { fontSize: 14, color: '#4B5563', marginBottom: 4 },
     detailRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-    detailText: { fontSize: 13, color: '#6B7280', marginLeft: 4 },
+    detailText: { fontSize: 13, color: colors.textSecondary, marginLeft: 4 },
     badgeRow: { flexDirection: 'row', gap: 8 },
     badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: '#CCFBF1' },
     badgeText: { fontSize: 12, color: '#0F766E', fontWeight: '500' },
-    miniCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12, marginBottom: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
-    miniCardDate: { alignItems: 'center', paddingRight: 12, borderRightWidth: 1, borderRightColor: '#F3F4F6', minWidth: 50 },
-    miniDay: { fontSize: 18, fontWeight: 'bold', color: '#1A1A1A' },
-    miniMonth: { fontSize: 12, color: '#6B7280', textTransform: 'uppercase' },
-    miniTitle: { fontSize: 15, fontWeight: '600', color: '#1A1A1A' },
-    miniSubtitle: { fontSize: 13, color: '#6B7280', marginTop: 2 },
+    miniCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, marginBottom: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    miniCardDate: { alignItems: 'center', paddingRight: 12, borderRightWidth: 1, borderRightColor: colors.border, minWidth: 50 },
+    miniDay: { fontSize: 18, fontWeight: 'bold', color: colors.text },
+    miniMonth: { fontSize: 12, color: colors.textSecondary, textTransform: 'uppercase' },
+    miniTitle: { fontSize: 15, fontWeight: '600', color: colors.text },
+    miniSubtitle: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, width: '100%', padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 },
-    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#F3F4F6', paddingBottom: 12 },
-    modalTitle: { fontSize: 20, fontWeight: '700', color: '#1A1A1A', flex: 1 },
+    modalContent: { backgroundColor: colors.surface, borderRadius: 16, width: '100%', padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 },
+    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: 12 },
+    modalTitle: { fontSize: 20, fontWeight: '700', color: colors.text, flex: 1 },
     modalBody: { gap: 16 },
     modalRow: { flexDirection: 'row', alignItems: 'flex-start' },
     modalRowContent: { marginLeft: 12, flex: 1 },
-    modalLabel: { fontSize: 13, color: '#6B7280', marginBottom: 2 },
-    modalValue: { fontSize: 16, color: '#1A1A1A', fontWeight: '500' },
+    modalLabel: { fontSize: 13, color: colors.textSecondary, marginBottom: 2 },
+    modalValue: { fontSize: 16, color: colors.text, fontWeight: '500' },
 });

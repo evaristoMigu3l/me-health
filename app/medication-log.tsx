@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { useAppTheme } from '../hooks/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +12,8 @@ import { Calendar } from 'react-native-calendars';
 const medicationTypes = ['All', 'Antibiotic', 'Analgesic', 'Antidepressant', 'Supplement', 'Vitamin', 'Other'];
 
 export default function MedicationLogScreen() {
+    const { colors } = useAppTheme();
+    const styles = getStyles(colors);
     const router = useRouter();
     const { medications, removeMedication } = useHealthStore();
     const [selectedType, setSelectedType] = useState('All');
@@ -56,7 +59,7 @@ export default function MedicationLogScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color="#1A1A1A" /></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Medications</Text>
                 <TouchableOpacity onPress={() => router.push('/add-medication')}><Ionicons name="add" size={24} color="#3B82F6" /></TouchableOpacity>
             </View>
@@ -70,8 +73,8 @@ export default function MedicationLogScreen() {
                     ))}
                 </ScrollView>
                 <View style={styles.viewToggle}>
-                    <TouchableOpacity style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]} onPress={() => setViewMode('list')}><Ionicons name="list" size={20} color={viewMode === 'list' ? '#fff' : '#6B7280'} /></TouchableOpacity>
-                    <TouchableOpacity style={[styles.toggleBtn, viewMode === 'calendar' && styles.toggleBtnActive]} onPress={() => setViewMode('calendar')}><Ionicons name="calendar" size={20} color={viewMode === 'calendar' ? '#fff' : '#6B7280'} /></TouchableOpacity>
+                    <TouchableOpacity style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]} onPress={() => setViewMode('list')}><Ionicons name="list" size={20} color={viewMode === 'list' ? '#fff' : colors.textSecondary} /></TouchableOpacity>
+                    <TouchableOpacity style={[styles.toggleBtn, viewMode === 'calendar' && styles.toggleBtnActive]} onPress={() => setViewMode('calendar')}><Ionicons name="calendar" size={20} color={viewMode === 'calendar' ? '#fff' : colors.textSecondary} /></TouchableOpacity>
                 </View>
             </View>
 
@@ -80,7 +83,7 @@ export default function MedicationLogScreen() {
                     <View style={styles.chartContainer}>
                         <Text style={styles.sectionTitle}>Distribution</Text>
                         <View style={{ alignItems: 'center' }}>
-                            <PieChart
+                            <PieChart innerCircleColor={colors.surface}
                                 data={chartData}
                                 donut
                                 showText
@@ -89,7 +92,7 @@ export default function MedicationLogScreen() {
                                 innerRadius={50}
                                 textSize={12}
                                 showTextBackground={false}
-                                centerLabelComponent={() => <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{medications.length}</Text>}
+                                centerLabelComponent={() => <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.text }}>{medications.length}</Text>}
                             />
                         </View>
                         <View style={styles.legendContainer}>
@@ -105,7 +108,20 @@ export default function MedicationLogScreen() {
 
                 {viewMode === 'calendar' ? (
                     <View style={styles.calendarContainer}>
-                        <Calendar markedDates={markedDates} theme={{ todayTextColor: '#3B82F6', arrowColor: '#3B82F6' }} />
+                        <Calendar markedDates={markedDates} theme={{
+                            calendarBackground: colors.surface,
+                            textSectionTitleColor: colors.textSecondary,
+                            selectedDayBackgroundColor: colors.primary || '#14B8A6',
+                            selectedDayTextColor: colors.surface,
+                            todayTextColor: colors.primary || '#14B8A6',
+                            dayTextColor: colors.text,
+                            textDisabledColor: colors.border,
+                            dotColor: colors.primary || '#14B8A6',
+                            selectedDotColor: colors.surface,
+                            arrowColor: colors.text,
+                            monthTextColor: colors.text,
+                            indicatorColor: colors.text,
+                        }} />
                         <Text style={styles.calendarHint}>Dots indicate medication start dates</Text>
                     </View>
                 ) : (
@@ -119,9 +135,14 @@ export default function MedicationLogScreen() {
                                         <Text style={styles.cardSubtitle}>{m.preparation} • {m.dosageUnit}</Text>
                                         {m.targetCondition && <Text style={styles.cardDetail}>For: {m.targetCondition}</Text>}
                                     </View>
-                                    <TouchableOpacity onPress={() => removeMedication(m.id)}>
-                                        <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                                    </TouchableOpacity>
+                                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                                        <TouchableOpacity onPress={() => router.push({ pathname: '/add-medication', params: { id: m.id } })}>
+                                            <Ionicons name="create-outline" size={20} color="#3B82F6" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => removeMedication(m.id)}>
+                                            <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                                 <View style={styles.cardFooter}>
                                     <View style={styles.badge}><Text style={styles.badgeText}>{m.frequency}</Text></View>
@@ -137,36 +158,36 @@ export default function MedicationLogScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F9FA' },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6', justifyContent: 'space-between' },
-    headerTitle: { fontSize: 20, fontWeight: '600', color: '#1A1A1A' },
-    filterSection: { padding: 16, backgroundColor: '#FFFFFF', marginBottom: 8 },
+const getStyles = (colors: any) => StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border, justifyContent: 'space-between' },
+    headerTitle: { fontSize: 20, fontWeight: '600', color: colors.text },
+    filterSection: { padding: 16, backgroundColor: colors.surface, marginBottom: 8 },
     typeScroll: { marginBottom: 16 },
-    typeChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#F3F4F6', marginRight: 8 },
+    typeChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.border, marginRight: 8 },
     typeChipActive: { backgroundColor: '#3B82F6' },
-    typeText: { fontSize: 14, color: '#6B7280' },
-    typeTextActive: { color: '#FFFFFF' },
+    typeText: { fontSize: 14, color: colors.textSecondary },
+    typeTextActive: { color: colors.surface },
     viewToggle: { flexDirection: 'row', justifyContent: 'flex-end' },
-    toggleBtn: { padding: 8, borderRadius: 8, backgroundColor: '#F3F4F6', marginLeft: 8 },
+    toggleBtn: { padding: 8, borderRadius: 8, backgroundColor: colors.border, marginLeft: 8 },
     toggleBtnActive: { backgroundColor: '#3B82F6' },
     content: { flex: 1 },
-    chartContainer: { backgroundColor: '#FFFFFF', margin: 16, padding: 16, borderRadius: 12 },
-    sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1A1A1A', marginBottom: 12 },
+    chartContainer: { backgroundColor: colors.surface, margin: 16, padding: 16, borderRadius: 12 },
+    sectionTitle: { fontSize: 18, fontWeight: '600', color: colors.text, marginBottom: 12 },
     legendContainer: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 16, justifyContent: 'center' },
     legendItem: { flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 },
     legendDot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
-    legendText: { fontSize: 12, color: '#6B7280' },
+    legendText: { fontSize: 12, color: colors.textSecondary },
     listContainer: { padding: 16 },
-    card: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+    card: { backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
     cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-    cardTitle: { fontSize: 16, fontWeight: '600', color: '#1A1A1A' },
-    cardSubtitle: { fontSize: 14, color: '#6B7280', marginTop: 2 },
+    cardTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
+    cardSubtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 2 },
     cardDetail: { fontSize: 13, color: '#4B5563', marginTop: 4, fontStyle: 'italic' },
     cardFooter: { flexDirection: 'row', alignItems: 'center', marginTop: 12, gap: 8 },
     badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: '#EFF6FF' },
     badgeText: { fontSize: 12, color: '#3B82F6', fontWeight: '500' },
-    dateText: { marginLeft: 'auto', fontSize: 12, color: '#9CA3AF' },
-    calendarContainer: { padding: 16, backgroundColor: '#FFFFFF', margin: 16, borderRadius: 12 },
-    calendarHint: { textAlign: 'center', color: '#9CA3AF', fontSize: 12, marginTop: 8 },
+    dateText: { marginLeft: 'auto', fontSize: 12, color: colors.textSecondary },
+    calendarContainer: { padding: 16, backgroundColor: colors.surface, margin: 16, borderRadius: 12 },
+    calendarHint: { textAlign: 'center', color: colors.textSecondary, fontSize: 12, marginTop: 8 },
 });
