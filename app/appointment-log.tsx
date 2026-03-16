@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
@@ -10,12 +10,14 @@ import { format, parseISO, isSameDay } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
 
 export default function AppointmentLogScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
     const { appointments, removeAppointment } = useHealthStore();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+    
 
     // Marked Dates for Calendar
     const markedDates = useMemo(() => {
@@ -49,7 +51,7 @@ export default function AppointmentLogScreen() {
     }, [appointments]);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
                 <Text style={styles.headerTitle}>Appointments</Text>
@@ -62,10 +64,10 @@ export default function AppointmentLogScreen() {
                 renderItem={({ item: a }) => (
                     <View style={[styles.card, { marginHorizontal: 16 }]}>
                         <View style={styles.timeColumn}>
-                            <Text style={styles.timeText}>{format(parseISO(a.dateTime), 'h:mm a')}</Text>
+                            <Text style={styles.timeText}>{format(parseISO(a.dateTime), 'HH:mm')}</Text>
                             <View style={styles.verticalLine} />
                         </View>
-                        <TouchableOpacity style={styles.cardContent} onPress={() => setSelectedAppointment(a)} activeOpacity={0.7}>
+                        <TouchableOpacity style={styles.cardContent} onPress={() => router.push({ pathname: '/appointment-details', params: { id: a.id } })} activeOpacity={0.7}>
                             <View style={styles.cardHeader}>
                                 <Text style={styles.cardTitle}>{a.reason}</Text>
                                 <TouchableOpacity onPress={() => removeAppointment(a.id)}>
@@ -89,7 +91,7 @@ export default function AppointmentLogScreen() {
                                     <View style={[styles.badge, { backgroundColor: colors.border }]}>
                                         <Ionicons name="alarm-outline" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
                                         <Text style={[styles.badgeText, { color: colors.textSecondary }]}>
-                                            {isNaN(new Date(a.reminder).getTime()) ? a.reminder : format(new Date(a.reminder), 'MMM d, h:mm a')}
+                                            {isNaN(new Date(a.reminder).getTime()) ? a.reminder : format(new Date(a.reminder), 'MMM d, HH:mm')}
                                         </Text>
                                     </View>
                                 )}
@@ -132,14 +134,14 @@ export default function AppointmentLogScreen() {
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Upcoming</Text>
                             {upcomingAppointments.map(a => (
-                                <TouchableOpacity key={a.id} style={styles.miniCard} onPress={() => setSelectedDate(a.dateTime.split('T')[0])}>
+                                <TouchableOpacity key={a.id} style={styles.miniCard} onPress={() => router.push({ pathname: '/appointment-details', params: { id: a.id } })}>
                                     <View style={styles.miniCardDate}>
                                         <Text style={styles.miniDay}>{format(parseISO(a.dateTime), 'd')}</Text>
                                         <Text style={styles.miniMonth}>{format(parseISO(a.dateTime), 'MMM')}</Text>
                                     </View>
                                     <View style={{ flex: 1, marginLeft: 12 }}>
                                         <Text style={styles.miniTitle}>{a.reason}</Text>
-                                        <Text style={styles.miniSubtitle}>{format(parseISO(a.dateTime), 'h:mm a')} • {a.location}</Text>
+                                        <Text style={styles.miniSubtitle}>{format(parseISO(a.dateTime), 'HH:mm')} • {a.location}</Text>
                                     </View>
                                     <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                                 </TouchableOpacity>
@@ -149,90 +151,7 @@ export default function AppointmentLogScreen() {
                 }
                 contentContainerStyle={{ paddingBottom: 20 }}
             />
-            {/* Detail Modal */}
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={!!selectedAppointment}
-                onRequestClose={() => setSelectedAppointment(null)}
-            >
-                <TouchableWithoutFeedback onPress={() => setSelectedAppointment(null)}>
-                    <View style={styles.modalOverlay}>
-                        <TouchableWithoutFeedback>
-                            <View style={styles.modalContent}>
-                                {selectedAppointment && (
-                                    <>
-                                        <View style={styles.modalHeader}>
-                                            <Text style={styles.modalTitle}>{selectedAppointment.reason || 'Appointment'}</Text>
-                                            <View style={{ flexDirection: 'row', gap: 16 }}>
-                                                <TouchableOpacity onPress={() => {
-                                                    const id = selectedAppointment.id;
-                                                    setSelectedAppointment(null);
-                                                    router.push({ pathname: '/add-appointment', params: { id } });
-                                                }}>
-                                                    <Ionicons name="pencil" size={24} color="#14B8A6" />
-                                                </TouchableOpacity>
-                                                <TouchableOpacity onPress={() => setSelectedAppointment(null)}>
-                                                    <Ionicons name="close" size={24} color={colors.textSecondary} />
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-
-                                        <View style={styles.modalBody}>
-                                            <View style={styles.modalRow}>
-                                                <Ionicons name="time-outline" size={20} color="#14B8A6" />
-                                                <View style={styles.modalRowContent}>
-                                                    <Text style={styles.modalLabel}>Date & Time</Text>
-                                                    <Text style={styles.modalValue}>
-                                                        {format(parseISO(selectedAppointment.dateTime), 'PPPP')} at {format(parseISO(selectedAppointment.dateTime), 'h:mm a')}
-                                                    </Text>
-                                                </View>
-                                            </View>
-
-                                            <View style={styles.modalRow}>
-                                                <Ionicons name="person-outline" size={20} color="#14B8A6" />
-                                                <View style={styles.modalRowContent}>
-                                                    <Text style={styles.modalLabel}>Doctor</Text>
-                                                    <Text style={styles.modalValue}>{selectedAppointment.doctorName || 'Not specified'}</Text>
-                                                </View>
-                                            </View>
-
-                                            <View style={styles.modalRow}>
-                                                <Ionicons name="location-outline" size={20} color="#14B8A6" />
-                                                <View style={styles.modalRowContent}>
-                                                    <Text style={styles.modalLabel}>Location</Text>
-                                                    <Text style={styles.modalValue}>{selectedAppointment.location}</Text>
-                                                </View>
-                                            </View>
-
-                                            <View style={styles.modalRow}>
-                                                <Ionicons name="videocam-outline" size={20} color="#14B8A6" />
-                                                <View style={styles.modalRowContent}>
-                                                    <Text style={styles.modalLabel}>Type</Text>
-                                                    <Text style={styles.modalValue}>{selectedAppointment.type}</Text>
-                                                </View>
-                                            </View>
-
-                                            {selectedAppointment.reminder && selectedAppointment.reminder !== 'None' && selectedAppointment.reminder !== 'No Reminder' && (
-                                                <View style={styles.modalRow}>
-                                                    <Ionicons name="alarm-outline" size={20} color="#14B8A6" />
-                                                    <View style={styles.modalRowContent}>
-                                                        <Text style={styles.modalLabel}>Reminder</Text>
-                                                        <Text style={styles.modalValue}>
-                                                            {isNaN(new Date(selectedAppointment.reminder).getTime()) ? selectedAppointment.reminder : format(new Date(selectedAppointment.reminder), 'PP p')}
-                                                        </Text>
-                                                    </View>
-                                                </View>
-                                            )}
-                                        </View>
-                                    </>
-                                )}
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -264,13 +183,4 @@ const getStyles = (colors: any) => StyleSheet.create({
     miniMonth: { fontSize: 12, color: colors.textSecondary, textTransform: 'uppercase' },
     miniTitle: { fontSize: 15, fontWeight: '600', color: colors.text },
     miniSubtitle: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
-    modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    modalContent: { backgroundColor: colors.surface, borderRadius: 16, width: '100%', padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 },
-    modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: 12 },
-    modalTitle: { fontSize: 20, fontWeight: '700', color: colors.text, flex: 1 },
-    modalBody: { gap: 16 },
-    modalRow: { flexDirection: 'row', alignItems: 'flex-start' },
-    modalRowContent: { marginLeft: 12, flex: 1 },
-    modalLabel: { fontSize: 13, color: colors.textSecondary, marginBottom: 2 },
-    modalValue: { fontSize: 16, color: colors.text, fontWeight: '500' },
 });
