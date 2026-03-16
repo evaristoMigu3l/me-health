@@ -1,0 +1,23 @@
+# Internationalization (i18n) Implementation Plan
+
+- [x] Create translation dictionary (English and Portuguese).
+- [x] Create language state management (Zustand store).
+- [ ] Add language toggle setting in Settings screen.
+- [x] Translate Home tab ([index.tsx](file:///c:/Users/Evaristo/Documents/Codehub_react/me-health/app/index.tsx)).
+- [x] Translate Track tab ([track.tsx](file:///c:/Users/Evaristo/Documents/Codehub_react/me-health/app/%28tabs%29/track.tsx)).
+- [x] Translate Profile tab ([profile.tsx](file:///c:/Users/Evaristo/Documents/Codehub_react/me-health/app/%28tabs%29/profile.tsx)).
+- [x] Translate Layout files.
+- [ ] Translate Log Screens (Add/Edit, List, Details):
+    - [x] Mood
+    - [/] Nutrition
+    - [ ] Activity
+    - [ ] Appointment
+    - [ ] Diagnosis
+    - [ ] Investigation
+    - [ ] Measurement
+    - [ ] Medication
+    - [ ] Sleep
+    - [ ] Symptom
+- [ ] Translate Components (EditProfileModal, LockScreen, etc.).
+- [ ] Translate Export utility ([exportData.ts](file:///c:/Users/Evaristo/Documents/Codehub_react/me-health/utils/exportData.ts)).
+

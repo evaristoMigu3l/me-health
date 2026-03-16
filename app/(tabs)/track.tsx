@@ -1,32 +1,36 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useAppTheme } from '../../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-const categories = [
-    { title: 'Symptoms', icon: 'pulse', color: '#EF4444', route: '/symptoms-log' },
-    { title: 'Add Symptom', icon: 'add', color: '#EF4444', route: '/add-symptom' },
-    { title: 'Medications', icon: 'medkit', color: '#3B82F6', route: '/medication-log' },
-    { title: 'Measurements', icon: 'speedometer', color: '#10B981', route: '/measurement-log' },
-    { title: 'Nutrition', icon: 'restaurant', color: '#F59E0B', route: '/nutrition-log' },
-    { title: 'Activity', icon: 'walk', color: '#8B5CF6', route: '/add-activity' },
-    { title: 'Sleep', icon: 'moon', color: '#6366F1', route: '/sleep-log' },
-    { title: 'Mood', icon: 'happy', color: '#EC4899', route: '/mood-log' },
-    { title: 'Appointments', icon: 'calendar', color: '#14B8A6', route: '/appointment-log' },
-    { title: 'Diagnoses', icon: 'medical', color: '#EF4444', route: '/diagnosis-log' },
-    { title: 'Exams', icon: 'document-text', color: '#3B82F6', route: '/investigation-log' },
-];
+import { useTranslation } from '../../hooks/useTranslation';
 
 export default function TrackScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
+
+    const categories = [
+        { title: t('symptoms'), icon: 'pulse', color: '#EF4444', route: '/symptoms-log' },
+        { title: t('add_symptom'), icon: 'add', color: '#EF4444', route: '/add-symptom' },
+        { title: t('medications'), icon: 'medkit', color: '#3B82F6', route: '/medication-log' },
+        { title: t('measurements'), icon: 'speedometer', color: '#10B981', route: '/measurement-log' },
+        { title: t('nutrition'), icon: 'restaurant', color: '#F59E0B', route: '/nutrition-log' },
+        { title: t('activity'), icon: 'walk', color: '#8B5CF6', route: '/activity-log' },
+        { title: t('sleep'), icon: 'moon', color: '#6366F1', route: '/sleep-log' },
+        { title: t('mood'), icon: 'happy', color: '#EC4899', route: '/mood-log' },
+        { title: t('appointments'), icon: 'calendar', color: '#14B8A6', route: '/appointment-log' },
+        { title: t('diagnoses'), icon: 'medical', color: '#EF4444', route: '/diagnosis-log' },
+        { title: t('exams'), icon: 'document-text', color: '#3B82F6', route: '/investigation-log' },
+    ];
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.title}>What would you like to track?</Text>
+                <Text style={styles.title}>{t('what_to_track')}</Text>
 
                 <View style={styles.grid}>
                     {categories.map((cat, index) => (
@@ -44,7 +48,7 @@ export default function TrackScreen() {
                     ))}
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 

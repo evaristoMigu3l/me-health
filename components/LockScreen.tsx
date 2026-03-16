@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Vibration } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useAppTheme } from '../hooks/useAppTheme';
+import { useTranslation } from '../hooks/useTranslation';
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'];
 
@@ -18,7 +19,10 @@ interface LockScreenProps {
 }
 
 export default function LockScreen({ mode, onSuccess, onCancel }: LockScreenProps) {
+
     const { colors } = useAppTheme();
+    const insets = useSafeAreaInsets();
+    const { t } = useTranslation();
     const { verifyPin, savePin, biometricEnabled, authenticateWithBiometric } = useAuthStore();
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
@@ -28,14 +32,14 @@ export default function LockScreen({ mode, onSuccess, onCancel }: LockScreenProp
     const [createdPin, setCreatedPin] = useState('');
 
     const title =
-        mode === 'unlock' ? 'Enter your PIN' :
-            setupStep === 'create' ? 'Create a 6-digit PIN' :
-                'Confirm your PIN';
+        mode === 'unlock' ? t('enter_pin') :
+            setupStep === 'create' ? t('create_pin') :
+                t('confirm_pin');
 
     const subtitle =
         mode === 'unlock' ? '' :
-            setupStep === 'create' ? 'You will use this to unlock the app' :
-                'Enter the same PIN again';
+            setupStep === 'create' ? t('pin_usage_notice') :
+                t('enter_pin_again');
 
     useEffect(() => {
         if (mode === 'unlock' && biometricEnabled) {
@@ -70,7 +74,7 @@ export default function LockScreen({ mode, onSuccess, onCancel }: LockScreenProp
                 onSuccess();
             } else {
                 Vibration.vibrate(400);
-                setError('Incorrect PIN. Try again.');
+                setError(t('incorrect_pin'));
                 setPin('');
             }
 
@@ -89,12 +93,12 @@ export default function LockScreen({ mode, onSuccess, onCancel }: LockScreenProp
                         await savePin(p);
                         onSuccess();
                     } catch (err) {
-                        setError('Could not save PIN. Try again.');
+                        setError(t('error_save_pin'));
                         setPin('');
                     }
                 } else {
                     Vibration.vibrate(400);
-                    setError("PINs don't match. Start over.");
+                    setError(t('pins_dont_match'));
                     setPin('');
                     // Reset back to create step after a brief delay
                     setTimeout(() => {
@@ -108,7 +112,7 @@ export default function LockScreen({ mode, onSuccess, onCancel }: LockScreenProp
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.inner}>
                 {/* Back button for setup confirm step */}
                 {mode === 'setup' && setupStep === 'confirm' && (
@@ -173,17 +177,17 @@ export default function LockScreen({ mode, onSuccess, onCancel }: LockScreenProp
                 {mode === 'unlock' && biometricEnabled && (
                     <TouchableOpacity style={styles.biometric} onPress={handleBiometric}>
                         <Ionicons name="finger-print-outline" size={32} color={colors.primary} />
-                        <Text style={[styles.biometricText, { color: colors.textSecondary }]}>Use Biometric</Text>
+                        <Text style={[styles.biometricText, { color: colors.textSecondary }]}>{t('use_biometric')}</Text>
                     </TouchableOpacity>
                 )}
 
                 {onCancel && (
                     <TouchableOpacity style={styles.cancel} onPress={onCancel}>
-                        <Text style={{ color: colors.textSecondary, fontSize: 15 }}>Cancel</Text>
+                        <Text style={{ color: colors.textSecondary, fontSize: 15 }}>{t('cancel')}</Text>
                     </TouchableOpacity>
                 )}
             </View>
-        </SafeAreaView>
+        </View>
     );
 }
 

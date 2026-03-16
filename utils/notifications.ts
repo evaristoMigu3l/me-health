@@ -1,3 +1,10 @@
+// Suppress the Expo Go push token warning BEFORE importing expo-notifications
+const originalWarn = console.warn;
+console.warn = (...args) => {
+    if (args.length > 0 && typeof args[0] === 'string' && args[0].includes('warnOfExpoGoPushUsage')) return;
+    originalWarn(...args);
+};
+
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { Medication, Appointment } from '../types';

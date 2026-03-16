@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Modal, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Modal, ScrollView, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../hooks/useAppTheme';
+import { useTranslation } from '../hooks/useTranslation';
 
 // Fully controlled — NO internal state for form fields.
 // Parent sets all values before opening the modal, so first render is always correct.
@@ -23,6 +24,17 @@ interface EditProfileModalProps {
 export default function EditProfileModal({ visible, onClose, form, onChange, onSave }: EditProfileModalProps) {
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
+    const { t } = useTranslation();
+
+    const handleClose = () => {
+        Keyboard.dismiss();
+        setTimeout(() => onClose(), 100);
+    };
+
+    const handleSave = () => {
+        Keyboard.dismiss();
+        setTimeout(() => onSave(), 100);
+    };
 
     return (
         <Modal
@@ -33,22 +45,25 @@ export default function EditProfileModal({ visible, onClose, form, onChange, onS
             hardwareAccelerated
             onRequestClose={onClose}
         >
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-                <View style={styles.overlay}>
-                    <View style={[styles.sheet, { backgroundColor: colors.surface }]}>
-                        <View style={styles.header}>
-                            <Text style={[styles.title, { color: colors.text }]}>Edit Profile</Text>
-                            <TouchableOpacity onPress={onClose}>
-                                <Ionicons name="close" size={24} color={colors.text} />
-                            </TouchableOpacity>
-                        </View>
+            <KeyboardAvoidingView style={styles.overlay} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                <View style={[styles.sheet, { backgroundColor: colors.surface }]}>
+                    <View style={styles.header}>
+                        <Text style={[styles.title, { color: colors.text }]}>{t('edit_profile')}</Text>
+                        <TouchableOpacity onPress={handleClose}>
+                            <Ionicons name="close" size={24} color={colors.text} />
+                        </TouchableOpacity>
+                    </View>
 
-                        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                    <ScrollView 
+                        showsVerticalScrollIndicator={false} 
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={{ paddingBottom: 20 }}
+                    >
                             {([
-                                { label: 'Full Name *', field: 'name' as const, placeholder: 'Your name', keyboard: 'default' as const },
-                                { label: 'Email', field: 'email' as const, placeholder: 'your@email.com', keyboard: 'email-address' as const },
-                                { label: 'Date of Birth (YYYY-MM-DD)', field: 'dob' as const, placeholder: '1990-01-15', keyboard: 'default' as const },
-                                { label: 'Ethnicity', field: 'ethnicity' as const, placeholder: 'e.g. Mixed', keyboard: 'default' as const },
+                                { label: t('full_name') + ' *', field: 'name' as const, placeholder: t('your_name'), keyboard: 'default' as const },
+                                { label: t('email'), field: 'email' as const, placeholder: 'your@email.com', keyboard: 'email-address' as const },
+                                { label: t('date_of_birth') + ' (' + t('dob_format') + ')', field: 'dob' as const, placeholder: t('dob_placeholder'), keyboard: 'default' as const },
+                                { label: t('ethnicity'), field: 'ethnicity' as const, placeholder: t('eg_mixed'), keyboard: 'default' as const },
                             ]).map(f => (
                                 <View key={f.field} style={styles.field}>
                                     <Text style={[styles.label, { color: colors.textSecondary }]}>{f.label}</Text>
@@ -65,7 +80,7 @@ export default function EditProfileModal({ visible, onClose, form, onChange, onS
                             ))}
 
                             <View style={styles.field}>
-                                <Text style={[styles.label, { color: colors.textSecondary }]}>Gender</Text>
+                                <Text style={[styles.label, { color: colors.textSecondary }]}>{t('gender')}</Text>
                                 <View style={styles.genderRow}>
                                     {(['Male', 'Female', 'Other'] as const).map(g => (
                                         <TouchableOpacity
@@ -77,18 +92,17 @@ export default function EditProfileModal({ visible, onClose, form, onChange, onS
                                             ]}
                                             onPress={() => onChange('gender', g)}
                                         >
-                                            <Text style={{ color: form.gender === g ? '#fff' : colors.text, fontWeight: '500' }}>{g}</Text>
+                                            <Text style={{ color: form.gender === g ? '#fff' : colors.text, fontWeight: '500' }}>{t(g.toLowerCase() as any) || g}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
                             </View>
 
-                            <TouchableOpacity style={[styles.saveBtn, { backgroundColor: colors.primary }]} onPress={onSave}>
-                                <Text style={styles.saveBtnText}>Save Changes</Text>
+                            <TouchableOpacity style={[styles.saveBtn, { backgroundColor: colors.primary }]} onPress={handleSave}>
+                                <Text style={styles.saveBtnText}>{t('save_changes')}</Text>
                             </TouchableOpacity>
                             <View style={{ height: 16 }} />
                         </ScrollView>
-                    </View>
                 </View>
             </KeyboardAvoidingView>
         </Modal>

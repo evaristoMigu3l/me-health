@@ -2,17 +2,21 @@ import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
 import { Calendar } from 'react-native-calendars';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
+import { useTranslation } from '../hooks/useTranslation';
 
 const measurementTypes = ['Blood Pressure', 'Heart Rate', 'Weight', 'BMI', 'Blood Sugar', 'Temperature', 'Cholesterol', 'Other'];
 
 export default function AddMeasurementScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
     const { id } = useLocalSearchParams<{ id: string }>();
     const { addMeasurement, updateMeasurement, measurements } = useHealthStore();
     const [type, setType] = useState('Blood Pressure');
@@ -52,38 +56,38 @@ export default function AddMeasurementScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{id ? 'Edit Measurement' : 'Add Measurement'}</Text>
+                <Text style={styles.headerTitle}>{id ? t('edit_measurement') : t('add_measurement')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.label}>Type</Text>
+                <Text style={styles.label}>{t('type')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
-                    {measurementTypes.map((t) => (
+                    {measurementTypes.map((tItem) => (
                         <TouchableOpacity
-                            key={t}
-                            style={[styles.chip, type === t && styles.chipActive]}
+                            key={tItem}
+                            style={[styles.chip, type === tItem && styles.chipActive]}
                             onPress={() => {
-                                setType(t);
-                                if (t === 'Weight') setUnit('kg');
-                                else if (t === 'Blood Pressure') setUnit('mmHg');
-                                else if (t === 'Heart Rate') setUnit('bpm');
-                                else if (t === 'Temperature') setUnit('°C');
+                                setType(tItem);
+                                if (tItem === 'Weight') setUnit('kg');
+                                else if (tItem === 'Blood Pressure') setUnit('mmHg');
+                                else if (tItem === 'Heart Rate') setUnit('bpm');
+                                else if (tItem === 'Temperature') setUnit('°C');
                                 else setUnit('unit');
                             }}
                         >
-                            <Text style={[styles.chipText, type === t && styles.chipTextActive]}>{t}</Text>
+                            <Text style={[styles.chipText, type === tItem && styles.chipTextActive]}>{t(tItem.toLowerCase().replace(' ', '_') as any) || tItem}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
 
                 {type === 'Weight' && (
                     <View style={styles.unitContainer}>
-                        <Text style={styles.label}>Unit</Text>
+                        <Text style={styles.label}>{t('unit')}</Text>
                         <View style={styles.unitSelector}>
                             {['kg', 'g', 'lb'].map((u) => (
                                 <TouchableOpacity
@@ -98,16 +102,16 @@ export default function AddMeasurementScreen() {
                     </View>
                 )}
 
-                <Text style={styles.label}>Reading ({unit})</Text>
+                <Text style={styles.label}>{t('reading')} ({unit})</Text>
                 <TextInput placeholderTextColor={colors.textSecondary}
                     style={styles.input}
-                    placeholder="Enter value"
+                    placeholder={t('enter_value')}
                     value={reading}
                     onChangeText={setReading}
                     keyboardType="numeric"
                 />
 
-                <Text style={styles.label}>Date</Text>
+                <Text style={styles.label}>{t('date')}</Text>
                 <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
                     <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                     <Text style={styles.dateButtonText}>{date.toISOString().split('T')[0]}</Text>
@@ -116,10 +120,10 @@ export default function AddMeasurementScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !reading.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!reading.trim()}>
-                    <Text style={styles.buttonText}>{id ? 'Update Measurement' : 'Save Measurement'}</Text>
+                    <Text style={styles.buttonText}>{id ? t('update') : t('save')}</Text>
                 </TouchableOpacity>
             </View>
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar
@@ -130,7 +134,8 @@ export default function AddMeasurementScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#10B981' }
                             }}
-                            theme={{ calendarBackground: colors.surface,
+                            theme={{
+                                calendarBackground: colors.surface,
                                 textSectionTitleColor: colors.textSecondary,
                                 selectedDayBackgroundColor: colors.primary || '#14B8A6',
                                 selectedDayTextColor: colors.surface,
@@ -145,12 +150,12 @@ export default function AddMeasurementScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
-                            <Text style={styles.closeButtonText}>Close</Text>
+                            <Text style={styles.closeButtonText}>{t('close')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -162,7 +167,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
     label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
-    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20, color: colors.text },
     chipContainer: { marginBottom: 20 },
     chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: colors.surface, marginRight: 10, borderWidth: 1, borderColor: colors.border },
     chipActive: { backgroundColor: '#10B981', borderColor: '#10B981' },

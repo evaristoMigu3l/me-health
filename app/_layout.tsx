@@ -3,11 +3,14 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { useEffect, useState } from 'react';
-import { AppState, AppStateStatus, View, Modal } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { AppState, AppStateStatus, View, Modal, LogBox } from 'react-native';
 import { useAuthStore } from '../stores/useAuthStore';
 import LockScreen from '../components/LockScreen';
 import * as SplashScreen from 'expo-splash-screen';
+
+// Ignore specific warnings from expo-notifications in Expo Go
+LogBox.ignoreLogs(['warnOfExpoGoPushUsage', 'Calling getDevicePushTokenAsync']);
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -15,23 +18,33 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
     const { isDark, colors } = useAppTheme();
     const { hasPin, isLocked, setIsLocked } = useAuthStore();
-    const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
+    const appStateRef = useRef(AppState.currentState);
+    const backgroundTime = useRef<number | null>(null);
 
     // Lock on first launch if PIN exists
     useEffect(() => {
         if (hasPin) setIsLocked(true);
     }, []);
 
-    // Lock when app goes to background
+    // Lock when app stays in background for more than 60 seconds
     useEffect(() => {
         const sub = AppState.addEventListener('change', (nextState) => {
-            if (appState === 'active' && nextState.match(/inactive|background/) && hasPin) {
-                setIsLocked(true);
+            if (appStateRef.current === 'active' && nextState.match(/inactive|background/)) {
+                backgroundTime.current = Date.now();
+            } else if (appStateRef.current.match(/inactive|background/) && nextState === 'active') {
+                if (hasPin && backgroundTime.current) {
+                    const elapsed = Date.now() - backgroundTime.current;
+                    // 5-minute grace period prevents locking when quickly using file pickers/camera
+                    if (elapsed > 300000) {
+                        setIsLocked(true);
+                    }
+                }
+                backgroundTime.current = null;
             }
-            setAppState(nextState);
+            appStateRef.current = nextState;
         });
         return () => sub.remove();
-    }, [appState, hasPin]);
+    }, [hasPin, setIsLocked]);
 
     // Hide splash screen after successful mount
     useEffect(() => {
@@ -55,7 +68,7 @@ export default function RootLayout() {
         <ThemeProvider value={customTheme}>
             {/* App always stays mounted — no flicker on unlock */}
             <View style={{ flex: 1, backgroundColor: colors.background }}>
-                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
+                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' }, animation: 'none' }}>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 </Stack>
             </View>

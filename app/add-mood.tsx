@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { MoodLog } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format } from 'date-fns';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function AddMoodScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
+    const { t } = useTranslation();
 
     const moods: { label: MoodLog['feeling']; emoji: string; color: string }[] = [
         { label: 'Happy', emoji: '😊', color: '#10B981' },
@@ -82,25 +86,25 @@ export default function AddMoodScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{id ? 'Edit Mood' : 'How are you feeling?'}</Text>
+                <Text style={styles.headerTitle}>{id ? t('edit_mood') || 'Edit Mood' : t('how_feeling') || 'How are you feeling?'}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.rowBetween}>
                     <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Date</Text>
+                        <Text style={styles.label}>{t('date') || 'Date'}</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
                             <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
                             <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Time</Text>
+                        <Text style={styles.label}>{t('time') || 'Time'}</Text>
                         <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
                     </View>
                 </View>
@@ -113,32 +117,32 @@ export default function AddMoodScreen() {
                             onPress={() => handleSelectPredefined(m.label)}
                         >
                             <Text style={styles.emoji}>{m.emoji}</Text>
-                            <Text style={[styles.moodLabel, selectedMood === m.label && { color: m.color }]}>{m.label}</Text>
+                            <Text style={[styles.moodLabel, selectedMood === m.label && { color: m.color }]}>{t(m.label.toLowerCase() as any) || m.label}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <Text style={styles.label}>Or add a custom feeling</Text>
+                <Text style={styles.label}>{t('custom_feeling') || 'Or add a custom feeling'}</Text>
                 <View style={styles.rowBetween}>
                     <View style={[styles.halfWidth, { width: '30%' }]}>
-                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="Emoji" value={customEmoji} onChangeText={(text) => { setCustomEmoji(text); setSelectedMood(null); }} maxLength={2} />
+                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('emoji') || 'Emoji'} value={customEmoji} onChangeText={(text) => { setCustomEmoji(text); setSelectedMood(null); }} maxLength={2} />
                     </View>
                     <View style={[styles.halfWidth, { width: '68%' }]}>
-                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Excited" value={customMood} onChangeText={(text) => { setCustomMood(text); setSelectedMood(null); }} />
+                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('eg_excited') || 'e.g., Excited'} value={customMood} onChangeText={(text) => { setCustomMood(text); setSelectedMood(null); }} />
                     </View>
                 </View>
 
-                <Text style={styles.label}>Notes (optional)</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder="What's on your mind?" value={notes} onChangeText={setNotes} multiline textAlignVertical="top" />
+                <Text style={styles.label}>{t('notes_optional') || 'Notes (optional)'}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder={t('whats_on_mind') || "What's on your mind?"} value={notes} onChangeText={setNotes} multiline textAlignVertical="top" />
             </ScrollView>
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !(selectedMood || customMood.trim()) && styles.buttonDisabled]} onPress={handleSubmit} disabled={!(selectedMood || customMood.trim())}>
-                    <Text style={styles.buttonText}>{id ? 'Update Mood' : 'Save Mood'}</Text>
+                    <Text style={styles.buttonText}>{id ? t('update_mood') || 'Update Mood' : t('save_mood') || 'Save Mood'}</Text>
                 </TouchableOpacity>
             </View>
 
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar
@@ -149,7 +153,8 @@ export default function AddMoodScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#EC4899' }
                             }}
-                            theme={{ calendarBackground: colors.surface,
+                            theme={{
+                                calendarBackground: colors.surface,
                                 textSectionTitleColor: colors.textSecondary,
                                 selectedDayBackgroundColor: colors.primary || '#14B8A6',
                                 selectedDayTextColor: colors.surface,
@@ -164,12 +169,12 @@ export default function AddMoodScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
-                            <Text style={styles.closeText}>Close</Text>
+                            <Text style={styles.closeText}>{t('close') || 'Close'}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -185,7 +190,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     emoji: { fontSize: 40, marginBottom: 8 },
     moodLabel: { fontSize: 14, fontWeight: '600', color: colors.text },
     label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
-    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20, color: colors.text },
     textArea: { minHeight: 100 },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#EC4899', padding: 16, borderRadius: 12, alignItems: 'center' },

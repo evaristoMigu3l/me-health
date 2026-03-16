@@ -3,7 +3,7 @@ const path = require('path');
 
 function processFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Skip if already patched or no StyleSheet
     if (content.includes('getStyles =') || !content.includes('StyleSheet.create')) return;
 
@@ -22,7 +22,7 @@ function processFile(filePath) {
         if (importMatch) {
             content = content.replace(importMatch[0], `${importMatch[0]}\nimport { useAppTheme } from '${importPath}';`);
         } else {
-             content = `import { useAppTheme } from '${importPath}';\n` + content;
+            content = `import { useAppTheme } from '${importPath}';\n` + content;
         }
     }
 
@@ -62,5 +62,5 @@ function walkDir(dir) {
     }
 }
 
-walkDir('/home/evaristo/Documents/me&health/app');
+walkDir(path.join(__dirname, 'app'));
 

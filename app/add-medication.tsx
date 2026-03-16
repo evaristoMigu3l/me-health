@@ -1,31 +1,37 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Switch, Modal } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Medication } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format } from 'date-fns';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
 
 const preparations: Medication['preparation'][] = ['Tablet', 'Capsule', 'Liquid', 'Injection', 'Inhaler', 'Patch', 'Topical', 'Drop', 'Gummies', 'Implant'];
 const medicationTypes = ['Antibiotic', 'Analgesic', 'Antidepressant', 'Supplement', 'Vitamin', 'Other'];
 const locations = ['Home', 'Work', 'School', 'Travel'];
 
 export default function AddMedicationScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const tagColors = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', colors.textSecondary];
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
     const { id } = useLocalSearchParams<{ id: string }>();
     const { addMedication, updateMedication, medications } = useHealthStore();
+    const { language } = useThemeStore();
 
     // Form State
     const [name, setName] = useState('');
     const [preparation, setPreparation] = useState<Medication['preparation']>('Tablet');
-    const [dosage, setDosage] = useState('');
     const [timesPerDay, setTimesPerDay] = useState(1);
+    const [schedule, setSchedule] = useState([{ time: '08:00', dosage: '' }]);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
     const [selfPrescribed, setSelfPrescribed] = useState(false);
@@ -33,7 +39,6 @@ export default function AddMedicationScreen() {
     const [location, setLocation] = useState('Home');
     const [subType, setSubType] = useState('Other');
     const [color, setColor] = useState(tagColors[4]); // Default blue
-    const [time, setTime] = useState('08:00');
     const [remindersEnabled, setRemindersEnabled] = useState(true);
 
     // Modals
@@ -47,8 +52,7 @@ export default function AddMedicationScreen() {
                 setName(existing.name);
                 setPreparation(existing.preparation);
                 if (existing.schedule && existing.schedule.length > 0) {
-                    setDosage(existing.schedule[0].dosage.toString());
-                    setTime(existing.schedule[0].time);
+                    setSchedule(existing.schedule.map(s => ({ time: s.time, dosage: s.dosage.toString() })));
                 }
                 setTimesPerDay(existing.timesPerDay);
                 setStartDate(new Date(existing.startDate));
@@ -65,6 +69,16 @@ export default function AddMedicationScreen() {
         }
     }, [id, medications]);
 
+    const handleTimesPerDayChange = (num: number) => {
+        setTimesPerDay(num);
+        const newSchedule = [...schedule];
+        while (newSchedule.length < num) {
+            newSchedule.push({ time: '08:00', dosage: newSchedule[0]?.dosage || '' });
+        }
+        setSchedule(newSchedule.slice(0, num));
+    };
+
+
     const handleSubmit = () => {
         if (!name.trim()) return;
         const data: Medication = {
@@ -76,7 +90,7 @@ export default function AddMedicationScreen() {
             endDate: endDate ? endDate.toISOString() : undefined,
             frequency: 'Daily',
             timesPerDay,
-            schedule: [{ time, dosage: parseFloat(dosage) || 1 }],
+            schedule: schedule.map(s => ({ time: s.time, dosage: parseFloat(s.dosage) || 1 })),
             status: 'Current',
             selfPrescribed,
             targetCondition,
@@ -95,92 +109,114 @@ export default function AddMedicationScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{id ? 'Edit Medication' : 'Add Medication'}</Text>
+                <Text style={styles.headerTitle}>{id ? t('edit_medication') : t('add_medication')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <View style={[styles.rowBetween, { alignItems: 'center', marginBottom: 20 }]}>
-                    <Text style={[styles.label, { marginBottom: 0 }]}>Enable Reminders</Text>
+                    <Text style={[styles.label, { marginBottom: 0 }]}>{t('enable_reminders')}</Text>
                     <Switch value={remindersEnabled} onValueChange={setRemindersEnabled} trackColor={{ false: colors.border, true: '#3B82F6' }} />
                 </View>
 
-                <Text style={styles.label}>Medication Name *</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Aspirin" value={name} onChangeText={setName} />
+                <Text style={styles.label}>{t('medication_name')} *</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('medication_name_placeholder')} value={name} onChangeText={setName} />
 
-                <Text style={styles.label}>Preparation</Text>
+                <Text style={styles.label}>{t('preparation')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
                     {preparations.map((prep) => (
                         <TouchableOpacity key={prep} style={[styles.chip, preparation === prep && styles.chipActive]} onPress={() => setPreparation(prep)}>
-                            <Text style={[styles.chipText, preparation === prep && styles.chipTextActive]}>{prep}</Text>
+                            <Text style={[styles.chipText, preparation === prep && styles.chipTextActive]}>{t(prep.toLowerCase() as any) || prep}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
-                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom preparation" value={preparation} onChangeText={setPreparation} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder={t('preparation_placeholder')} value={preparation} onChangeText={setPreparation as any} />
 
-                <Text style={styles.label}>Type / Category</Text>
+                <Text style={styles.label}>{t('type_category')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
-                    {medicationTypes.map((t) => (
-                        <TouchableOpacity key={t} style={[styles.chip, subType === t && styles.chipActive]} onPress={() => setSubType(t)}>
-                            <Text style={[styles.chipText, subType === t && styles.chipTextActive]}>{t}</Text>
+                    {medicationTypes.map((tItem) => (
+                        <TouchableOpacity key={tItem} style={[styles.chip, subType === tItem && styles.chipActive]} onPress={() => setSubType(tItem)}>
+                            <Text style={[styles.chipText, subType === tItem && styles.chipTextActive]}>{t(tItem.toLowerCase() as any) || tItem}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
-                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom category" value={subType} onChangeText={setSubType} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder={t('type_placeholder')} value={subType} onChangeText={setSubType} />
 
-                <Text style={styles.label}>Dosage</Text>
-                <View style={styles.dosageRow}>
-                    <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.dosageInput]} placeholder="Amount" value={dosage} onChangeText={setDosage} keyboardType="numeric" />
-                    <View style={styles.unitBadge}><Text style={styles.unitText}>mg</Text></View>
+                <Text style={styles.label}>{t('times_per_day')}</Text>
+                <View style={styles.frequencyRow}>
+                    {[1, 2, 3, 4].map((num) => (
+                        <TouchableOpacity key={num} style={[styles.frequencyButton, timesPerDay === num && styles.frequencyButtonActive]} onPress={() => handleTimesPerDayChange(num)}>
+                            <Text style={[styles.frequencyText, timesPerDay === num && styles.frequencyTextActive]}>{num}x</Text>
+                        </TouchableOpacity>
+                    ))}
                 </View>
+
+                {schedule.map((item, index) => (
+                    <View key={index} style={{ marginBottom: 0 }}>
+                        <Text style={[styles.label, { color: '#3B82F6' }]}>{t('dose')} {index + 1}</Text>
+                        <View style={styles.rowBetween}>
+                            <View style={styles.halfWidth}>
+                                <Text style={styles.label}>{t('dosage')}</Text>
+                                <View style={styles.dosageRow}>
+                                    <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.dosageInput]} placeholder={t('amount_placeholder')} value={item.dosage} onChangeText={(text) => {
+                                        const newSchedule = [...schedule];
+                                        newSchedule[index].dosage = text;
+                                        setSchedule(newSchedule);
+                                    }} keyboardType="numeric" />
+                                    <View style={styles.unitBadge}><Text style={styles.unitText}>mg</Text></View>
+                                </View>
+                            </View>
+                            <View style={styles.halfWidth}>
+                                <Text style={styles.label}>{t('time')}</Text>
+                                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={item.time} onChangeText={(text) => {
+                                    const newSchedule = [...schedule];
+                                    newSchedule[index].time = text;
+                                    setSchedule(newSchedule);
+                                }} />
+                            </View>
+                        </View>
+                    </View>
+                ))}
 
                 <View style={styles.rowBetween}>
                     <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Start Date</Text>
+                        <Text style={styles.label}>{t('start_date')}</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowStartCalendar(true)}>
                             <Text style={styles.dateText}>{format(startDate, 'MMM d, yyyy')}</Text>
                             <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.halfWidth}>
-                        <Text style={styles.label}>End Date (Optional)</Text>
+                        <Text style={styles.label}>{t('end_date')}</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowEndCalendar(true)}>
-                            <Text style={styles.dateText}>{endDate ? format(endDate, 'MMM d, yyyy') : 'Set Date'}</Text>
+                            <Text style={styles.dateText}>{endDate ? format(endDate, 'MMM d, yyyy') : t('set_date')}</Text>
                             <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                <Text style={styles.label}>Target Issue / Condition</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Headache, Infection" value={targetCondition} onChangeText={setTargetCondition} />
+                <Text style={styles.label}>{t('target_condition')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { flex: 1 }]} placeholder={t('med_condition_placeholder')} value={targetCondition} onChangeText={setTargetCondition} />
 
-                <View style={styles.rowBetween}>
-                    <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Location</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {locations.map((loc) => (
-                                <TouchableOpacity key={loc} style={[styles.chipSmall, location === loc && styles.chipActive]} onPress={() => setLocation(loc)}>
-                                    <Text style={[styles.chipTextSmall, location === loc && styles.chipTextActive]}>{loc}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </View>
-                    <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Time</Text>
-                        <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
-                    </View>
-                </View>
+                <Text style={styles.label}>{t('location')}</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
+                    {locations.map((loc) => (
+                        <TouchableOpacity key={loc} style={[styles.chipSmall, location === loc && styles.chipActive]} onPress={() => setLocation(loc)}>
+                            <Text style={[styles.chipTextSmall, location === loc && styles.chipTextActive]}>{t(loc.toLowerCase().replace(' ', '_') as any) || loc}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
 
                 <View style={styles.switchRow}>
-                    <Text style={styles.labelNoMargin}>Self Prescribed</Text>
+                    <Text style={styles.labelNoMargin}>{t('self_prescribed')}</Text>
                     <Switch value={selfPrescribed} onValueChange={setSelfPrescribed} trackColor={{ false: "#E5E7EB", true: "#3B82F6" }} />
                 </View>
 
-                <Text style={styles.label}>Color Tag</Text>
+                <Text style={styles.label}>{t('color_tag')}</Text>
                 <View style={styles.colorGrid}>
                     {tagColors.map((c) => (
                         <TouchableOpacity key={c} style={[styles.colorCircle, { backgroundColor: c }, color === c && styles.colorCircleActive]} onPress={() => setColor(c)}>
@@ -189,42 +225,61 @@ export default function AddMedicationScreen() {
                     ))}
                 </View>
 
-                <Text style={styles.label}>Times per day</Text>
-                <View style={styles.frequencyRow}>
-                    {[1, 2, 3, 4].map((num) => (
-                        <TouchableOpacity key={num} style={[styles.frequencyButton, timesPerDay === num && styles.frequencyButtonActive]} onPress={() => setTimesPerDay(num)}>
-                            <Text style={[styles.frequencyText, timesPerDay === num && styles.frequencyTextActive]}>{num}x</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+
             </ScrollView>
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !name.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!name.trim()}>
-                    <Text style={styles.buttonText}>{id ? 'Update Medication' : 'Add Medication'}</Text>
+                    <Text style={styles.buttonText}>{id ? t('update') : t('save')}</Text>
                 </TouchableOpacity>
             </View>
 
             {/* Date Modals */}
-            <Modal visible={showStartCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showStartCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar onDayPress={(day: any) => { setStartDate(new Date(day.dateString)); setShowStartCalendar(false); }}
-                            markedDates={{ [startDate.toISOString().split('T')[0]]: { selected: true, selectedColor: '#3B82F6' } }} />
-                        <TouchableOpacity style={styles.closeButton} onPress={() => setShowStartCalendar(false)}><Text style={styles.closeText}>Close</Text></TouchableOpacity>
+                            markedDates={{ [startDate.toISOString().split('T')[0]]: { selected: true, selectedColor: '#3B82F6' } }}
+                            theme={{
+                                calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: '#3B82F6',
+                                selectedDayTextColor: '#ffffff',
+                                todayTextColor: '#3B82F6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
+                        />
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setShowStartCalendar(false)}><Text style={styles.closeText}>{t('close')}</Text></TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-            <Modal visible={showEndCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showEndCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar onDayPress={(day: any) => { setEndDate(new Date(day.dateString)); setShowEndCalendar(false); }}
-                            markedDates={endDate ? { [endDate.toISOString().split('T')[0]]: { selected: true, selectedColor: '#3B82F6' } } : {}} />
-                        <TouchableOpacity style={styles.closeButton} onPress={() => setShowEndCalendar(false)}><Text style={styles.closeText}>Close</Text></TouchableOpacity>
+                            markedDates={endDate ? { [endDate.toISOString().split('T')[0]]: { selected: true, selectedColor: '#3B82F6' } } : {}}
+                            theme={{
+                                calendarBackground: colors.surface,
+                                textSectionTitleColor: colors.textSecondary,
+                                selectedDayBackgroundColor: '#3B82F6',
+                                selectedDayTextColor: '#ffffff',
+                                todayTextColor: '#3B82F6',
+                                dayTextColor: colors.text,
+                                textDisabledColor: colors.border,
+                                arrowColor: colors.text,
+                                monthTextColor: colors.text,
+                                indicatorColor: colors.text,
+                            }}
+                        />
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setShowEndCalendar(false)}><Text style={styles.closeText}>{t('close')}</Text></TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 

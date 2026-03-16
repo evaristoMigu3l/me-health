@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Switch, Alert, Modal } from 'react-native';
 import { useAppTheme } from '../../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUserStore } from '../../stores/useUserStore';
 import { useAuthStore } from '../../stores/useAuthStore';
@@ -10,14 +10,18 @@ import * as ImagePicker from 'expo-image-picker';
 import * as LocalAuthentication from 'expo-local-authentication';
 import LockScreen from '../../components/LockScreen';
 import EditProfileModal, { EditProfileForm } from '../../components/EditProfileModal';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // PIN step: null = not setting up, 'setup' = modal is open
 type PinStep = null | 'setup';
 
 export default function ProfileScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
     const { profile, setProfile, clearProfile } = useUserStore();
     const { hasPin, biometricEnabled, setBiometricEnabled, clearPin, setIsLocked } = useAuthStore();
 
@@ -33,12 +37,16 @@ export default function ProfileScreen() {
         LocalAuthentication.hasHardwareAsync().then(setHasBiometric);
     }, []);
 
+    function closeEditModal() {
+        setEditProfileVisible(false);
+    }
+
     // Removed early conditional return — PIN setup now uses a Modal overlay (no flicker)
 
     async function pickImage() {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-            Alert.alert('Permission Required', 'Allow access to your photo library to set a profile picture.');
+            Alert.alert(t('permission_required'), t('allow_photo_library'));
             return;
         }
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -65,21 +73,21 @@ export default function ProfileScreen() {
     }
 
     function handleLogout() {
-        Alert.alert('Log Out', 'Are you sure you want to log out?', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Log Out', style: 'destructive', onPress: () => { clearProfile(); router.replace('/onboarding'); } }
+        Alert.alert(t('log_out_confirm'), '', [
+            { text: t('cancel'), style: 'cancel' },
+            { text: t('log_out'), style: 'destructive', onPress: () => { clearProfile(); router.replace('/onboarding'); } }
         ]);
     }
 
     function handleRemovePin() {
-        Alert.alert('Remove PIN', 'Are you sure you want to remove your PIN lock?', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Remove', style: 'destructive', onPress: () => clearPin() }
+        Alert.alert(t('remove_pin'), t('remove_pin_confirm'), [
+            { text: t('cancel'), style: 'cancel' },
+            { text: t('remove'), style: 'destructive', onPress: () => clearPin() }
         ]);
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <ScrollView>
                 {/* Profile Header */}
                 <View style={styles.profileHeader}>
@@ -95,23 +103,28 @@ export default function ProfileScreen() {
                             <Ionicons name="camera" size={14} color="#fff" />
                         </View>
                     </TouchableOpacity>
-                    <Text style={styles.name}>{profile?.name || 'Guest User'}</Text>
-                    <Text style={styles.email}>{profile?.email || 'No email set'}</Text>
+                    <Text style={styles.name}>{profile?.name || t('guest')}</Text>
+                    <Text style={styles.email}>{profile?.email || ''}</Text>
 
                     <TouchableOpacity style={styles.editProfileBtn} onPress={openEditModal}>
                         <Ionicons name="pencil-outline" size={14} color={colors.primary} />
-                        <Text style={[styles.editProfileText, { color: colors.primary }]}>Edit Profile</Text>
+                        <Text style={[styles.editProfileText, { color: colors.primary }]}>{t('edit_profile')}</Text>
                     </TouchableOpacity>
 
-                    <View style={styles.statRow}>
+                    <View style={styles.infoGrid}>
                         {[
-                            { label: 'DOB', value: profile?.dob ? new Date(profile.dob).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—' },
-                            { label: 'Gender', value: profile?.gender || '—' },
-                            { label: 'Ethnicity', value: profile?.ethnicity || '—' },
+                            { label: t('dob'), value: profile?.dob ? new Date(profile.dob).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—', icon: 'calendar-outline' },
+                            { label: t('gender'), value: profile?.gender ? t(profile.gender.toLowerCase() as any) || profile.gender : '—', icon: 'person-outline' },
+                            { label: t('ethnicity'), value: profile?.ethnicity || '—', icon: 'people-outline' },
                         ].map(s => (
-                            <View key={s.label} style={styles.stat}>
-                                <Text style={styles.statLabel}>{s.label}</Text>
-                                <Text style={styles.statValue}>{s.value}</Text>
+                            <View key={s.label} style={styles.infoCard}>
+                                <View style={styles.infoIconBox}>
+                                    <Ionicons name={s.icon as any} size={18} color={colors.primary} />
+                                </View>
+                                <View style={styles.infoContent}>
+                                    <Text style={styles.infoLabel}>{s.label}</Text>
+                                    <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">{s.value}</Text>
+                                </View>
                             </View>
                         ))}
                     </View>
@@ -119,21 +132,21 @@ export default function ProfileScreen() {
 
                 {/* Security Section */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>SECURITY</Text>
+                    <Text style={styles.sectionTitle}>{t('security')}</Text>
 
                     <View style={[styles.menuItem, { borderBottomColor: colors.border }]}>
                         <View style={[styles.iconBox, { backgroundColor: '#EFF6FF' }]}>
                             <Ionicons name="lock-closed-outline" size={20} color="#3B82F6" />
                         </View>
-                        <Text style={styles.menuText}>App PIN Lock</Text>
-                        <Text style={[styles.menuSub, hasPin ? { color: '#10B981' } : {}]}>{hasPin ? 'Enabled' : 'Off'}</Text>
+                        <Text style={styles.menuText}>{t('app_pin_lock')}</Text>
+                        <Text style={[styles.menuSub, hasPin ? { color: '#10B981' } : {}]}>{hasPin ? t('enabled') : t('off')}</Text>
                         {hasPin ? (
                             <TouchableOpacity onPress={handleRemovePin} style={styles.actionBtn}>
-                                <Text style={{ color: '#EF4444', fontSize: 13, fontWeight: '600' }}>Remove</Text>
+                                <Text style={{ color: '#EF4444', fontSize: 13, fontWeight: '600' }}>{t('remove')}</Text>
                             </TouchableOpacity>
                         ) : (
                             <TouchableOpacity onPress={() => setPinStep('setup')} style={styles.actionBtn}>
-                                <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '600' }}>Set Up</Text>
+                                <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '600' }}>{t('set_up')}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -143,7 +156,7 @@ export default function ProfileScreen() {
                             <View style={[styles.iconBox, { backgroundColor: '#F0FDF4' }]}>
                                 <Ionicons name="finger-print-outline" size={20} color="#10B981" />
                             </View>
-                            <Text style={styles.menuText}>Biometric Unlock</Text>
+                            <Text style={styles.menuText}>{t('biometric_unlock')}</Text>
                             <Switch value={biometricEnabled} onValueChange={setBiometricEnabled} trackColor={{ false: colors.border, true: colors.primary }} />
                         </View>
                     )}
@@ -153,7 +166,7 @@ export default function ProfileScreen() {
                             <View style={[styles.iconBox, { backgroundColor: '#FFF7ED' }]}>
                                 <Ionicons name="lock-open-outline" size={20} color="#F97316" />
                             </View>
-                            <Text style={styles.menuText}>Lock App Now</Text>
+                            <Text style={styles.menuText}>{t('lock_app_now')}</Text>
                             <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
                         </TouchableOpacity>
                     )}
@@ -161,19 +174,19 @@ export default function ProfileScreen() {
 
                 {/* Quick Links */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>GENERAL</Text>
+                    <Text style={styles.sectionTitle}>{t('general')}</Text>
 
                     <TouchableOpacity style={[styles.menuItem, { borderBottomColor: colors.border }]} onPress={() => router.push('/settings')}>
                         <View style={[styles.iconBox, { backgroundColor: '#F3F4F6' }]}>
-                            <Ionicons name="settings-outline" size={20} color="#6B7280" />
+                            <Ionicons name="settings-outline" size={20} color={colors.textSecondary} />
                         </View>
-                        <Text style={styles.menuText}>Settings</Text>
+                        <Text style={styles.menuText}>{t('settings')}</Text>
                         <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                         <Ionicons name="log-out-outline" size={22} color="#EF4444" />
-                        <Text style={styles.logoutText}>Log Out</Text>
+                        <Text style={styles.logoutText}>{t('log_out')}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -182,13 +195,13 @@ export default function ProfileScreen() {
 
             <EditProfileModal
                 visible={editProfileVisible}
-                onClose={() => setEditProfileVisible(false)}
+                onClose={closeEditModal}
                 form={editForm}
                 onChange={(field, value) => setEditForm(f => ({ ...f, [field]: value }))}
                 onSave={() => {
                     if (!editForm.name.trim()) { Alert.alert('Name required', 'Please enter your name.'); return; }
                     setProfile({ ...profile!, ...editForm, name: editForm.name.trim(), email: editForm.email.trim() });
-                    setEditProfileVisible(false);
+                    closeEditModal();
                 }}
             />
 
@@ -209,7 +222,7 @@ export default function ProfileScreen() {
                     onCancel={() => setPinStep(null)}
                 />
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -224,10 +237,12 @@ const getStyles = (colors: any) => StyleSheet.create({
     email: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
     editProfileBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: colors.primary },
     editProfileText: { fontSize: 13, fontWeight: '600' },
-    statRow: { flexDirection: 'row', marginTop: 20, gap: 24 },
-    stat: { alignItems: 'center' },
-    statLabel: { fontSize: 11, color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5 },
-    statValue: { fontSize: 14, fontWeight: '600', color: colors.text, marginTop: 2 },
+    infoGrid: { width: '100%', marginTop: 20, gap: 12 },
+    infoCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, paddingHorizontal: 16, paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+    infoIconBox: { width: 40, height: 40, borderRadius: 10, backgroundColor: colors.primary + '15', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+    infoContent: { flex: 1 },
+    infoLabel: { fontSize: 11, color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
+    infoValue: { fontSize: 15, fontWeight: '600', color: colors.text },
     section: { backgroundColor: colors.surface, marginTop: 20, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 4 },
     sectionTitle: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 },
     menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1 },
@@ -244,7 +259,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     modalTitle: { fontSize: 20, fontWeight: '700' },
     field: { marginBottom: 16 },
     fieldLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
-    input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15 },
+    input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: colors.text },
     genderRow: { flexDirection: 'row', gap: 10 },
     genderBtn: { flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: colors.border, alignItems: 'center' },
     saveBtn: { borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 8 },

@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Activity } from '../types';
+import { useTranslation } from '../hooks/useTranslation';
 
 const categories: Activity['category'][] = ['Basic Activities', 'Cognitive', 'Daily Living', 'Endurance'];
 
 export default function AddActivityScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
     const { id } = useLocalSearchParams<{ id: string }>();
     const { addActivity, updateActivity, activities } = useHealthStore();
     const [category, setCategory] = useState<Activity['category']>('Basic Activities');
@@ -52,32 +56,32 @@ export default function AddActivityScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{id ? 'Edit Activity' : 'Log Activity'}</Text>
+                <Text style={styles.headerTitle}>{id ? t('edit') : t('add_log')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.label}>Category</Text>
+                <Text style={styles.label}>{t('category')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
                     {categories.map((c) => (
                         <TouchableOpacity key={c} style={[styles.chip, category === c && styles.chipActive]} onPress={() => setCategory(c)}>
-                            <Text style={[styles.chipText, category === c && styles.chipTextActive]}>{c}</Text>
+                            <Text style={[styles.chipText, category === c && styles.chipTextActive]}>{t(c.toLowerCase().replace(/ /g, '_') as any) || c}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
-                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder="Or type custom category" value={category} onChangeText={setCategory} />
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, { marginBottom: 20 }]} placeholder={t('or_type_custom_category')} value={category} onChangeText={setCategory} />
 
-                <Text style={styles.label}>Activity</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Walking, Yoga" value={activity} onChangeText={setActivity} />
+                <Text style={styles.label}>{t('activity')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('activity_placeholder')} value={activity} onChangeText={setActivity} />
 
-                <Text style={styles.label}>Duration</Text>
+                <Text style={styles.label}>{t('duration')}</Text>
                 <View style={styles.durationRow}>
                     <View style={styles.durationItem}>
-                        <Text style={styles.durationLabel}>Hours</Text>
+                        <Text style={styles.durationLabel}>{t('hours')}</Text>
                         <View style={styles.durationControl}>
                             <TouchableOpacity onPress={() => setHours(Math.max(0, hours - 1))}><Ionicons name="remove" size={20} color="#3B82F6" /></TouchableOpacity>
                             <Text style={styles.durationValue}>{hours}</Text>
@@ -85,7 +89,7 @@ export default function AddActivityScreen() {
                         </View>
                     </View>
                     <View style={styles.durationItem}>
-                        <Text style={styles.durationLabel}>Minutes</Text>
+                        <Text style={styles.durationLabel}>{t('minutes')}</Text>
                         <View style={styles.durationControl}>
                             <TouchableOpacity onPress={() => setMinutes(Math.max(0, minutes - 15))}><Ionicons name="remove" size={20} color="#3B82F6" /></TouchableOpacity>
                             <Text style={styles.durationValue}>{minutes}</Text>
@@ -97,10 +101,10 @@ export default function AddActivityScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !activity.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!activity.trim()}>
-                    <Text style={styles.buttonText}>{id ? 'Update Activity' : 'Save Activity'}</Text>
+                    <Text style={styles.buttonText}>{t('save')}</Text>
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -112,7 +116,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
     label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
-    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20, color: colors.text },
     chipContainer: { marginBottom: 20 },
     chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: colors.surface, marginRight: 10, borderWidth: 1, borderColor: colors.border },
     chipActive: { backgroundColor: '#8B5CF6', borderColor: '#8B5CF6' },

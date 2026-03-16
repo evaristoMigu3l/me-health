@@ -5,6 +5,9 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { format, parseISO } from 'date-fns';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
 
 export default function AppointmentDetailsScreen() {
     const { colors } = useAppTheme();
@@ -12,6 +15,8 @@ export default function AppointmentDetailsScreen() {
     const styles = getStyles(colors);
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
     const { appointments, removeAppointment } = useHealthStore();
 
     const appointment = appointments.find(a => a.id === params.id);
@@ -21,10 +26,10 @@ export default function AppointmentDetailsScreen() {
             <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                    <Text style={styles.headerTitle}>Not Found</Text>
+                    <Text style={styles.headerTitle}>{t('not_found')}</Text>
                 </View>
                 <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>Appointment not found.</Text>
+                    <Text style={styles.errorText}>{t('not_found')}</Text>
                 </View>
             </View>
         );
@@ -34,25 +39,25 @@ export default function AppointmentDetailsScreen() {
         <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                <Text style={styles.headerTitle}>Appointment Details</Text>
+                <Text style={styles.headerTitle}>{t('appointment_details')}</Text>
                 <TouchableOpacity onPress={() => router.push({ pathname: '/add-appointment', params: { id: appointment.id } })}>
-                    <Text style={styles.editLink}>Edit</Text>
+                    <Text style={styles.editLink}>{t('edit')}</Text>
                 </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.section}>
                     <Text style={styles.title}>{appointment.reason}</Text>
-                    {appointment.doctorName ? <Text style={styles.subtitle}>with {appointment.doctorName}</Text> : null}
+                    {appointment.doctorName ? <Text style={styles.subtitle}>{t('with')} {appointment.doctorName}</Text> : null}
                 </View>
 
                 <View style={styles.section}>
                     <View style={styles.detailRow}>
                         <Ionicons name="time-outline" size={20} color="#14B8A6" />
                         <View style={styles.detailRowContent}>
-                            <Text style={styles.label}>Date & Time</Text>
+                            <Text style={styles.label}>{t('date_time')}</Text>
                             <Text style={styles.value}>
-                                {format(parseISO(appointment.dateTime), 'PPPP')} at {format(parseISO(appointment.dateTime), 'HH:mm')}
+                                {format(parseISO(appointment.dateTime), 'PPPP', { locale: language === 'pt' ? ptBR : enUS })} {t('at')} {format(parseISO(appointment.dateTime), 'HH:mm')}
                             </Text>
                         </View>
                     </View>
@@ -62,7 +67,7 @@ export default function AppointmentDetailsScreen() {
                     <View style={styles.detailRow}>
                         <Ionicons name="location-outline" size={20} color="#14B8A6" />
                         <View style={styles.detailRowContent}>
-                            <Text style={styles.label}>Location</Text>
+                            <Text style={styles.label}>{t('location')}</Text>
                             <Text style={styles.value}>{appointment.location}</Text>
                         </View>
                     </View>
@@ -72,8 +77,8 @@ export default function AppointmentDetailsScreen() {
                     <View style={styles.detailRow}>
                         <Ionicons name="videocam-outline" size={20} color="#14B8A6" />
                         <View style={styles.detailRowContent}>
-                            <Text style={styles.label}>Type</Text>
-                            <Text style={styles.value}>{appointment.type}</Text>
+                            <Text style={styles.label}>{t('type')}</Text>
+                            <Text style={styles.value}>{t(appointment.type.toLowerCase().replace(' ', '_') as any) || appointment.type}</Text>
                         </View>
                     </View>
                 </View>
@@ -83,9 +88,9 @@ export default function AppointmentDetailsScreen() {
                         <View style={styles.detailRow}>
                             <Ionicons name="alarm-outline" size={20} color="#14B8A6" />
                             <View style={styles.detailRowContent}>
-                                <Text style={styles.label}>Reminder</Text>
+                                <Text style={styles.label}>{t('reminder')}</Text>
                                 <Text style={styles.value}>
-                                    {isNaN(new Date(appointment.reminder).getTime()) ? appointment.reminder : format(new Date(appointment.reminder), 'PP HH:mm')}
+                                    {isNaN(new Date(appointment.reminder).getTime()) ? appointment.reminder : format(new Date(appointment.reminder), 'PP HH:mm', { locale: language === 'pt' ? ptBR : enUS })}
                                 </Text>
                             </View>
                         </View>
@@ -97,8 +102,8 @@ export default function AppointmentDetailsScreen() {
                         <View style={styles.detailRow}>
                             <Ionicons name="repeat-outline" size={20} color="#14B8A6" />
                             <View style={styles.detailRowContent}>
-                                <Text style={styles.label}>Recurrence</Text>
-                                <Text style={styles.value}>{appointment.recurrence}</Text>
+                                <Text style={styles.label}>{t('recurrence')}</Text>
+                                <Text style={styles.value}>{t(appointment.recurrence.toLowerCase() as any) || appointment.recurrence}</Text>
                             </View>
                         </View>
                     </View>
@@ -106,7 +111,7 @@ export default function AppointmentDetailsScreen() {
 
                 <TouchableOpacity style={styles.deleteButton} onPress={() => { removeAppointment(appointment.id); router.back(); }}>
                     <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                    <Text style={styles.deleteText}>Delete Appointment</Text>
+                    <Text style={styles.deleteText}>{t('delete_appointment')}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>

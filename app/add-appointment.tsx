@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Switch } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Appointment } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format } from 'date-fns';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
 
 export default function AddAppointmentScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
+    const dateLocale = language === 'pt' ? ptBR : enUS;
     const { addAppointment, updateAppointment, appointments } = useHealthStore();
     const isEditing = !!params.id;
 
@@ -94,71 +102,71 @@ export default function AddAppointmentScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{isEditing ? 'Edit Appointment' : 'Add Appointment'}</Text>
+                <Text style={styles.headerTitle}>{isEditing ? t('edit_appointment') : t('add_appointment')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.label}>Reason *</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Annual Checkup" value={reason} onChangeText={setReason} />
+                <Text style={styles.label}>{t('reason')} *</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('eg_checkup')} value={reason} onChangeText={setReason} />
 
                 <View style={styles.rowBetween}>
                     <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Date</Text>
+                        <Text style={styles.label}>{t('date')}</Text>
                         <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
-                            <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
+                            <Text style={styles.dateText}>{format(date, 'MMM d, yyyy', { locale: dateLocale })}</Text>
                             <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.halfWidth}>
-                        <Text style={styles.label}>Time</Text>
+                        <Text style={styles.label}>{t('time')}</Text>
                         <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={time} onChangeText={setTime} />
                     </View>
                 </View>
 
-                <Text style={styles.label}>Doctor Name (Optional)</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Dr. Smith" value={doctorName} onChangeText={setDoctorName} />
+                <Text style={styles.label}>{t('doctor_name_optional')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('eg_dr_smith')} value={doctorName} onChangeText={setDoctorName} />
 
-                <Text style={styles.label}>Location</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., City Hospital" value={location} onChangeText={setLocation} />
+                <Text style={styles.label}>{t('location')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('eg_city_hospital')} value={location} onChangeText={setLocation} />
 
-                <Text style={styles.label}>Type</Text>
+                <Text style={styles.label}>{t('type')}</Text>
                 <View style={styles.typeRow}>
-                    {types.map((t) => (
-                        <TouchableOpacity key={t} style={[styles.typeButton, type === t && styles.typeButtonActive]} onPress={() => setType(t)}>
-                            <Text style={[styles.typeText, type === t && styles.typeTextActive]}>{t}</Text>
+                    {types.map((tItem) => (
+                        <TouchableOpacity key={tItem} style={[styles.typeButton, type === tItem && styles.typeButtonActive]} onPress={() => setType(tItem)}>
+                            <Text style={[styles.typeText, type === tItem && styles.typeTextActive]}>{t(tItem.toLowerCase().replace(' ', '_') as any) || tItem}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <Text style={styles.label}>Recurrence</Text>
+                <Text style={styles.label}>{t('recurrence')}</Text>
                 <View style={styles.typeRow}>
                     {recurrences.map((r) => (
-                        <TouchableOpacity key={r} style={[styles.typeButton, recurrence === r && styles.typeButtonActive]} onPress={() => setRecurrence(r)}>
-                            <Text style={[styles.typeText, recurrence === r && styles.typeTextActive]}>{r}</Text>
+                        <TouchableOpacity key={r || 'none'} style={[styles.typeButton, recurrence === r && styles.typeButtonActive]} onPress={() => setRecurrence(r)}>
+                            <Text style={[styles.typeText, recurrence === r && styles.typeTextActive]}>{t(r?.toLowerCase() as any) || r}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
                 <View style={[styles.rowBetween, { alignItems: 'center', marginBottom: 20 }]}>
-                    <Text style={[styles.label, { marginBottom: 0 }]}>Enable Reminder</Text>
+                    <Text style={[styles.label, { marginBottom: 0 }]}>{t('enable_reminder')}</Text>
                     <Switch value={remindersEnabled} onValueChange={setRemindersEnabled} trackColor={{ false: colors.border, true: '#14B8A6' }} />
                 </View>
                 {remindersEnabled && (
                     <View style={styles.rowBetween}>
                         <View style={styles.halfWidth}>
-                            <Text style={styles.label}>Reminder Date</Text>
+                            <Text style={styles.label}>{t('reminder_date')}</Text>
                             <TouchableOpacity style={styles.dateButton} onPress={() => setShowReminderCalendar(true)}>
-                                <Text style={styles.dateText}>{format(reminderDate, 'MMM d, yyyy')}</Text>
+                                <Text style={styles.dateText}>{format(reminderDate, 'MMM d, yyyy', { locale: dateLocale })}</Text>
                                 <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.halfWidth}>
-                            <Text style={styles.label}>Reminder Time</Text>
+                            <Text style={styles.label}>{t('reminder_time')}</Text>
                             <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="HH:MM" value={reminderTime} onChangeText={setReminderTime} />
                         </View>
                     </View>
@@ -167,11 +175,11 @@ export default function AddAppointmentScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !reason.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!reason.trim()}>
-                    <Text style={styles.buttonText}>{isEditing ? 'Update Appointment' : 'Save Appointment'}</Text>
+                    <Text style={styles.buttonText}>{isEditing ? t('update') : t('save')}</Text>
                 </TouchableOpacity>
             </View>
 
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar
@@ -198,13 +206,13 @@ export default function AddAppointmentScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
-                            <Text style={styles.closeText}>Close</Text>
+                            <Text style={styles.closeText}>{t('close')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
 
-            <Modal visible={showReminderCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showReminderCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar
@@ -231,12 +239,12 @@ export default function AddAppointmentScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowReminderCalendar(false)}>
-                            <Text style={styles.closeText}>Close</Text>
+                            <Text style={styles.closeText}>{t('close')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 

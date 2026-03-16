@@ -8,6 +8,9 @@ import { useHealthStore } from '../stores/useHealthStore';
 import { Appointment } from '../types';
 import { format, parseISO, isSameDay } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
 
 export default function AppointmentLogScreen() {
 
@@ -15,9 +18,12 @@ export default function AppointmentLogScreen() {
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
+    const dateLocale = language === 'pt' ? ptBR : enUS;
     const { appointments, removeAppointment } = useHealthStore();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    
+
 
     // Marked Dates for Calendar
     const markedDates = useMemo(() => {
@@ -54,7 +60,7 @@ export default function AppointmentLogScreen() {
         <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                <Text style={styles.headerTitle}>Appointments</Text>
+                <Text style={styles.headerTitle}>{t('appointments')}</Text>
                 <TouchableOpacity onPress={() => router.push('/add-appointment')}><Ionicons name="add" size={24} color="#14B8A6" /></TouchableOpacity>
             </View>
 
@@ -64,7 +70,7 @@ export default function AppointmentLogScreen() {
                 renderItem={({ item: a }) => (
                     <View style={[styles.card, { marginHorizontal: 16 }]}>
                         <View style={styles.timeColumn}>
-                            <Text style={styles.timeText}>{format(parseISO(a.dateTime), 'HH:mm')}</Text>
+                            <Text style={styles.timeText}>{format(parseISO(a.dateTime), 'HH:mm', { locale: dateLocale })}</Text>
                             <View style={styles.verticalLine} />
                         </View>
                         <TouchableOpacity style={styles.cardContent} onPress={() => router.push({ pathname: '/appointment-details', params: { id: a.id } })} activeOpacity={0.7}>
@@ -74,24 +80,24 @@ export default function AppointmentLogScreen() {
                                     <Ionicons name="trash-outline" size={18} color="#EF4444" />
                                 </TouchableOpacity>
                             </View>
-                            {a.doctorName ? <Text style={styles.doctorText}>with {a.doctorName}</Text> : null}
+                            {a.doctorName ? <Text style={styles.doctorText}>{t('with')} {a.doctorName}</Text> : null}
                             <View style={styles.detailRow}>
                                 <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
                                 <Text style={styles.detailText}>{a.location}</Text>
                             </View>
                             <View style={styles.badgeRow}>
-                                <View style={styles.badge}><Text style={styles.badgeText}>{a.type}</Text></View>
+                                <View style={styles.badge}><Text style={styles.badgeText}>{t(a.type.toLowerCase().replace(' ', '_') as any) || a.type}</Text></View>
                                 {a.recurrence && a.recurrence !== 'None' && (
                                     <View style={[styles.badge, { backgroundColor: colors.border }]}>
                                         <Ionicons name="repeat" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
-                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>{a.recurrence}</Text>
+                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>{t(a.recurrence.toLowerCase() as any) || a.recurrence}</Text>
                                     </View>
                                 )}
                                 {a.reminder && a.reminder !== 'None' && (
                                     <View style={[styles.badge, { backgroundColor: colors.border }]}>
                                         <Ionicons name="alarm-outline" size={12} color={colors.textSecondary} style={{ marginRight: 4 }} />
                                         <Text style={[styles.badgeText, { color: colors.textSecondary }]}>
-                                            {isNaN(new Date(a.reminder).getTime()) ? a.reminder : format(new Date(a.reminder), 'MMM d, HH:mm')}
+                                            {isNaN(new Date(a.reminder).getTime()) ? a.reminder : format(new Date(a.reminder), 'MMM d, HH:mm', { locale: dateLocale })}
                                         </Text>
                                     </View>
                                 )}
@@ -123,25 +129,25 @@ export default function AppointmentLogScreen() {
                         </View>
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>
-                                {format(parseISO(selectedDate), 'MMMM d, yyyy')}
+                                {format(parseISO(selectedDate), 'MMMM d, yyyy', { locale: dateLocale })}
                             </Text>
                         </View>
                     </>
                 }
-                ListEmptyComponent={<Text style={styles.emptyText}>No appointments for this day.</Text>}
+                ListEmptyComponent={<Text style={styles.emptyText}>{t('no_appointments_day')}</Text>}
                 ListFooterComponent={
                     upcomingAppointments.length > 0 ? (
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Upcoming</Text>
+                            <Text style={styles.sectionTitle}>{t('upcoming')}</Text>
                             {upcomingAppointments.map(a => (
                                 <TouchableOpacity key={a.id} style={styles.miniCard} onPress={() => router.push({ pathname: '/appointment-details', params: { id: a.id } })}>
                                     <View style={styles.miniCardDate}>
-                                        <Text style={styles.miniDay}>{format(parseISO(a.dateTime), 'd')}</Text>
-                                        <Text style={styles.miniMonth}>{format(parseISO(a.dateTime), 'MMM')}</Text>
+                                        <Text style={styles.miniDay}>{format(parseISO(a.dateTime), 'd', { locale: dateLocale })}</Text>
+                                        <Text style={styles.miniMonth}>{format(parseISO(a.dateTime), 'MMM', { locale: dateLocale })}</Text>
                                     </View>
                                     <View style={{ flex: 1, marginLeft: 12 }}>
                                         <Text style={styles.miniTitle}>{a.reason}</Text>
-                                        <Text style={styles.miniSubtitle}>{format(parseISO(a.dateTime), 'HH:mm')} • {a.location}</Text>
+                                        <Text style={styles.miniSubtitle}>{format(parseISO(a.dateTime), 'HH:mm', { locale: dateLocale })} • {a.location}</Text>
                                     </View>
                                     <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                                 </TouchableOpacity>

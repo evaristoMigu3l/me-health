@@ -13,10 +13,10 @@ function processFile(filePath) {
     content = content.replace(/color="#FFFFFF"/g, 'color={colors.surface}');
     content = content.replace(/color="#F8F9FA"/g, 'color={colors.background}');
     content = content.replace(/backgroundColor="#FEE2E2"/g, 'backgroundColor={colors.border}');
-    
+
     // For single quote within inline objects e.g. { color: '#1A1A1A' }
     // which the first script might have missed if not exactly what it looked for, wait, first script did /'#1A1A1A'/g which gets ALL single quotes. So single quotes are mostly done.
-    
+
     // 2. Add placeholderTextColor to TextInputs
     // Look for <TextInput ... >. If it doesn't have placeholderTextColor, add it.
     content = content.replace(/<TextInput([\s\S]*?)(\/?)>/g, (match, p1, p2) => {
@@ -44,4 +44,4 @@ function walkDir(dir) {
     }
 }
 
-walkDir('/home/evaristo/Documents/me&health/app');
+walkDir(path.join(__dirname, 'app'));

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, FlatList, Alert } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
@@ -9,12 +9,20 @@ import { Investigation } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format, parseISO } from 'date-fns';
 import * as DocumentPicker from 'expo-document-picker';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
 
 export default function AddInvestigationScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
+    const dateLocale = language === 'pt' ? ptBR : enUS;
     const { addInvestigation, updateInvestigation, investigations, appointments } = useHealthStore();
 
     const isEditing = !!params.id;
@@ -56,7 +64,7 @@ export default function AddInvestigationScreen() {
             const asset = result.assets[0];
             setAttachments([...attachments, asset.uri]);
         } catch (err) {
-            Alert.alert('Error', 'Failed to pick document');
+            Alert.alert(t('error'), t('error'));
         }
     };
 
@@ -89,46 +97,46 @@ export default function AddInvestigationScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{isEditing ? 'Edit Exam' : 'Log Exam'}</Text>
+                <Text style={styles.headerTitle}>{isEditing ? t('edit_exam') : t('log_exam')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.label}>Exam Type</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Blood Test, MRI, X-Ray" value={type} onChangeText={setType} />
+                <Text style={styles.label}>{t('exam_type')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('eg_blood_mri')} value={type} onChangeText={setType} />
 
-                <Text style={styles.label}>Date</Text>
+                <Text style={styles.label}>{t('date')}</Text>
                 <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
-                    <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
+                    <Text style={styles.dateText}>{format(date, 'MMM d, yyyy', { locale: dateLocale })}</Text>
                     <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
 
-                <Text style={styles.label}>Status</Text>
+                <Text style={styles.label}>{t('status')}</Text>
                 <View style={styles.statusRow}>
                     {(['Scheduled', 'Pending', 'Completed'] as Investigation['status'][]).map(s => (
                         <TouchableOpacity key={s} style={[styles.statusChip, status === s && styles.statusChipActive]} onPress={() => setStatus(s)}>
-                            <Text style={[styles.statusText, status === s && styles.statusTextActive]}>{s}</Text>
+                            <Text style={[styles.statusText, status === s && styles.statusTextActive]}>{t(s.toLowerCase() as any) || s}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <Text style={styles.label}>Result / Outcome</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="Normal, High Cholesterol, Fracture..." value={result} onChangeText={setResult} />
+                <Text style={styles.label}>{t('result_outcome')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('normal_high_fracture')} value={result} onChangeText={setResult} />
 
-                <Text style={styles.label}>Notes</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder="Additional details..." value={notes} onChangeText={setNotes} multiline textAlignVertical="top" />
+                <Text style={styles.label}>{t('notes')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder={t('additional_details')} value={notes} onChangeText={setNotes} multiline textAlignVertical="top" />
 
-                <Text style={styles.label}>Link to Appointment (Optional)</Text>
+                <Text style={styles.label}>{t('link_appointment_optional')}</Text>
                 <TouchableOpacity style={styles.linkButton} onPress={() => setShowLinkModal(true)}>
                     <Ionicons name="link" size={20} color="#3B82F6" />
                     <Text style={styles.linkButtonText}>
                         {linkedAppointmentId
-                            ? `Linked: ${appointments.find(a => a.id === linkedAppointmentId)?.reason || 'Appointment'}`
-                            : 'Select Appointment'}
+                            ? `${t('linked')}: ${appointments.find(a => a.id === linkedAppointmentId)?.reason || t('appointment')}`
+                            : t('select_appointments')}
                     </Text>
                     {linkedAppointmentId && (
                         <TouchableOpacity onPress={() => setLinkedAppointmentId(undefined)} style={{ marginLeft: 'auto' }}>
@@ -137,10 +145,10 @@ export default function AddInvestigationScreen() {
                     )}
                 </TouchableOpacity>
 
-                <Text style={styles.label}>Attachments</Text>
+                <Text style={styles.label}>{t('attachments')}</Text>
                 <TouchableOpacity style={styles.attachButton} onPress={handlePickDocument}>
                     <Ionicons name="attach" size={20} color="#3B82F6" />
-                    <Text style={styles.attachButtonText}>Add Document / Photo</Text>
+                    <Text style={styles.attachButtonText}>{t('add_document_photo')}</Text>
                 </TouchableOpacity>
 
                 {attachments.length > 0 && (
@@ -160,11 +168,11 @@ export default function AddInvestigationScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !type.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!type.trim()}>
-                    <Text style={styles.buttonText}>{isEditing ? 'Update Exam' : 'Save Exam'}</Text>
+                    <Text style={styles.buttonText}>{isEditing ? t('update') : t('save')}</Text>
                 </TouchableOpacity>
             </View>
 
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar
@@ -175,7 +183,8 @@ export default function AddInvestigationScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#3B82F6' }
                             }}
-                            theme={{ calendarBackground: colors.surface,
+                            theme={{
+                                calendarBackground: colors.surface,
                                 textSectionTitleColor: colors.textSecondary,
                                 selectedDayBackgroundColor: colors.primary || '#14B8A6',
                                 selectedDayTextColor: colors.surface,
@@ -190,16 +199,16 @@ export default function AddInvestigationScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
-                            <Text style={styles.closeText}>Close</Text>
+                            <Text style={styles.closeText}>{t('close')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
 
-            <Modal visible={showLinkModal} animationType="slide" presentationStyle="pageSheet">
-                <SafeAreaView style={styles.modalContainer}>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showLinkModal} animationType="none" presentationStyle="pageSheet">
+                <View style={styles.modalContainer}>
                     <View style={styles.modalHeader}>
-                        <Text style={styles.modalTitle}>Link Appointment</Text>
+                        <Text style={styles.modalTitle}>{t('link_appointment')}</Text>
                         <TouchableOpacity onPress={() => setShowLinkModal(false)}><Ionicons name="close" size={24} color={colors.text} /></TouchableOpacity>
                     </View>
                     <FlatList
@@ -208,18 +217,18 @@ export default function AddInvestigationScreen() {
                         renderItem={({ item }) => (
                             <TouchableOpacity style={[styles.apptItem, linkedAppointmentId === item.id && styles.apptItemSelected]} onPress={() => { setLinkedAppointmentId(item.id); setShowLinkModal(false); }}>
                                 <View>
-                                    <Text style={styles.apptTitle}>{item.reason || 'Appointment'}</Text>
-                                    <Text style={styles.apptDate}>{format(parseISO(item.dateTime), 'MMM d, yyyy h:mm a')}</Text>
+                                    <Text style={styles.apptTitle}>{item.reason || t('appointment')}</Text>
+                                    <Text style={styles.apptDate}>{format(parseISO(item.dateTime), 'MMM d, yyyy h:mm a', { locale: dateLocale })}</Text>
                                 </View>
                                 {linkedAppointmentId === item.id && <Ionicons name="checkmark-circle" size={24} color="#3B82F6" />}
                             </TouchableOpacity>
                         )}
                         contentContainerStyle={styles.listContent}
-                        ListEmptyComponent={<Text style={styles.emptyText}>No appointments found.</Text>}
+                        ListEmptyComponent={<Text style={styles.emptyText}>{t('no_appointments_found')}</Text>}
                     />
-                </SafeAreaView>
+                </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -231,7 +240,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
     label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
-    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20, color: colors.text },
     textArea: { minHeight: 100 },
     dateButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border, marginBottom: 20 },
     dateText: { fontSize: 14, color: colors.text },
@@ -240,7 +249,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     statusChipActive: { backgroundColor: '#3B82F6' },
     statusText: { fontSize: 14, color: colors.textSecondary },
     statusTextActive: { color: colors.surface },
-    linkButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#EFF6FF', borderRadius: 12, marginBottom: 20 },
+    linkButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: 12, marginBottom: 20 },
     linkButtonText: { flex: 1, marginLeft: 8, color: '#3B82F6', fontWeight: '600' },
     footer: { padding: 20, paddingBottom: 32 },
     button: { backgroundColor: '#3B82F6', padding: 16, borderRadius: 12, alignItems: 'center' },
@@ -254,12 +263,12 @@ const getStyles = (colors: any) => StyleSheet.create({
     modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
     modalTitle: { fontSize: 18, fontWeight: '600', color: colors.text },
     apptItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: colors.surface, marginBottom: 1, borderBottomWidth: 1, borderBottomColor: colors.border },
-    apptItemSelected: { backgroundColor: '#EFF6FF' },
+    apptItemSelected: { backgroundColor: 'rgba(59, 130, 246, 0.1)' },
     apptTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
     apptDate: { fontSize: 13, color: colors.textSecondary, marginTop: 4 },
     listContent: { paddingBottom: 20 },
     emptyText: { textAlign: 'center', color: colors.textSecondary, fontStyle: 'italic', marginTop: 20 },
-    attachButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: '#EFF6FF', borderRadius: 12, marginBottom: 20, borderStyle: 'dashed', borderWidth: 1, borderColor: '#3B82F6' },
+    attachButton: { flexDirection: 'row', alignItems: 'center', padding: 16, backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: 12, marginBottom: 20, borderStyle: 'dashed', borderWidth: 1, borderColor: '#3B82F6' },
     attachButtonText: { marginLeft: 8, color: '#3B82F6', fontWeight: '600' },
     attachmentList: { marginBottom: 20 },
     attachmentItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, padding: 12, borderRadius: 8, marginBottom: 8, borderWidth: 1, borderColor: colors.border },

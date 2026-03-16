@@ -1,16 +1,19 @@
 import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, addMonths, subMonths, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { enUS, ptBR } from 'date-fns/locale';
 
 type FilterType = 'all' | 'week' | 'month' | 'year';
 type SortBy = 'date' | 'intensity' | 'name';
 
-function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styles, colors }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void, styles: any, colors: any }) {
+function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styles, colors, t }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void, styles: any, colors: any, t: any }) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const days = eachDayOfInterval({ start: startOfWeek(startOfMonth(currentMonth)), end: endOfWeek(endOfMonth(currentMonth)) });
 
@@ -22,7 +25,7 @@ function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styl
                 <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name="chevron-forward" size={24} color={colors.text} /></TouchableOpacity>
             </View>
             <View style={styles.weekDays}>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{d}</Text>)}
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{t(d.toLowerCase()) || d}</Text>)}
             </View>
             <View style={styles.daysGrid}>
                 {days.map(day => {
@@ -38,16 +41,21 @@ function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styl
                 })}
             </View>
             <View style={styles.calendarFooter}>
-                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>Done</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>{t('done')}</Text></TouchableOpacity>
             </View>
         </View>
     );
 }
 
 export default function SymptomsLogScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
+    const dateLocale = language === 'pt' ? ptBR : enUS;
     const { symptoms, removeSymptom } = useHealthStore();
     const [search, setSearch] = useState('');
     const [filterType, setFilterType] = useState<FilterType>('all');
@@ -55,6 +63,7 @@ export default function SymptomsLogScreen() {
     const [sortBy, setSortBy] = useState<SortBy>('date');
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [isDateModalVisible, setIsDateModalVisible] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
 
     const intensityColors = { Mild: '#10B981', Moderate: '#F59E0B', Severe: '#EF4444', 'Very Severe': '#DC2626' };
@@ -72,17 +81,9 @@ export default function SymptomsLogScreen() {
             result = result.filter(s => new Date(s.dateStarted).getFullYear() === now.getFullYear());
         }
 
-        if (selectedDate) {
-            result = result.filter(s => format(parseISO(s.dateStarted), 'yyyy-MM-dd') === selectedDate);
-        }
-
-        if (search) {
-            result = result.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
-        }
-
-        if (minIntensity > 0) {
-            result = result.filter(s => s.intensity >= minIntensity);
-        }
+        if (selectedDate) result = result.filter(s => format(parseISO(s.dateStarted), 'yyyy-MM-dd') === selectedDate);
+        if (search) result = result.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+        if (minIntensity > 0) result = result.filter(s => s.intensity >= minIntensity);
 
         result.sort((a, b) => {
             if (sortBy === 'date') return new Date(b.dateStarted).getTime() - new Date(a.dateStarted).getTime();
@@ -94,8 +95,6 @@ export default function SymptomsLogScreen() {
     }, [symptoms, filterType, selectedDate, search, minIntensity, sortBy]);
 
     const intensityStats = useMemo(() => {
-        const total = filteredSymptoms.length;
-        if (total === 0) return { Mild: 0, Moderate: 0, Severe: 0, 'Very Severe': 0 };
         const stats = { Mild: 0, Moderate: 0, Severe: 0, 'Very Severe': 0 };
         filteredSymptoms.forEach(s => stats[s.intensityLabel]++);
         return stats;
@@ -108,25 +107,21 @@ export default function SymptomsLogScreen() {
     }, {} as Record<string, any>);
 
     const handleDateSelect = (date: string) => {
-        if (selectedDate === date) {
-            setSelectedDate(null);
-        } else {
-            setSelectedDate(date);
-        }
+        setSelectedDate(selectedDate === date ? null : date);
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                <Text style={styles.headerTitle}>Symptoms Log</Text>
+                <Text style={styles.headerTitle}>{t('symptoms_log')}</Text>
                 <TouchableOpacity onPress={() => router.push('/add-symptom')}><Ionicons name="add" size={24} color="#3B82F6" /></TouchableOpacity>
             </View>
 
             <View style={styles.searchRow}>
                 <View style={styles.searchContainer}>
                     <Ionicons name="search" size={20} color={colors.textSecondary} />
-                    <TextInput placeholderTextColor={colors.textSecondary} style={styles.searchInput} placeholder="Search symptoms..." value={search} onChangeText={setSearch} />
+                    <TextInput placeholderTextColor={colors.textSecondary} style={styles.searchInput} placeholder={t('search_symptoms')} value={search} onChangeText={setSearch} />
                 </View>
                 <TouchableOpacity style={[styles.filterButton, showFilters && styles.filterButtonActive]} onPress={() => setShowFilters(!showFilters)}>
                     <Ionicons name="options" size={20} color={showFilters ? '#3B82F6' : colors.textSecondary} />
@@ -139,26 +134,26 @@ export default function SymptomsLogScreen() {
             {showFilters && (
                 <View style={styles.filterPanel}>
                     <View style={styles.filterRow}>
-                        <Text style={styles.filterLabel}>Period:</Text>
-                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(t => (
-                            <TouchableOpacity key={t} style={[styles.filterChip, filterType === t && styles.filterChipActive]} onPress={() => setFilterType(t)}>
-                                <Text style={[styles.filterChipText, filterType === t && styles.filterChipTextActive]}>{t.charAt(0).toUpperCase() + t.slice(1)}</Text>
+                        <Text style={styles.filterLabel}>{t('period')}</Text>
+                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(type => (
+                            <TouchableOpacity key={type} style={[styles.filterChip, filterType === type && styles.filterChipActive]} onPress={() => setFilterType(type)}>
+                                <Text style={[styles.filterChipText, filterType === type && styles.filterChipTextActive]}>{t(type) || type.charAt(0).toUpperCase() + type.slice(1)}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
                     <View style={styles.filterRow}>
-                        <Text style={styles.filterLabel}>Min Intensity:</Text>
+                        <Text style={styles.filterLabel}>{t('min_intensity')}</Text>
                         {[0, 25, 50, 75].map(i => (
                             <TouchableOpacity key={i} style={[styles.filterChip, minIntensity === i && styles.filterChipActive]} onPress={() => setMinIntensity(i)}>
-                                <Text style={[styles.filterChipText, minIntensity === i && styles.filterChipTextActive]}>{i === 0 ? 'All' : `${i}+`}</Text>
+                                <Text style={[styles.filterChipText, minIntensity === i && styles.filterChipTextActive]}>{i === 0 ? t('all') || 'All' : `${i}+`}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
                     <View style={styles.filterRow}>
-                        <Text style={styles.filterLabel}>Sort:</Text>
+                        <Text style={styles.filterLabel}>{t('sort')}</Text>
                         {(['date', 'intensity', 'name'] as SortBy[]).map(s => (
                             <TouchableOpacity key={s} style={[styles.filterChip, sortBy === s && styles.filterChipActive]} onPress={() => setSortBy(s)}>
-                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{s.charAt(0).toUpperCase() + s.slice(1)}</Text>
+                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{t(s) || s.charAt(0).toUpperCase() + s.slice(1)}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -167,7 +162,7 @@ export default function SymptomsLogScreen() {
 
             {filteredSymptoms.length > 0 && (
                 <View style={styles.chartSection}>
-                    <Text style={styles.chartTitle}>Intensity Distribution</Text>
+                    <Text style={styles.chartTitle}>{t('intensity_distribution')}</Text>
                     <View style={styles.pieContainer}>
                         {Object.entries(intensityStats).map(([label, count]) => {
                             const total = filteredSymptoms.length;
@@ -176,7 +171,7 @@ export default function SymptomsLogScreen() {
                             return (
                                 <View key={label} style={styles.pieItem}>
                                     <View style={[styles.pieSlice, { backgroundColor: intensityColors[label as keyof typeof intensityColors] }]} />
-                                    <Text style={styles.pieLabel}>{label}</Text>
+                                    <Text style={styles.pieLabel}>{t(label.toLowerCase().replace(' ', '_') as any) || label}</Text>
                                     <Text style={styles.pieValue}>{count} ({percentage.toFixed(0)}%)</Text>
                                 </View>
                             );
@@ -186,54 +181,55 @@ export default function SymptomsLogScreen() {
             )}
 
             <View style={styles.statsRow}>
-                <View style={styles.statItem}><Text style={styles.statValue}>{filteredSymptoms.length}</Text><Text style={styles.statLabel}>Total</Text></View>
+                <View style={styles.statItem}><Text style={styles.statValue}>{filteredSymptoms.length}</Text><Text style={styles.statLabel}>{t('total')}</Text></View>
                 <View style={styles.statDivider} />
-                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#EF4444' }]}>{intensityStats.Severe + intensityStats['Very Severe']}</Text><Text style={styles.statLabel}>High</Text></View>
+                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#EF4444' }]}>{intensityStats.Severe + intensityStats['Very Severe']}</Text><Text style={styles.statLabel}>{t('high')}</Text></View>
                 <View style={styles.statDivider} />
-                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{intensityStats.Mild}</Text><Text style={styles.statLabel}>Mild</Text></View>
+                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{intensityStats.Mild}</Text><Text style={styles.statLabel}>{t('mild')}</Text></View>
             </View>
 
             <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
                 {filteredSymptoms.length === 0 ? (
-                    <View style={styles.emptyState}><Ionicons name="pulse" size={48} color={colors.textSecondary} /><Text style={styles.emptyText}>No symptoms found</Text></View>
+                    <View style={styles.emptyState}><Ionicons name="pulse" size={48} color={colors.textSecondary} /><Text style={styles.emptyText}>{t('no_symptoms_found')}</Text></View>
                 ) : (
                     filteredSymptoms.map(s => (
-                        <View key={s.id} style={styles.symptomCard}>
+                        <TouchableOpacity key={s.id} style={styles.symptomCard} onPress={() => router.push({ pathname: '/symptom-details', params: { id: s.id } })} activeOpacity={0.8}>
                             <View style={styles.symptomHeader}>
                                 <View style={[styles.intensityDot, { backgroundColor: intensityColors[s.intensityLabel] }]} />
                                 <Text style={styles.symptomName}>{s.name}</Text>
                                 <View style={[styles.intensityBadge, { backgroundColor: intensityColors[s.intensityLabel] + '20' }]}>
-                                    <Text style={[styles.intensityText, { color: intensityColors[s.intensityLabel] }]}>{s.intensityLabel} ({s.intensity}%)</Text>
+                                    <Text style={[styles.intensityText, { color: intensityColors[s.intensityLabel] }]}>{t(s.intensityLabel.toLowerCase().replace(' ', '_') as any) || s.intensityLabel} ({s.intensity}%)</Text>
                                 </View>
                             </View>
                             <View style={styles.symptomDetails}>
-                                <View style={styles.detailItem}><Ionicons name="calendar-outline" size={16} color={colors.textSecondary} /><Text style={styles.detailText}>{format(parseISO(s.dateStarted), 'MMM d, yyyy h:mm a')}</Text></View>
+                                <View style={styles.detailItem}><Ionicons name="calendar-outline" size={16} color={colors.textSecondary} /><Text style={styles.detailText}>{format(parseISO(s.dateStarted), 'MMM d, yyyy HH:mm', { locale: dateLocale })}</Text></View>
                                 {s.place && <View style={styles.detailItem}><Ionicons name="location-outline" size={16} color={colors.textSecondary} /><Text style={styles.detailText}>{s.place}</Text></View>}
                             </View>
                             {s.notes && <Text style={styles.notes}>{s.notes}</Text>}
                             <View style={styles.cardActions}>
                                 <TouchableOpacity style={styles.editButton} onPress={() => router.push({ pathname: '/add-symptom', params: { id: s.id } })}>
                                     <Ionicons name="create-outline" size={18} color="#3B82F6" />
-                                    <Text style={styles.editText}>Edit</Text>
+                                    <Text style={styles.editText}>{t('edit')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.deleteButton} onPress={() => removeSymptom(s.id)}>
                                     <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                                    <Text style={styles.deleteText}>Delete</Text>
+                                    <Text style={styles.deleteText}>{t('delete')}</Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))
                 )}
             </ScrollView>
 
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            {/* Calendar Modal */}
+            <Modal visible={showCalendar} animationType="none" transparent statusBarTranslucent hardwareAccelerated>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} styles={styles} colors={colors} />
+                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} styles={styles} colors={colors} t={t} />
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -243,7 +239,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
     searchRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' },
     searchContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, paddingHorizontal: 12, borderRadius: 10, marginRight: 8 },
-    searchInput: { flex: 1, paddingVertical: 10, marginLeft: 8, fontSize: 16 },
+    searchInput: { flex: 1, paddingVertical: 10, marginLeft: 8, fontSize: 16, color: colors.text },
     filterButton: { padding: 10, marginLeft: 4, borderRadius: 8, backgroundColor: colors.surface },
     filterButtonActive: { backgroundColor: '#DBEAFE' },
     filterPanel: { backgroundColor: colors.surface, padding: 16, borderBottomWidth: 1, borderBottomColor: colors.border },
@@ -300,4 +296,16 @@ const getStyles = (colors: any) => StyleSheet.create({
     calendarFooter: { marginTop: 16, alignItems: 'flex-end' },
     clearButton: { paddingHorizontal: 20, paddingVertical: 10 },
     clearButtonText: { color: '#3B82F6', fontSize: 16, fontWeight: '600' },
+    // Detail modal
+    detailOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+    detailContent: { backgroundColor: colors.surface, borderRadius: 16, width: '100%', padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 },
+    detailHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: 12 },
+    detailTitle: { fontSize: 22, fontWeight: '700', color: colors.text },
+    detailBody: { gap: 14 },
+    detailRow: { flexDirection: 'row', alignItems: 'flex-start' },
+    detailRowContent: { marginLeft: 12, flex: 1 },
+    detailLabel: { fontSize: 12, color: colors.textSecondary, marginBottom: 2 },
+    detailValue: { fontSize: 15, color: colors.text, fontWeight: '500' },
+    deleteFullBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20, paddingVertical: 12, borderRadius: 10, borderWidth: 1, borderColor: '#EF4444' },
+    deleteFullText: { color: '#EF4444', fontWeight: '600', marginLeft: 8, fontSize: 15 },
 });

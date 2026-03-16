@@ -1,0 +1,32 @@
+﻿app/activity-log.tsx(65,14): error TS2304: Cannot find name 'Modal'.
+app/activity-log.tsx(66,18): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/activity-log.tsx(68,26): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/activity-log.tsx(106,63): error TS2339: Property 'intensity' does not exist on type 'Activity'.
+app/activity-log.tsx(111,108): error TS2339: Property 'intensity' does not exist on type 'Activity'.
+app/activity-log.tsx(115,63): error TS2339: Property 'caloriesBurned' does not exist on type 'Activity'.
+app/activity-log.tsx(120,108): error TS2339: Property 'caloriesBurned' does not exist on type 'Activity'.
+app/activity-log.tsx(142,27): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/activity-log.tsx(144,19): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/activity-log.tsx(145,15): error TS2304: Cannot find name 'Modal'.
+app/diagnosis-log.tsx(79,14): error TS2304: Cannot find name 'Modal'.
+app/diagnosis-log.tsx(80,18): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/diagnosis-log.tsx(82,26): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/diagnosis-log.tsx(152,27): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/diagnosis-log.tsx(154,19): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/diagnosis-log.tsx(155,15): error TS2304: Cannot find name 'Modal'.
+app/measurement-log.tsx(120,14): error TS2304: Cannot find name 'Modal'.
+app/measurement-log.tsx(121,18): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/measurement-log.tsx(123,26): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/measurement-log.tsx(187,27): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/measurement-log.tsx(189,19): error TS2304: Cannot find name 'TouchableWithoutFeedback'.
+app/measurement-log.tsx(190,15): error TS2304: Cannot find name 'Modal'.
+app/nutrition-details.tsx(75,28): error TS2339: Property 'protein' does not exist on type 'FoodEntry'.
+app/nutrition-details.tsx(81,71): error TS2339: Property 'protein' does not exist on type 'FoodEntry'.
+app/nutrition-details.tsx(87,28): error TS2339: Property 'carbs' does not exist on type 'FoodEntry'.
+app/nutrition-details.tsx(93,71): error TS2339: Property 'carbs' does not exist on type 'FoodEntry'.
+app/nutrition-details.tsx(99,28): error TS2339: Property 'fats' does not exist on type 'FoodEntry'.
+app/nutrition-details.tsx(105,71): error TS2339: Property 'fats' does not exist on type 'FoodEntry'.
+app/nutrition-log.tsx(142,80): error TS2304: Cannot find name 'selectedEntry'.
+app/nutrition-log.tsx(142,108): error TS2304: Cannot find name 'setSelectedEntry'.
+app/sleep-log.tsx(221,100): error TS2304: Cannot find name 'selectedSleep'.
+app/sleep-log.tsx(221,128): error TS2304: Cannot find name 'setSelectedSleep'.

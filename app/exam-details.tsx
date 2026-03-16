@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Platform, Alert } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
@@ -9,30 +9,38 @@ import * as Sharing from 'expo-sharing';
 // Using legacy import to access getContentUriAsync which is deprecated/removed in newer SDKs
 import * as FileSystem from 'expo-file-system/legacy';
 import * as IntentLauncher from 'expo-intent-launcher';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
 
 // ... imports
 
 export default function ExamDetailsScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
     const { investigations, appointments } = useHealthStore();
+    const dateLocale = language === 'pt' ? ptBR : enUS;
 
     const exam = investigations.find(i => i.id === params.id);
     const linkedAppt = exam?.linkedAppointmentId ? appointments.find(a => a.id === exam.linkedAppointmentId) : null;
 
     if (!exam) {
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                    <Text style={styles.headerTitle}>Exam Not Found</Text>
+                    <Text style={styles.headerTitle}>{t('exam_not_found')}</Text>
                 </View>
                 <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>The requested exam details could not be found.</Text>
+                    <Text style={styles.errorText}>{t('exam_not_found_desc')}</Text>
                 </View>
-            </SafeAreaView>
+            </View>
         );
     }
 
@@ -58,14 +66,14 @@ export default function ExamDetailsScreen() {
                 });
             } else {
                 if (!(await Sharing.isAvailableAsync())) {
-                    alert('Sharing is not available on this platform');
+                    alert(t('error')); // Assuming we have a general error key or create one
                     return;
                 }
                 await Sharing.shareAsync(uri);
             }
         } catch (e: any) {
             console.log('File open error:', e);
-            Alert.alert('Open Failed', `Error opening file: ${e.message || JSON.stringify(e)}`);
+            Alert.alert(t('error'), `${t('error')}: ${e.message || JSON.stringify(e)}`);
             // Fallback commented out to verify error
             // if (await Sharing.isAvailableAsync()) {
             //    await Sharing.shareAsync(uri);
@@ -74,37 +82,37 @@ export default function ExamDetailsScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                <Text style={styles.headerTitle}>Exam Details</Text>
+                <Text style={styles.headerTitle}>{t('exam_details')}</Text>
                 <TouchableOpacity onPress={() => router.push({ pathname: '/add-investigation', params: { id: exam.id } })}>
-                    <Text style={styles.editLink}>Edit</Text>
+                    <Text style={styles.editLink}>{t('edit')}</Text>
                 </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.section}>
-                    <Text style={styles.label}>Type</Text>
+                    <Text style={styles.label}>{t('type')}</Text>
                     <Text style={styles.value}>{exam.type}</Text>
                 </View>
 
                 <View style={styles.row}>
                     <View style={styles.halfSection}>
-                        <Text style={styles.label}>Date</Text>
-                        <Text style={styles.value}>{format(parseISO(exam.dateTime), 'MMM d, yyyy')}</Text>
+                        <Text style={styles.label}>{t('date')}</Text>
+                        <Text style={styles.value}>{format(parseISO(exam.dateTime), 'MMM d, yyyy', { locale: dateLocale })}</Text>
                     </View>
                     <View style={styles.halfSection}>
-                        <Text style={styles.label}>Status</Text>
+                        <Text style={styles.label}>{t('status')}</Text>
                         <View style={[styles.statusBadge, exam.status === 'Completed' ? styles.statusCompleted : exam.status === 'Pending' ? styles.statusPending : styles.statusScheduled]}>
-                            <Text style={[styles.statusText, exam.status === 'Completed' ? styles.statusTextCompleted : exam.status === 'Pending' ? styles.statusTextPending : styles.statusTextScheduled]}>{exam.status}</Text>
+                            <Text style={[styles.statusText, exam.status === 'Completed' ? styles.statusTextCompleted : exam.status === 'Pending' ? styles.statusTextPending : styles.statusTextScheduled]}>{t(exam.status.toLowerCase() as any) || exam.status}</Text>
                         </View>
                     </View>
                 </View>
 
                 {exam.result ? (
                     <View style={styles.section}>
-                        <Text style={styles.label}>Result</Text>
+                        <Text style={styles.label}>{t('result')}</Text>
                         <View style={styles.resultBox}>
                             <Text style={styles.resultText}>{exam.result}</Text>
                         </View>
@@ -113,19 +121,19 @@ export default function ExamDetailsScreen() {
 
                 {exam.notes ? (
                     <View style={styles.section}>
-                        <Text style={styles.label}>Notes</Text>
+                        <Text style={styles.label}>{t('notes')}</Text>
                         <Text style={styles.value}>{exam.notes}</Text>
                     </View>
                 ) : null}
 
                 {linkedAppt && (
                     <View style={styles.section}>
-                        <Text style={styles.label}>Linked Appointment</Text>
+                        <Text style={styles.label}>{t('linked_appointment')}</Text>
                         <TouchableOpacity style={styles.linkCard}>
                             <Ionicons name="calendar" size={20} color="#3B82F6" />
                             <View style={styles.linkInfo}>
-                                <Text style={styles.linkTitle}>{linkedAppt.reason || linkedAppt.doctorName || 'Appointment'}</Text>
-                                <Text style={styles.linkDate}>{format(parseISO(linkedAppt.dateTime), 'PPPP p')}</Text>
+                                <Text style={styles.linkTitle}>{linkedAppt.reason || linkedAppt.doctorName || t('appointment')}</Text>
+                                <Text style={styles.linkDate}>{format(parseISO(linkedAppt.dateTime), 'PPPP p', { locale: dateLocale })}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -133,7 +141,7 @@ export default function ExamDetailsScreen() {
 
                 {exam.attachments && exam.attachments.length > 0 && (
                     <View style={styles.section}>
-                        <Text style={styles.label}>Attachments</Text>
+                        <Text style={styles.label}>{t('attachments')}</Text>
                         {exam.attachments.map((uri, index) => {
                             // Simple heuristic for images based on extension? 
                             // URIs from document picker usually have accessible paths on Android/iOS
@@ -148,10 +156,10 @@ export default function ExamDetailsScreen() {
                                         </View>
                                     )}
                                     <View style={styles.attachmentInfo}>
-                                        <Text style={styles.attachmentName} numberOfLines={1}>{decodeURIComponent(uri).split('/').pop() || 'Attachment'}</Text>
+                                        <Text style={styles.attachmentName} numberOfLines={1}>{decodeURIComponent(uri).split('/').pop() || t('attachment')}</Text>
                                         <TouchableOpacity style={styles.shareButton} onPress={() => handleOpenFile(uri)}>
                                             <Ionicons name="open-outline" size={16} color="#3B82F6" />
-                                            <Text style={styles.shareText}>Open</Text>
+                                            <Text style={styles.shareText}>{t('open')}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -160,7 +168,7 @@ export default function ExamDetailsScreen() {
                     </View>
                 )}
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 

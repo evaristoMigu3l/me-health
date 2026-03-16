@@ -1,16 +1,20 @@
 import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, addMonths, subMonths, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
+import { useTranslation } from '../hooks/useTranslation';
+
 type FilterType = 'all' | 'week' | 'month' | 'year';
 type SortBy = 'date' | 'hours' | 'quality';
 
-function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styles, colors }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void, styles: any, colors: any }) {
+function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styles, colors, t }: { markedDates: Record<string, any>, selectedDate: string | null, onSelectDate: (d: string) => void, onClose: () => void, styles: any, colors: any, t: any }) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const days = eachDayOfInterval({ start: startOfWeek(startOfMonth(currentMonth)), end: endOfWeek(endOfMonth(currentMonth)) });
 
@@ -22,7 +26,7 @@ function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styl
                 <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}><Ionicons name="chevron-forward" size={24} color={colors.text} /></TouchableOpacity>
             </View>
             <View style={styles.weekDays}>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{d}</Text>)}
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <Text key={d} style={styles.weekDay}>{t(d.toLowerCase()) || d}</Text>)}
             </View>
             <View style={styles.daysGrid}>
                 {days.map(day => {
@@ -38,16 +42,21 @@ function CustomCalendar({ markedDates, selectedDate, onSelectDate, onClose, styl
                 })}
             </View>
             <View style={styles.calendarFooter}>
-                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>Done</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.clearButton} onPress={onClose}><Text style={styles.clearButtonText}>{t('done')}</Text></TouchableOpacity>
             </View>
         </View>
     );
 }
 
 export default function SleepLogScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
+    const dateLocale = language === 'pt' ? ptBR : enUS;
     const { sleepLogs, removeSleepLog } = useHealthStore();
     const [search, setSearch] = useState('');
     const [filterType, setFilterType] = useState<FilterType>('all');
@@ -55,6 +64,7 @@ export default function SleepLogScreen() {
     const [sortBy, setSortBy] = useState<SortBy>('date');
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [isDateModalVisible, setIsDateModalVisible] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
 
     const qualityColors = { Poor: '#EF4444', Fair: '#F59E0B', Good: '#10B981', Excellent: '#059669' };
@@ -111,24 +121,24 @@ export default function SleepLogScreen() {
 
     const handleDateSelect = (date: string) => {
         if (selectedDate === date) {
-            setSelectedDate(null);
+            setIsDateModalVisible(false);
         } else {
             setSelectedDate(date);
         }
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back" size={24} color={colors.text} /></TouchableOpacity>
-                <Text style={styles.headerTitle}>Sleep Log</Text>
+                <Text style={styles.headerTitle}>{t('sleep_log')}</Text>
                 <TouchableOpacity onPress={() => router.push('/add-sleep')}><Ionicons name="add" size={24} color="#6366F1" /></TouchableOpacity>
             </View>
 
             <View style={styles.searchRow}>
                 <View style={styles.searchContainer}>
                     <Ionicons name="search" size={20} color={colors.textSecondary} />
-                    <TextInput placeholderTextColor={colors.textSecondary} style={styles.searchInput} placeholder="Search sleep logs..." value={search} onChangeText={setSearch} />
+                    <TextInput placeholderTextColor={colors.textSecondary} style={styles.searchInput} placeholder={t('search_sleep_logs')} value={search} onChangeText={setSearch} />
                 </View>
                 <TouchableOpacity style={[styles.filterButton, showFilters && styles.filterButtonActive]} onPress={() => setShowFilters(!showFilters)}>
                     <Ionicons name="options" size={20} color={showFilters ? '#6366F1' : colors.textSecondary} />
@@ -141,26 +151,26 @@ export default function SleepLogScreen() {
             {showFilters && (
                 <View style={styles.filterPanel}>
                     <View style={styles.filterRow}>
-                        <Text style={styles.filterLabel}>Period:</Text>
-                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(t => (
-                            <TouchableOpacity key={t} style={[styles.filterChip, filterType === t && styles.filterChipActive]} onPress={() => setFilterType(t)}>
-                                <Text style={[styles.filterChipText, filterType === t && styles.filterChipTextActive]}>{t.charAt(0).toUpperCase() + t.slice(1)}</Text>
+                        <Text style={styles.filterLabel}>{t('period')}</Text>
+                        {(['all', 'week', 'month', 'year'] as FilterType[]).map(type => (
+                            <TouchableOpacity key={type} style={[styles.filterChip, filterType === type && styles.filterChipActive]} onPress={() => setFilterType(type)}>
+                                <Text style={[styles.filterChipText, filterType === type && styles.filterChipTextActive]}>{t(type) || type.charAt(0).toUpperCase() + type.slice(1)}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
                     <View style={styles.filterRow}>
-                        <Text style={styles.filterLabel}>Min Hours:</Text>
+                        <Text style={styles.filterLabel}>{t('min_hours')}</Text>
                         {[0, 5, 6, 7, 8].map(i => (
                             <TouchableOpacity key={i} style={[styles.filterChip, minHours === i && styles.filterChipActive]} onPress={() => setMinHours(i)}>
-                                <Text style={[styles.filterChipText, minHours === i && styles.filterChipTextActive]}>{i === 0 ? 'All' : `${i}+`}</Text>
+                                <Text style={[styles.filterChipText, minHours === i && styles.filterChipTextActive]}>{i === 0 ? t('all') || 'All' : `${i}+`}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
                     <View style={styles.filterRow}>
-                        <Text style={styles.filterLabel}>Sort:</Text>
+                        <Text style={styles.filterLabel}>{t('sort')}</Text>
                         {(['date', 'hours', 'quality'] as SortBy[]).map(s => (
                             <TouchableOpacity key={s} style={[styles.filterChip, sortBy === s && styles.filterChipActive]} onPress={() => setSortBy(s)}>
-                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{s.charAt(0).toUpperCase() + s.slice(1)}</Text>
+                                <Text style={[styles.filterChipText, sortBy === s && styles.filterChipTextActive]}>{t(s) || s.charAt(0).toUpperCase() + s.slice(1)}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -169,7 +179,7 @@ export default function SleepLogScreen() {
 
             {filteredLogs.length > 0 && (
                 <View style={styles.chartSection}>
-                    <Text style={styles.chartTitle}>Quality Distribution</Text>
+                    <Text style={styles.chartTitle}>{t('quality_distribution')}</Text>
                     <View style={styles.pieContainer}>
                         {Object.entries(qualityStats).map(([label, count]) => {
                             const total = filteredLogs.length;
@@ -178,7 +188,7 @@ export default function SleepLogScreen() {
                             return (
                                 <View key={label} style={styles.pieItem}>
                                     <View style={[styles.pieSlice, { backgroundColor: qualityColors[label as keyof typeof qualityColors] }]} />
-                                    <Text style={styles.pieLabel}>{label}</Text>
+                                    <Text style={styles.pieLabel}>{t(label.toLowerCase()) || label}</Text>
                                     <Text style={styles.pieValue}>{count} ({percentage.toFixed(0)}%)</Text>
                                 </View>
                             );
@@ -188,53 +198,53 @@ export default function SleepLogScreen() {
             )}
 
             <View style={styles.statsRow}>
-                <View style={styles.statItem}><Text style={styles.statValue}>{filteredLogs.length}</Text><Text style={styles.statLabel}>Total</Text></View>
+                <View style={styles.statItem}><Text style={styles.statValue}>{filteredLogs.length}</Text><Text style={styles.statLabel}>{t('total')}</Text></View>
                 <View style={styles.statDivider} />
-                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#6366F1' }]}>{avgHours}h</Text><Text style={styles.statLabel}>Avg Sleep</Text></View>
+                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#6366F1' }]}>{avgHours}h</Text><Text style={styles.statLabel}>{t('avg_sleep')}</Text></View>
                 <View style={styles.statDivider} />
-                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{qualityStats.Good + qualityStats.Excellent}</Text><Text style={styles.statLabel}>Good+</Text></View>
+                <View style={styles.statItem}><Text style={[styles.statValue, { color: '#10B981' }]}>{qualityStats.Good + qualityStats.Excellent}</Text><Text style={styles.statLabel}>{t('good_plus')}</Text></View>
             </View>
 
             <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
                 {filteredLogs.length === 0 ? (
-                    <View style={styles.emptyState}><Ionicons name="bed" size={48} color={colors.textSecondary} /><Text style={styles.emptyText}>No sleep logs found</Text></View>
+                    <View style={styles.emptyState}><Ionicons name="bed" size={48} color={colors.textSecondary} /><Text style={styles.emptyText}>{t('no_sleep_found')}</Text></View>
                 ) : (
                     filteredLogs.map(s => (
-                        <View key={s.id} style={styles.sleepCard}>
+                        <TouchableOpacity key={s.id} style={styles.sleepCard} onPress={() => router.push({ pathname: '/sleep-details', params: { id: s.id } })} activeOpacity={0.8}>
                             <View style={styles.sleepHeader}>
                                 <View style={[styles.qualityDot, { backgroundColor: qualityColors[s.quality] }]} />
-                                <Text style={styles.sleepName}>{s.quality}</Text>
+                                <Text style={styles.sleepName}>{t(s.quality.toLowerCase() as any) || s.quality}</Text>
                                 <View style={[styles.qualityBadge, { backgroundColor: qualityColors[s.quality] + '20' }]}>
                                     <Text style={[styles.qualityText, { color: qualityColors[s.quality] }]}>{s.hours}h</Text>
                                 </View>
                             </View>
                             <View style={styles.sleepDetails}>
-                                <View style={styles.detailItem}><Ionicons name="calendar-outline" size={16} color={colors.textSecondary} /><Text style={styles.detailText}>{format(parseISO(s.dateTime), 'MMM d, yyyy h:mm a')}</Text></View>
+                                <View style={styles.detailItem}><Ionicons name="calendar-outline" size={16} color={colors.textSecondary} /><Text style={styles.detailText}>{format(parseISO(s.dateTime), 'MMM d, yyyy  HH:mm', { locale: dateLocale })}</Text></View>
                             </View>
                             {s.notes && <Text style={styles.notes}>{s.notes}</Text>}
                             <View style={styles.cardActions}>
                                 <TouchableOpacity style={styles.editButton} onPress={() => router.push({ pathname: '/add-sleep', params: { id: s.id } })}>
                                     <Ionicons name="create-outline" size={18} color="#3B82F6" />
-                                    <Text style={styles.editText}>Edit</Text>
+                                    <Text style={styles.editText}>{t('edit')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.deleteButton} onPress={() => removeSleepLog(s.id)}>
                                     <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                                    <Text style={styles.deleteText}>Delete</Text>
+                                    <Text style={styles.deleteText}>{t('delete')}</Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))
                 )}
             </ScrollView>
 
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            <Modal visible={showCalendar} animationType="none" transparent statusBarTranslucent hardwareAccelerated>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} styles={styles} colors={colors} />
+                        <CustomCalendar markedDates={markedDates} selectedDate={selectedDate} onSelectDate={handleDateSelect} onClose={() => setShowCalendar(false)} styles={styles} colors={colors} t={t} />
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -301,4 +311,21 @@ const getStyles = (colors: any) => StyleSheet.create({
     calendarFooter: { marginTop: 16, alignItems: 'flex-end' },
     clearButton: { paddingHorizontal: 20, paddingVertical: 10 },
     clearButtonText: { color: '#6366F1', fontSize: 16, fontWeight: '600' },
+    // Detail modal
+    detailOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+    detailContent: { backgroundColor: colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 },
+    detailHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 12 },
+    detailEmoji: { fontSize: 36 },
+    detailTitle: { fontSize: 22, fontWeight: '700' },
+    detailSub: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
+    hoursHighlight: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', marginBottom: 24 },
+    hoursValue: { fontSize: 56, fontWeight: '800' },
+    hoursUnit: { fontSize: 18, color: colors.textSecondary, marginLeft: 8 },
+    detailBody: { gap: 16, marginBottom: 20 },
+    detailRow: { flexDirection: 'row', alignItems: 'flex-start' },
+    detailRowContent: { marginLeft: 12, flex: 1 },
+    detailLabel: { fontSize: 12, color: colors.textSecondary, marginBottom: 2 },
+    detailValue: { fontSize: 15, color: colors.text, fontWeight: '500' },
+    deleteFullBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: '#EF4444' },
+    deleteFullText: { color: '#EF4444', fontWeight: '600', marginLeft: 8, fontSize: 15 },
 });

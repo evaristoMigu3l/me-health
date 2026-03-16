@@ -1,21 +1,28 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthStore } from '../stores/useHealthStore';
 import { SleepLog } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format } from 'date-fns';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { ptBR, enUS } from 'date-fns/locale';
 
 const qualities: SleepLog['quality'][] = ['Poor', 'Fair', 'Good', 'Excellent'];
 
 export default function AddSleepScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id: string }>();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
     const { addSleepLog, updateSleepLog, sleepLogs } = useHealthStore();
     const [hours, setHours] = useState(7);
     const [quality, setQuality] = useState<SleepLog['quality'] | null>(null);
@@ -51,35 +58,35 @@ export default function AddSleepScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{id ? 'Edit Sleep' : 'Log Sleep'}</Text>
+                <Text style={styles.headerTitle}>{id ? t('edit_sleep') : t('log_sleep')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.dateContainer}>
-                    <Text style={styles.label}>Date</Text>
+                    <Text style={styles.label}>{t('date')}</Text>
                     <TouchableOpacity style={styles.dateButton} onPress={() => setShowCalendar(true)}>
-                        <Text style={styles.dateText}>{format(date, 'MMM d, yyyy')}</Text>
+                        <Text style={styles.dateText}>{format(date, 'MMM d, yyyy', { locale: language === 'pt' ? ptBR : enUS })}</Text>
                         <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
 
-                <Text style={styles.label}>Hours of sleep</Text>
+                <Text style={styles.label}>{t('hours_of_sleep')}</Text>
                 <View style={styles.hoursSelector}>
                     <TouchableOpacity style={styles.hourButton} onPress={() => setHours(Math.max(1, hours - 1))}><Ionicons name="remove" size={24} color="#3B82F6" /></TouchableOpacity>
-                    <View style={styles.hoursDisplay}><Text style={styles.hoursValue}>{hours}</Text><Text style={styles.hoursLabel}>hours</Text></View>
+                    <View style={styles.hoursDisplay}><Text style={styles.hoursValue}>{hours}</Text><Text style={styles.hoursLabel}>{t('hours')}</Text></View>
                     <TouchableOpacity style={styles.hourButton} onPress={() => setHours(Math.min(24, hours + 1))}><Ionicons name="add" size={24} color="#3B82F6" /></TouchableOpacity>
                 </View>
 
-                <Text style={styles.label}>Sleep Quality</Text>
+                <Text style={styles.label}>{t('sleep_quality')}</Text>
                 <View style={styles.qualityRow}>
                     {qualities.map((q) => (
                         <TouchableOpacity key={q} style={[styles.qualityButton, quality === q && styles.qualityButtonActive]} onPress={() => setQuality(q)}>
-                            <Text style={[styles.qualityText, quality === q && styles.qualityTextActive]}>{q}</Text>
+                            <Text style={[styles.qualityText, quality === q && styles.qualityTextActive]}>{t(q.toLowerCase() as any) || q}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -87,11 +94,11 @@ export default function AddSleepScreen() {
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !quality && styles.buttonDisabled]} onPress={handleSubmit} disabled={!quality}>
-                    <Text style={styles.buttonText}>{id ? 'Update Sleep' : 'Save Sleep'}</Text>
+                    <Text style={styles.buttonText}>{id ? t('update') : t('save')}</Text>
                 </TouchableOpacity>
             </View>
 
-            <Modal visible={showCalendar} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={showCalendar} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Calendar
@@ -102,7 +109,8 @@ export default function AddSleepScreen() {
                             markedDates={{
                                 [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#6366F1' }
                             }}
-                            theme={{ calendarBackground: colors.surface,
+                            theme={{
+                                calendarBackground: colors.surface,
                                 textSectionTitleColor: colors.textSecondary,
                                 selectedDayBackgroundColor: colors.primary || '#14B8A6',
                                 selectedDayTextColor: colors.surface,
@@ -117,12 +125,12 @@ export default function AddSleepScreen() {
                             }}
                         />
                         <TouchableOpacity style={styles.closeButton} onPress={() => setShowCalendar(false)}>
-                            <Text style={styles.closeText}>Close</Text>
+                            <Text style={styles.closeText}>{t('close')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </View>
     );
 }
 

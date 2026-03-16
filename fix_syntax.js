@@ -34,4 +34,4 @@ function walkDir(dir) {
     }
 }
 
-walkDir('/home/evaristo/Documents/me&health/app');
+walkDir(path.join(__dirname, 'app'));

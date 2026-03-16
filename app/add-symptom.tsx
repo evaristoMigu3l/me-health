@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
 import { useHealthStore } from '../stores/useHealthStore';
 import { Symptom } from '../types';
+import { useTranslation } from '../hooks/useTranslation';
+import { useThemeStore } from '../stores/useThemeStore';
+import { enUS, ptBR } from 'date-fns/locale';
 
 export default function AddSymptomScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
+    const { language } = useThemeStore();
     const { id } = useLocalSearchParams<{ id: string }>();
     const { addSymptom, updateSymptom, symptoms } = useHealthStore();
     const [name, setName] = useState('');
@@ -18,6 +26,8 @@ export default function AddSymptomScreen() {
     const [place, setPlace] = useState('');
     const [notes, setNotes] = useState('');
     const [dateStarted, setDateStarted] = useState<string | null>(null);
+
+    const dateLocale = language === 'pt' ? ptBR : enUS;
 
     useEffect(() => {
         if (id) {
@@ -38,6 +48,13 @@ export default function AddSymptomScreen() {
         if (val < 75) return 'Severe';
         return 'Very Severe';
     };
+
+    const getTranslatedIntensityLabel = (val: number): string => {
+        if (val < 25) return t('mild');
+        if (val < 50) return t('moderate');
+        if (val < 75) return t('severe');
+        return t('very_severe');
+    }
 
     const handleSubmit = () => {
         if (!name.trim()) return;
@@ -61,48 +78,49 @@ export default function AddSymptomScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{id ? 'Edit Symptom' : 'Add Symptom'}</Text>
+                <Text style={styles.headerTitle}>{id ? t('edit_symptom') : t('add_symptom')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.label}>Symptom Name *</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder="e.g., Headache, Fatigue" value={name} onChangeText={setName} />
+                <Text style={styles.label}>{t('symptom_name')} *</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={styles.input} placeholder={t('symptom_name_placeholder')} value={name} onChangeText={setName} />
 
-                <Text style={styles.label}>Intensity: {getIntensityLabel(intensity)} ({intensity})</Text>
+                <Text style={styles.label}>{t('intensity')}: {getTranslatedIntensityLabel(intensity)} ({intensity})</Text>
                 <View style={styles.sliderContainer}>
-                    <View style={styles.sliderLabels}>
-                        {[0, 25, 50, 75, 100].map((val) => (
-                            <TouchableOpacity key={val} onPress={() => setIntensity(val)}>
-                                <Text style={[styles.sliderLabel, intensity === val && styles.sliderLabelActive]}>{val}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                    <View style={styles.sliderTrack}>
-                        <View style={[styles.sliderFill, { width: `${intensity}%`, backgroundColor: intensity >= 75 ? '#EF4444' : intensity >= 50 ? '#F59E0B' : '#10B981' }]} />
-                    </View>
+                    <Slider
+                        style={{ width: '100%', height: 40 }}
+                        minimumValue={0}
+                        maximumValue={100}
+                        step={1}
+                        value={intensity}
+                        onValueChange={setIntensity}
+                        minimumTrackTintColor={intensity >= 75 ? '#EF4444' : intensity >= 50 ? '#F59E0B' : '#10B981'}
+                        maximumTrackTintColor={colors.border}
+                        thumbTintColor="#3B82F6"
+                    />
                 </View>
 
-                <Text style={styles.label}>Location/Place</Text>
-                <View style={styles.inputWithIcon}>
+                <Text style={styles.label}>{t('location_place')}</Text>
+                <View style={[styles.inputWithIcon, { backgroundColor: colors.surface }]}>
                     <Ionicons name="location-outline" size={20} color={colors.textSecondary} />
-                    <TextInput placeholderTextColor={colors.textSecondary} style={styles.inputNoBorder} placeholder="e.g., Home, Office" value={place} onChangeText={setPlace} />
+                    <TextInput placeholderTextColor={colors.textSecondary} style={[styles.inputNoBorder, { color: colors.text }]} placeholder={t('location_placeholder')} value={place} onChangeText={setPlace} />
                 </View>
 
-                <Text style={styles.label}>Notes (optional)</Text>
-                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder="Additional details..." value={notes} onChangeText={setNotes} multiline textAlignVertical="top" />
+                <Text style={styles.label}>{t('notes_optional')}</Text>
+                <TextInput placeholderTextColor={colors.textSecondary} style={[styles.input, styles.textArea]} placeholder={t('notes_placeholder')} value={notes} onChangeText={setNotes} multiline textAlignVertical="top" />
             </ScrollView>
 
             <View style={styles.footer}>
                 <TouchableOpacity style={[styles.button, !name.trim() && styles.buttonDisabled]} onPress={handleSubmit} disabled={!name.trim()}>
-                    <Text style={styles.buttonText}>{id ? 'Update Symptom' : 'Add Symptom'}</Text>
+                    <Text style={styles.buttonText}>{id ? t('update') : t('save')}</Text>
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -114,9 +132,9 @@ const getStyles = (colors: any) => StyleSheet.create({
     scrollView: { flex: 1 },
     scrollContent: { padding: 20 },
     label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 8 },
-    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20 , color: colors.text },
+    input: { backgroundColor: colors.surface, padding: 16, borderRadius: 12, fontSize: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 20, color: colors.text },
     inputWithIcon: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: colors.border, marginBottom: 20 },
-    inputNoBorder: { flex: 1, paddingVertical: 16, marginLeft: 8, fontSize: 16 },
+    inputNoBorder: { flex: 1, paddingVertical: 16, marginLeft: 8, fontSize: 16, color: colors.text },
     textArea: { minHeight: 100 },
     sliderContainer: { marginBottom: 20 },
     sliderLabels: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },

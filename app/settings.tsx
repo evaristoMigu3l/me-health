@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Switch, ScrollView, Modal, FlatList, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore, NotificationSound } from '../stores/useThemeStore';
@@ -13,13 +13,17 @@ import { exportAllHealthDataAsCSV, exportAllHealthDataAsPDF, exportAppDataAsJSON
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import EditProfileModal, { EditProfileForm } from '../components/EditProfileModal';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function SettingsScreen() {
+
+    const insets = useSafeAreaInsets();
     const { colors } = useAppTheme();
     const styles = getStyles(colors);
     const router = useRouter();
+    const { t } = useTranslation();
     const [notifications, setNotifications] = useState(true);
-    const { themePreference, setThemePreference, notificationSound, setNotificationSound } = useThemeStore();
+    const { themePreference, setThemePreference, notificationSound, setNotificationSound, language, setLanguage } = useThemeStore();
     const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
     const healthData = useHealthStore.getState();
     const { profile, setProfile } = useUserStore();
@@ -66,22 +70,37 @@ export default function SettingsScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: colors.background }]}>
             <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('settings')}</Text>
             </View>
 
             <ScrollView style={styles.scrollView}>
                 <View style={[styles.section, { backgroundColor: colors.surface, marginTop: 0 }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Preferences</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('preferences')}</Text>
+
+                    <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+                        <View style={styles.settingInfo}>
+                            <Ionicons name="globe-outline" size={22} color={colors.textSecondary} />
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('language')}</Text>
+                        </View>
+                        <View style={[styles.unitToggle, { backgroundColor: colors.background }]}>
+                            <TouchableOpacity style={[styles.unitButton, language === 'en' && { backgroundColor: colors.surface }]} onPress={() => setLanguage('en')}>
+                                <Text style={[styles.unitText, { color: colors.textSecondary }, language === 'en' && { color: colors.text, fontWeight: '600' }]}>EN</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.unitButton, language === 'pt' && { backgroundColor: colors.surface }]} onPress={() => setLanguage('pt')}>
+                                <Text style={[styles.unitText, { color: colors.textSecondary }, language === 'pt' && { color: colors.text, fontWeight: '600' }]}>PT</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
 
                     <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="notifications-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Notifications</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('notifications')}</Text>
                         </View>
                         <Switch value={notifications} onValueChange={setNotifications} trackColor={{ false: colors.border, true: colors.primary }} />
                     </View>
@@ -92,7 +111,7 @@ export default function SettingsScreen() {
                     >
                         <View style={styles.settingInfo}>
                             <Ionicons name="musical-notes-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Alert Sound</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('alert_sound')}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={{ color: colors.textSecondary, marginRight: 8 }}>
@@ -105,7 +124,7 @@ export default function SettingsScreen() {
                     <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="moon-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Theme</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('theme')}</Text>
                         </View>
                         <View style={[styles.unitToggle, { backgroundColor: colors.background }]}>
                             {(['system', 'light', 'dark'] as const).map((t) => (
@@ -119,14 +138,14 @@ export default function SettingsScreen() {
                     <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="resize-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Units</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('units')}</Text>
                         </View>
                         <View style={[styles.unitToggle, { backgroundColor: colors.background }]}>
                             <TouchableOpacity style={[styles.unitButton, units === 'metric' && { backgroundColor: colors.surface }]} onPress={() => setUnits('metric')}>
-                                <Text style={[styles.unitText, { color: colors.textSecondary }, units === 'metric' && { color: colors.text, fontWeight: '600' }]}>Metric</Text>
+                                <Text style={[styles.unitText, { color: colors.textSecondary }, units === 'metric' && { color: colors.text, fontWeight: '600' }]}>{t('metric')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.unitButton, units === 'imperial' && { backgroundColor: colors.surface }]} onPress={() => setUnits('imperial')}>
-                                <Text style={[styles.unitText, { color: colors.textSecondary }, units === 'imperial' && { color: colors.text, fontWeight: '600' }]}>Imperial</Text>
+                                <Text style={[styles.unitText, { color: colors.textSecondary }, units === 'imperial' && { color: colors.text, fontWeight: '600' }]}>{t('imperial')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -134,16 +153,16 @@ export default function SettingsScreen() {
                     <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="chatbubble-ellipses-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Test Notifications</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('test_notifications')}</Text>
                         </View>
                         <TouchableOpacity style={[styles.unitToggle, { backgroundColor: colors.primary, paddingHorizontal: 16 }]} onPress={handleTestNotification}>
-                            <Text style={{ color: colors.surface, fontWeight: '600' }}>Send Test 🔔</Text>
+                            <Text style={{ color: colors.surface, fontWeight: '600' }}>{t('send_test')} 🔔</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <View style={[styles.section, { backgroundColor: colors.surface }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Account</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('account')}</Text>
 
                     <TouchableOpacity style={[styles.settingRow, { borderBottomColor: colors.border }]} onPress={() => {
                         // Set values AND open in same batch — no flicker
@@ -158,7 +177,7 @@ export default function SettingsScreen() {
                     }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="person-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Edit Profile</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('edit_profile')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
@@ -166,40 +185,40 @@ export default function SettingsScreen() {
                     <TouchableOpacity style={[styles.settingRow, { borderBottomColor: colors.border }]} onPress={() => { }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="lock-closed-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Privacy</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('privacy')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={[styles.section, { backgroundColor: colors.surface }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Data Export</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('data_export')}</Text>
 
                     <TouchableOpacity style={[styles.settingRow, { borderBottomColor: colors.border }]} onPress={async () => {
-                        try { await exportAllHealthDataAsCSV(healthData); }
+                        try { await exportAllHealthDataAsCSV(healthData, language); }
                         catch (e) { Alert.alert('Error', 'Failed to export CSV.'); }
                     }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="document-text-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Export as CSV</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('export_as_csv')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={[styles.settingRow, { borderBottomColor: colors.border }]} onPress={async () => {
-                        try { await exportAllHealthDataAsPDF(healthData, profile?.name || 'User'); }
+                        try { await exportAllHealthDataAsPDF(healthData, profile?.name || 'User', language); }
                         catch (e) { Alert.alert('Error', 'Failed to export PDF.'); }
                     }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="document-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Export as PDF</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('export_as_pdf')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={[styles.section, { backgroundColor: colors.surface }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>App Backup</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('app_backup')}</Text>
 
                     <TouchableOpacity style={[styles.settingRow, { borderBottomColor: colors.border }]} onPress={async () => {
                         try {
@@ -209,12 +228,12 @@ export default function SettingsScreen() {
                                 health: useHealthStore.getState(),
                                 user: useUserStore.getState(),
                             };
-                            await exportAppDataAsJSON(backup);
+                            await exportAppDataAsJSON(backup, language);
                         } catch (e) { Alert.alert('Error', 'Failed to export backup.'); }
                     }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="cloud-upload-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Export App Backup (JSON)</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('export_app_backup')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
@@ -251,19 +270,19 @@ export default function SettingsScreen() {
                     }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="cloud-download-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Import App Backup (JSON)</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('import_app_backup')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={[styles.section, { backgroundColor: colors.surface }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Support</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('support')}</Text>
 
                     <TouchableOpacity style={[styles.settingRow, { borderBottomColor: colors.border }]} onPress={() => { }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="help-circle-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>Help Center</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('help_center')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
@@ -271,14 +290,14 @@ export default function SettingsScreen() {
                     <TouchableOpacity style={[styles.settingRow, { borderBottomWidth: 0 }]} onPress={() => { }}>
                         <View style={styles.settingInfo}>
                             <Ionicons name="information-circle-outline" size={22} color={colors.textSecondary} />
-                            <Text style={[styles.settingText, { color: colors.text }]}>About</Text>
+                            <Text style={[styles.settingText, { color: colors.text }]}>{t('about')}</Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                 </View>
             </ScrollView>
 
-            <Modal visible={soundModalVisible} animationType="slide" transparent>
+            <Modal statusBarTranslucent hardwareAccelerated visible={soundModalVisible} animationType="none" transparent>
                 <View style={styles.modalOverlay}>
                     <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
                         <View style={styles.modalHeader}>
@@ -334,16 +353,16 @@ export default function SettingsScreen() {
                     setEditProfileVisible(false);
                 }}
             />
-        </SafeAreaView>
+        </View>
     );
 }
 
 const getStyles = (colors: any) => StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     scrollView: { flex: 1 },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
-    backButton: { padding: 4 },
-    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 12 },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
+    backButton: { padding: 12, marginLeft: -8, marginRight: 4, justifyContent: 'center', alignItems: 'center', minWidth: 44, minHeight: 44 },
+    headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: colors.text, marginLeft: 8 },
     section: { backgroundColor: colors.surface, marginTop: 20, paddingHorizontal: 16, paddingVertical: 8 },
     sectionTitle: { fontSize: 12, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase', marginBottom: 8, marginTop: 8 },
     settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.border },

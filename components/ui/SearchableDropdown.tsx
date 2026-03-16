@@ -39,7 +39,7 @@ export function SearchableDropdown({ items, onSelect, placeholder = "Search...",
                 <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
             </TouchableOpacity>
 
-            <Modal visible={isVisible} animationType="slide" presentationStyle="pageSheet">
+            <Modal visible={isVisible} animationType="none" presentationStyle="pageSheet">
                 <View className="flex-1 bg-background pt-6">
                     <View className="flex-row items-center px-4 pb-4 border-b border-gray-100 bg-white">
                         {/* Close Button */}
