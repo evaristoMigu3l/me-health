@@ -53,8 +53,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "8d589550-51c8-4279-bcf6-dcb18686f170"
+        "projectId": "62ef19e5-0727-421a-be54-947d0ed5eab1"
       }
-    }
+    },
+    "owner": "kotoamatsu1"
   }
 }

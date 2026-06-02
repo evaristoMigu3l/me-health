@@ -9,9 +9,13 @@ import { Investigation } from '../types';
 import { Calendar } from 'react-native-calendars';
 import { format, parseISO } from 'date-fns';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useTranslation } from '../hooks/useTranslation';
 import { useThemeStore } from '../stores/useThemeStore';
 import { ptBR, enUS } from 'date-fns/locale';
+
+// Persistent directory for exam attachments (survives cache clears)
+const ATTACHMENTS_DIR = `${FileSystem.documentDirectory}exam-attachments/`;
 
 export default function AddInvestigationScreen() {
 
@@ -51,6 +55,30 @@ export default function AddInvestigationScreen() {
         }
     }, [existingExam]);
 
+    /**
+     * Copies a picked file from the volatile cache directory to
+     * FileSystem.documentDirectory (persistent storage that survives
+     * cache clears by Android). Returns the new persistent URI.
+     */
+    const copyToPersistentStorage = async (cacheUri: string, fileName: string): Promise<string> => {
+        // Ensure the persistent attachments directory exists
+        const dirInfo = await FileSystem.getInfoAsync(ATTACHMENTS_DIR);
+        if (!dirInfo.exists) {
+            await FileSystem.makeDirectoryAsync(ATTACHMENTS_DIR, { intermediates: true });
+        }
+
+        // Create a unique filename to avoid collisions
+        const uniqueName = `${Date.now()}_${fileName}`;
+        const persistentUri = `${ATTACHMENTS_DIR}${uniqueName}`;
+
+        await FileSystem.copyAsync({
+            from: cacheUri,
+            to: persistentUri,
+        });
+
+        return persistentUri;
+    };
+
     const handlePickDocument = async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({
@@ -60,9 +88,12 @@ export default function AddInvestigationScreen() {
 
             if (result.canceled) return;
 
-            // For this demo, we'll store the URI.
             const asset = result.assets[0];
-            setAttachments([...attachments, asset.uri]);
+            const fileName = asset.name || asset.uri.split('/').pop() || 'attachment';
+
+            // Copy from volatile cache to persistent document directory
+            const persistentUri = await copyToPersistentStorage(asset.uri, fileName);
+            setAttachments([...attachments, persistentUri]);
         } catch (err) {
             Alert.alert(t('error'), t('error'));
         }

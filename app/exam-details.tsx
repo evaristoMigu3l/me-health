@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Platform, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Platform, Alert, ActivityIndicator } from 'react-native';
 import { useAppTheme } from '../hooks/useAppTheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -13,7 +14,88 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useThemeStore } from '../stores/useThemeStore';
 import { ptBR, enUS } from 'date-fns/locale';
 
-// ... imports
+/**
+ * AttachmentCard checks if the file still exists on disk before rendering.
+ * Old attachments stored from the cache directory may no longer exist
+ * after Android clears the cache — this handles that gracefully.
+ */
+function AttachmentCard({ uri, colors, styles, t, onOpen }: {
+    uri: string;
+    colors: any;
+    styles: any;
+    t: (key: any) => string;
+    onOpen: (uri: string) => void;
+}) {
+    const [fileExists, setFileExists] = useState<boolean | null>(null); // null = loading
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                // content:// URIs can't be checked with getInfoAsync, assume they exist
+                if (uri.startsWith('content://')) {
+                    if (mounted) setFileExists(true);
+                    return;
+                }
+                const info = await FileSystem.getInfoAsync(uri);
+                if (mounted) setFileExists(info.exists);
+            } catch {
+                if (mounted) setFileExists(false);
+            }
+        })();
+        return () => { mounted = false; };
+    }, [uri]);
+
+    const isImage = uri.match(/\.(jpg|jpeg|png|gif)$/i);
+    const fileName = decodeURIComponent(uri).split('/').pop() || t('attachment');
+
+    // Still checking...
+    if (fileExists === null) {
+        return (
+            <View style={styles.attachmentCard}>
+                <View style={styles.fileIconContainer}>
+                    <ActivityIndicator size="small" color={colors.textSecondary} />
+                </View>
+            </View>
+        );
+    }
+
+    // File is missing — show a friendly message instead of crashing
+    if (!fileExists) {
+        return (
+            <View style={[styles.attachmentCard, { opacity: 0.5 }]}>
+                <View style={styles.fileIconContainer}>
+                    <Ionicons name="alert-circle-outline" size={32} color="#EF4444" />
+                </View>
+                <View style={styles.attachmentInfo}>
+                    <Text style={[styles.attachmentName, { color: '#EF4444' }]} numberOfLines={2}>
+                        {t('error')}: {fileName}
+                    </Text>
+                </View>
+            </View>
+        );
+    }
+
+    // File exists — render normally
+    return (
+        <View style={styles.attachmentCard}>
+            {isImage ? (
+                <Image source={{ uri }} style={styles.attachmentImage} resizeMode="cover" />
+            ) : (
+                <View style={styles.fileIconContainer}>
+                    <Ionicons name="document-text" size={32} color={colors.textSecondary} />
+                </View>
+            )}
+            <View style={styles.attachmentInfo}>
+                <Text style={styles.attachmentName} numberOfLines={1}>{fileName}</Text>
+                <TouchableOpacity style={styles.shareButton} onPress={() => onOpen(uri)}>
+                    <Ionicons name="open-outline" size={16} color="#3B82F6" />
+                    <Text style={styles.shareText}>{t('open')}</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
 
 export default function ExamDetailsScreen() {
 
@@ -142,29 +224,16 @@ export default function ExamDetailsScreen() {
                 {exam.attachments && exam.attachments.length > 0 && (
                     <View style={styles.section}>
                         <Text style={styles.label}>{t('attachments')}</Text>
-                        {exam.attachments.map((uri, index) => {
-                            // Simple heuristic for images based on extension? 
-                            // URIs from document picker usually have accessible paths on Android/iOS
-                            const isImage = uri.match(/\.(jpg|jpeg|png|gif)$/i);
-                            return (
-                                <View key={index} style={styles.attachmentCard}>
-                                    {isImage ? (
-                                        <Image source={{ uri }} style={styles.attachmentImage} resizeMode="cover" />
-                                    ) : (
-                                        <View style={styles.fileIconContainer}>
-                                            <Ionicons name="document-text" size={32} color={colors.textSecondary} />
-                                        </View>
-                                    )}
-                                    <View style={styles.attachmentInfo}>
-                                        <Text style={styles.attachmentName} numberOfLines={1}>{decodeURIComponent(uri).split('/').pop() || t('attachment')}</Text>
-                                        <TouchableOpacity style={styles.shareButton} onPress={() => handleOpenFile(uri)}>
-                                            <Ionicons name="open-outline" size={16} color="#3B82F6" />
-                                            <Text style={styles.shareText}>{t('open')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            );
-                        })}
+                        {exam.attachments.map((uri, index) => (
+                            <AttachmentCard
+                                key={index}
+                                uri={uri}
+                                colors={colors}
+                                styles={styles}
+                                t={t}
+                                onOpen={handleOpenFile}
+                            />
+                        ))}
                     </View>
                 )}
             </ScrollView>
