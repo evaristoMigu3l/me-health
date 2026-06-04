@@ -128,6 +128,20 @@ export default function ExamDetailsScreen() {
 
     const handleOpenFile = async (uri: string) => {
         try {
+            // Pre-check: verify the file still exists before attempting to open it.
+            // getContentUriAsync crashes with a Java IOException if the parent
+            // directory was deleted (e.g., Android cleared the cache).
+            if (!uri.startsWith('content://')) {
+                const fileInfo = await FileSystem.getInfoAsync(uri);
+                if (!fileInfo.exists) {
+                    Alert.alert(
+                        t('file_unavailable'),
+                        t('file_unavailable_desc')
+                    );
+                    return;
+                }
+            }
+
             if (Platform.OS === 'android') {
                 const extension = uri.split('.').pop()?.toLowerCase();
                 let mimeType = '*/*';
@@ -148,18 +162,21 @@ export default function ExamDetailsScreen() {
                 });
             } else {
                 if (!(await Sharing.isAvailableAsync())) {
-                    alert(t('error')); // Assuming we have a general error key or create one
+                    Alert.alert(t('error'), t('file_unavailable_desc'));
                     return;
                 }
                 await Sharing.shareAsync(uri);
             }
         } catch (e: any) {
             console.log('File open error:', e);
-            Alert.alert(t('error'), `${t('error')}: ${e.message || JSON.stringify(e)}`);
-            // Fallback commented out to verify error
-            // if (await Sharing.isAvailableAsync()) {
-            //    await Sharing.shareAsync(uri);
-            // }
+            // Fallback: try sharing if direct open failed
+            try {
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(uri);
+                    return;
+                }
+            } catch { /* ignore fallback errors */ }
+            Alert.alert(t('file_unavailable'), t('file_unavailable_desc'));
         }
     };
 

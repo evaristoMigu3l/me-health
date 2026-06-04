@@ -1,0 +1,365 @@
+Listed directory Me%20&%20health%20v%202.0
+Ran command: `git clone https://github.com/evaristoMigu3l/me-health.git .`
+Used tool: manage_task
+Used tool: schedule
+
+I've started cloning the repository into the workspace folder `Me & health v 2.0`. I'll verify when it completes and then list the files to begin analyzing the project.
+
+Used tool: manage_task
+Used tool: schedule
+
+Checking the cloning task status again. It's still running, I'll check back in a few seconds.
+
+Used tool: manage_task
+Used tool: schedule
+
+Checking the clone task again. Still running, I will check again in 15 seconds.
+
+Used tool: manage_task
+Viewed task-7.log:1-3
+Listed directory Me%20&%20health%20v%202.0
+Viewed package.json:1-59
+Ran command: `npm install`
+Listed directory app
+Listed directory %28tabs%29
+Listed directory components
+Listed directory ui
+Listed directory hooks
+Listed directory stores
+Listed directory types
+Listed directory utils
+Used tool: manage_task
+Viewed index.ts:1-160
+Used tool: manage_task
+Viewed useHealthStore.ts:1-168
+Viewed useAuthStore.ts:1-68
+Used tool: manage_task
+Viewed useThemeStore.ts:1-34
+Viewed useUserStore.ts:1-25
+Viewed useAppTheme.ts:1-49
+Viewed useTranslation.ts:1-27
+Used tool: manage_task
+Viewed notifications.ts:1-225
+Used tool: manage_task
+Viewed _layout.tsx:1-91
+Viewed LockScreen.tsx:1-213
+Used tool: manage_task
+Viewed index.tsx:1-195
+Used tool: manage_task
+Viewed guide.md:1-298
+Used tool: manage_task
+Used tool: schedule
+
+Dependencies installation (`npm install`) is still running. I've set a timer to check again in 30 seconds.
+
+Used tool: manage_task
+Viewed task-36.log:1-7
+Used tool: schedule
+
+Checking on `npm install` again. It's still running, so I've scheduled a 40-second timer to check when it finishes.
+
+Viewed track.tsx:1-65
+Viewed exportData.ts:1-292
+Viewed app.json:1-61
+Viewed disable_modal_animations.js:1-61
+Viewed fix_missing_colors.js:1-66
+Viewed fix_unmount_flicker.js:1-73
+Viewed typescript-errors.txt:1-33
+Ran command: `npx tsc --noEmit`
+Ran command: `node -v`
+Ran command: `node node_modules/typescript/bin/tsc --noEmit`
+Used tool: schedule
+
+Checking the local `tsc` run status. I'll check back in 10 seconds.
+
+Viewed tsconfig.json:1-7
+Viewed profile.tsx:1-268
+Viewed i18n.ts:1-494
+Viewed settings.tsx:1-385
+Viewed SearchableDropdown.tsx:1-86
+Viewed TrendChart.tsx:1-122
+
+I have successfully cloned the repository and installed all the dependencies. You are now fully set up to build, debug, and run the app.
+
+---
+
+# Architecture Blueprint: Me & Health
+
+This application is a highly comprehensive **React Native + Expo** application designed to serve as a personal health companion. It uses **Expo Router** for file-based navigation, **Zustand** for state management (persisted via `AsyncStorage`), and **NativeWind** (Tailwind CSS) paired with custom `StyleSheet` styling for a rich, modern design.
+
+Below is an in-depth breakdown of how the folders, files, and layers are interconnected.
+
+---
+
+## 1. Data Layer & Models
+All data models used to store health metrics, user properties, and app settings are declared in a centralized file:
+
+* [types/index.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/types/index.ts): Declares TypeScript interfaces defining the shape of each health entity in the application:
+  * `UserProfile`: User information (name, dob, gender, ethnicity, avatarUri).
+  * `Symptom`: Logged symptom data (intensity, duration, location, optional images).
+  * `Medication`: Medication logs, dosage units, frequency patterns, custom schedules, and reminders.
+  * `Measurement`: Readings (Blood Pressure, Heart Rate, BMI, etc.) and units.
+  * `Diagnosis`, `MoodLog`, `DietPlan`, `Investigation` (Scans/Exams), `Activity` (Exercise/Tasks), `SleepLog`, `FoodEntry` (Nutrition), `Document`, `Appointment`, and `HCP` (Healthcare Professionals).
+  * `AppSettings`: Settings configurations.
+
+---
+
+## 2. State Management Layer (Stores)
+The app uses Zustand stores to hold persisted health, user, authentication, and layout preferences:
+
+* [stores/useHealthStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useHealthStore.ts): Manages all arrays of logged health items (symptoms, activities, sleep logs, etc.). 
+  * Integrates with notification triggers (e.g., adding/updating a medication schedules reminders; deleting it cancels them).
+  * Persists automatically using `AsyncStorage` under the key `health-storage`.
+* [stores/useAuthStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useAuthStore.ts): Manages security logic, PIN locking, and biometric enrollment status (using `expo-secure-store` and `expo-local-authentication`).
+  * Features `savePin`, `verifyPin`, `clearPin`, and `authenticateWithBiometric`.
+  * Persists under the key `auth-storage`, except for the `isLocked` flag (which is intentionally reset to `true` on cold starts if a PIN exists).
+* [stores/useUserStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useUserStore.ts): Stores the user profile configuration and persists under the key `user-storage`.
+* [stores/useThemeStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useThemeStore.ts): Manages the current language (English/Portuguese), the theme preference (light/dark/system), and notification alert sounds. Persists under `theme-storage`.
+
+---
+
+## 3. Utility & Core Helpers Layer
+* [utils/i18n.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/utils/i18n.ts): Holds the multi-lingual dictionaries supporting English (`en`) and Portuguese (`pt`) for every UI string.
+* [utils/notifications.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/utils/notifications.ts): Configures Expo notifications. Computes upcoming dose timings for daily/relative triggers and registers them with the device.
+* [utils/exportData.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/utils/exportData.ts): Controls file sharing and generation:
+  * Generates clean `.json` file backup formats of the stores.
+  * Exports formatted CSV files summarizing all logs.
+  * Leverages `expo-print` to transform CSS-styled HTML reports into PDF files and open the OS share sheet.
+
+---
+
+## 4. Custom Hooks Layer
+* [hooks/useAppTheme.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/hooks/useAppTheme.ts): Detects current color themes. Extracts light or dark configurations (`colors.background`, `colors.surface`, `colors.primary`, etc.) for clean component consumption.
+* [hooks/useTranslation.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/hooks/useTranslation.ts): Exposes the `t` function to render correctly localized labels based on the currently selected language in `useThemeStore`.
+
+---
+
+## 5. UI Components Layer
+* [components/LockScreen.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/components/LockScreen.tsx): The secure keypad input screen for setting up PINs, confirming PIN configurations, and entering PINs/biometrics to unlock the application.
+* [components/EditProfileModal.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/components/EditProfileModal.tsx): An overlay interface enabling profile detail changes.
+* `components/ui/` Subfolder: Highly styled UI building blocks:
+  * `SearchableDropdown.tsx`: Modal list autocomplete helper to select symptoms, medications, etc.
+  * `TrendChart.tsx`: Built with `react-native-gifted-charts` for presenting historical measurement trendlines.
+  * `CircularProgressRing.tsx`, `HealthDataCard.tsx`, `ActionCard.tsx`, `CategoryButton.tsx`.
+
+---
+
+## 6. Page Routing Layer (`app/`)
+Uses file-based routing to hook screens up:
+
+* [app/_layout.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/_layout.tsx): **Root Entrypoint**. Instantiates the theme provider, coordinates splash screen hide timers, and registers an `AppState` event listener:
+  * Lock timing: When the app moves to the background, it starts a timer. If it remains there for more than 5 minutes, it flags `isLocked: true`.
+  * Lock overlay: Instead of unmounting the routing tree, the LockScreen is presented as a full-screen Modal overlay. This preserves state and eliminates unmount/remount flickers during unlock transitions.
+* `app/(tabs)/` folder: The bottom tab layout configuration:
+  * [index.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/index.tsx): Dashboard summarizing today's logged data, shortcuts, medications, and sleep.
+  * [track.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/track.tsx): Simple list linking to individual logs or creation forms.
+  * [profile.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/profile.tsx): Profile management, PIN/biometric controls, and preferences.
+* `app/settings.tsx` [Settings Screen](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/settings.tsx): Central screen for units, audio previews, notifications, backups, and file exports.
+* Logs & Add forms (e.g. `add-symptom.tsx`, `symptoms-log.tsx`, `symptom-details.tsx`): Screens allowing the user to view lists of past entries, create new items, or edit/delete specific logs.
+
+---
+
+## 7. How the Flows Interconnect (Trace Example)
+
+Let's track what happens when a user **logs a symptom**:
+1. The user navigates to `/add-symptom` (which opens [app/add-symptom.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/add-symptom.tsx)).
+2. The user types a symptom name (aided by `SearchableDropdown`) and submits the form.
+3. The screen dispatches `addSymptom(newSymptom)` to [useHealthStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useHealthStore.ts).
+4. The store updates state and calls `AsyncStorage` under the hood to preserve it.
+5. The user is redirected back. Both [index.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/index.tsx) and [symptoms-log.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/symptoms-log.tsx) re-render reactively since they consume the store.
+
+---
+
+## 8. Development & Patch Scripts
+In the root directory, there are utility scripts used to fix typical React Native and Expo Router quirks:
+* `fix_unmount_flicker.js`: Changes the modal visibility checks from `visible={!!selectedItem}` to a boolean state. This ensures that when the modal is closed, the item isn't immediately set to null, allowing the modal closing animation to finish cleanly without flickering or blanking out.
+* `fix_missing_colors.js`: Automatically patches components to ensure they import and invoke `useAppTheme()` instead of referencing missing theme styling structures.
+* `disable_modal_animations.js`: Standardizes animation timing across React Native Modals by turning off default transition loops.
+
+---
+
+We are fully set up and ready to begin. What feature or optimization would you like to build first?
+
+
+
+Listed directory Me%20&%20health%20v%202.0
+Ran command: `git clone https://github.com/evaristoMigu3l/me-health.git .`
+Used tool: manage_task
+Used tool: schedule
+
+I've started cloning the repository into the workspace folder `Me & health v 2.0`. I'll verify when it completes and then list the files to begin analyzing the project.
+
+Used tool: manage_task
+Used tool: schedule
+
+Checking the cloning task status again. It's still running, I'll check back in a few seconds.
+
+Used tool: manage_task
+Used tool: schedule
+
+Checking the clone task again. Still running, I will check again in 15 seconds.
+
+Used tool: manage_task
+Viewed task-7.log:1-3
+Listed directory Me%20&%20health%20v%202.0
+Viewed package.json:1-59
+Ran command: `npm install`
+Listed directory app
+Listed directory %28tabs%29
+Listed directory components
+Listed directory ui
+Listed directory hooks
+Listed directory stores
+Listed directory types
+Listed directory utils
+Used tool: manage_task
+Viewed index.ts:1-160
+Used tool: manage_task
+Viewed useHealthStore.ts:1-168
+Viewed useAuthStore.ts:1-68
+Used tool: manage_task
+Viewed useThemeStore.ts:1-34
+Viewed useUserStore.ts:1-25
+Viewed useAppTheme.ts:1-49
+Viewed useTranslation.ts:1-27
+Used tool: manage_task
+Viewed notifications.ts:1-225
+Used tool: manage_task
+Viewed _layout.tsx:1-91
+Viewed LockScreen.tsx:1-213
+Used tool: manage_task
+Viewed index.tsx:1-195
+Used tool: manage_task
+Viewed guide.md:1-298
+Used tool: manage_task
+Used tool: schedule
+
+Dependencies installation (`npm install`) is still running. I've set a timer to check again in 30 seconds.
+
+Used tool: manage_task
+Viewed task-36.log:1-7
+Used tool: schedule
+
+Checking on `npm install` again. It's still running, so I've scheduled a 40-second timer to check when it finishes.
+
+Viewed track.tsx:1-65
+Viewed exportData.ts:1-292
+Viewed app.json:1-61
+Viewed disable_modal_animations.js:1-61
+Viewed fix_missing_colors.js:1-66
+Viewed fix_unmount_flicker.js:1-73
+Viewed typescript-errors.txt:1-33
+Ran command: `npx tsc --noEmit`
+Ran command: `node -v`
+Ran command: `node node_modules/typescript/bin/tsc --noEmit`
+Used tool: schedule
+
+Checking the local `tsc` run status. I'll check back in 10 seconds.
+
+Viewed tsconfig.json:1-7
+Viewed profile.tsx:1-268
+Viewed i18n.ts:1-494
+Viewed settings.tsx:1-385
+Viewed SearchableDropdown.tsx:1-86
+Viewed TrendChart.tsx:1-122
+
+I have successfully cloned the repository and installed all the dependencies. You are now fully set up to build, debug, and run the app.
+
+---
+
+# Architecture Blueprint: Me & Health
+
+This application is a highly comprehensive **React Native + Expo** application designed to serve as a personal health companion. It uses **Expo Router** for file-based navigation, **Zustand** for state management (persisted via `AsyncStorage`), and **NativeWind** (Tailwind CSS) paired with custom `StyleSheet` styling for a rich, modern design.
+
+Below is an in-depth breakdown of how the folders, files, and layers are interconnected.
+
+---
+
+## 1. Data Layer & Models
+All data models used to store health metrics, user properties, and app settings are declared in a centralized file:
+
+* [types/index.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/types/index.ts): Declares TypeScript interfaces defining the shape of each health entity in the application:
+  * `UserProfile`: User information (name, dob, gender, ethnicity, avatarUri).
+  * `Symptom`: Logged symptom data (intensity, duration, location, optional images).
+  * `Medication`: Medication logs, dosage units, frequency patterns, custom schedules, and reminders.
+  * `Measurement`: Readings (Blood Pressure, Heart Rate, BMI, etc.) and units.
+  * `Diagnosis`, `MoodLog`, `DietPlan`, `Investigation` (Scans/Exams), `Activity` (Exercise/Tasks), `SleepLog`, `FoodEntry` (Nutrition), `Document`, `Appointment`, and `HCP` (Healthcare Professionals).
+  * `AppSettings`: Settings configurations.
+
+---
+
+## 2. State Management Layer (Stores)
+The app uses Zustand stores to hold persisted health, user, authentication, and layout preferences:
+
+* [stores/useHealthStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useHealthStore.ts): Manages all arrays of logged health items (symptoms, activities, sleep logs, etc.). 
+  * Integrates with notification triggers (e.g., adding/updating a medication schedules reminders; deleting it cancels them).
+  * Persists automatically using `AsyncStorage` under the key `health-storage`.
+* [stores/useAuthStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useAuthStore.ts): Manages security logic, PIN locking, and biometric enrollment status (using `expo-secure-store` and `expo-local-authentication`).
+  * Features `savePin`, `verifyPin`, `clearPin`, and `authenticateWithBiometric`.
+  * Persists under the key `auth-storage`, except for the `isLocked` flag (which is intentionally reset to `true` on cold starts if a PIN exists).
+* [stores/useUserStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useUserStore.ts): Stores the user profile configuration and persists under the key `user-storage`.
+* [stores/useThemeStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useThemeStore.ts): Manages the current language (English/Portuguese), the theme preference (light/dark/system), and notification alert sounds. Persists under `theme-storage`.
+
+---
+
+## 3. Utility & Core Helpers Layer
+* [utils/i18n.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/utils/i18n.ts): Holds the multi-lingual dictionaries supporting English (`en`) and Portuguese (`pt`) for every UI string.
+* [utils/notifications.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/utils/notifications.ts): Configures Expo notifications. Computes upcoming dose timings for daily/relative triggers and registers them with the device.
+* [utils/exportData.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/utils/exportData.ts): Controls file sharing and generation:
+  * Generates clean `.json` file backup formats of the stores.
+  * Exports formatted CSV files summarizing all logs.
+  * Leverages `expo-print` to transform CSS-styled HTML reports into PDF files and open the OS share sheet.
+
+---
+
+## 4. Custom Hooks Layer
+* [hooks/useAppTheme.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/hooks/useAppTheme.ts): Detects current color themes. Extracts light or dark configurations (`colors.background`, `colors.surface`, `colors.primary`, etc.) for clean component consumption.
+* [hooks/useTranslation.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/hooks/useTranslation.ts): Exposes the `t` function to render correctly localized labels based on the currently selected language in `useThemeStore`.
+
+---
+
+## 5. UI Components Layer
+* [components/LockScreen.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/components/LockScreen.tsx): The secure keypad input screen for setting up PINs, confirming PIN configurations, and entering PINs/biometrics to unlock the application.
+* [components/EditProfileModal.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/components/EditProfileModal.tsx): An overlay interface enabling profile detail changes.
+* `components/ui/` Subfolder: Highly styled UI building blocks:
+  * `SearchableDropdown.tsx`: Modal list autocomplete helper to select symptoms, medications, etc.
+  * `TrendChart.tsx`: Built with `react-native-gifted-charts` for presenting historical measurement trendlines.
+  * `CircularProgressRing.tsx`, `HealthDataCard.tsx`, `ActionCard.tsx`, `CategoryButton.tsx`.
+
+---
+
+## 6. Page Routing Layer (`app/`)
+Uses file-based routing to hook screens up:
+
+* [app/_layout.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/_layout.tsx): **Root Entrypoint**. Instantiates the theme provider, coordinates splash screen hide timers, and registers an `AppState` event listener:
+  * Lock timing: When the app moves to the background, it starts a timer. If it remains there for more than 5 minutes, it flags `isLocked: true`.
+  * Lock overlay: Instead of unmounting the routing tree, the LockScreen is presented as a full-screen Modal overlay. This preserves state and eliminates unmount/remount flickers during unlock transitions.
+* `app/(tabs)/` folder: The bottom tab layout configuration:
+  * [index.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/index.tsx): Dashboard summarizing today's logged data, shortcuts, medications, and sleep.
+  * [track.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/track.tsx): Simple list linking to individual logs or creation forms.
+  * [profile.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/profile.tsx): Profile management, PIN/biometric controls, and preferences.
+* `app/settings.tsx` [Settings Screen](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/settings.tsx): Central screen for units, audio previews, notifications, backups, and file exports.
+* Logs & Add forms (e.g. `add-symptom.tsx`, `symptoms-log.tsx`, `symptom-details.tsx`): Screens allowing the user to view lists of past entries, create new items, or edit/delete specific logs.
+
+---
+
+## 7. How the Flows Interconnect (Trace Example)
+
+Let's track what happens when a user **logs a symptom**:
+1. The user navigates to `/add-symptom` (which opens [app/add-symptom.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/add-symptom.tsx)).
+2. The user types a symptom name (aided by `SearchableDropdown`) and submits the form.
+3. The screen dispatches `addSymptom(newSymptom)` to [useHealthStore.ts](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/stores/useHealthStore.ts).
+4. The store updates state and calls `AsyncStorage` under the hood to preserve it.
+5. The user is redirected back. Both [index.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/(tabs)/index.tsx) and [symptoms-log.tsx](file:///c:/Users/Evaristo/Documents/Development/React-Projects/Codehub_react/Me%20&%20health%20v%202.0/app/symptoms-log.tsx) re-render reactively since they consume the store.
+
+---
+
+## 8. Development & Patch Scripts
+In the root directory, there are utility scripts used to fix typical React Native and Expo Router quirks:
+* `fix_unmount_flicker.js`: Changes the modal visibility checks from `visible={!!selectedItem}` to a boolean state. This ensures that when the modal is closed, the item isn't immediately set to null, allowing the modal closing animation to finish cleanly without flickering or blanking out.
+* `fix_missing_colors.js`: Automatically patches components to ensure they import and invoke `useAppTheme()` instead of referencing missing theme styling structures.
+* `disable_modal_animations.js`: Standardizes animation timing across React Native Modals by turning off default transition loops.
+
+---
+
+We are fully set up and ready to begin. What feature or optimization would you like to build first?

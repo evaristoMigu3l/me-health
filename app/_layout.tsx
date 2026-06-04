@@ -8,6 +8,7 @@ import { AppState, AppStateStatus, View, Modal, LogBox } from 'react-native';
 import { useAuthStore } from '../stores/useAuthStore';
 import LockScreen from '../components/LockScreen';
 import * as SplashScreen from 'expo-splash-screen';
+import { migrateAttachmentsToPersistentStorage } from '../utils/migrateAttachments';
 
 // Ignore specific warnings from expo-notifications in Expo Go
 LogBox.ignoreLogs(['warnOfExpoGoPushUsage', 'Calling getDevicePushTokenAsync']);
@@ -24,6 +25,11 @@ export default function RootLayout() {
     // Lock on first launch if PIN exists
     useEffect(() => {
         if (hasPin) setIsLocked(true);
+    }, []);
+
+    // Migrate old cache-based attachment URIs to persistent storage (runs once)
+    useEffect(() => {
+        migrateAttachmentsToPersistentStorage();
     }, []);
 
     // Lock when app stays in background for more than 60 seconds

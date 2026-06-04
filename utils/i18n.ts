@@ -490,4 +490,16 @@ export const translations: Dictionary = {
     remove_pin_confirm: { en: 'Are you sure you want to remove your PIN?', pt: 'Tem certeza que deseja remover o seu PIN?' },
     set_up: { en: 'Set Up', pt: 'Configurar' },
 
+    // Exam attachments & file handling
+    file_unavailable: { en: 'File Unavailable', pt: 'Arquivo Indisponível' },
+    file_unavailable_desc: { en: 'This file is no longer available. It may have been removed by the system to free up storage. Please re-attach it.', pt: 'Este arquivo não está mais disponível. Ele pode ter sido removido pelo sistema para liberar espaço. Por favor, anexe-o novamente.' },
+    open: { en: 'Open', pt: 'Abrir' },
+    linked_appointment: { en: 'Linked Appointment', pt: 'Consulta Vinculada' },
+    edit_exam: { en: 'Edit Exam', pt: 'Editar Exame' },
+    exam_not_found: { en: 'Exam Not Found', pt: 'Exame Não Encontrado' },
+    exam_not_found_desc: { en: 'This exam record could not be found.', pt: 'Este registro de exame não foi encontrado.' },
+    linked: { en: 'Linked', pt: 'Vinculado' },
+    appointment: { en: 'Appointment', pt: 'Consulta' },
+    no_diagnoses_recorded: { en: 'No diagnoses recorded', pt: 'Nenhum diagnóstico registrado' },
+
 };
