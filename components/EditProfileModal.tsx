@@ -45,7 +45,7 @@ export default function EditProfileModal({ visible, onClose, form, onChange, onS
             hardwareAccelerated
             onRequestClose={onClose}
         >
-            <KeyboardAvoidingView style={styles.overlay} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <KeyboardAvoidingView style={styles.overlay} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
                 <View style={[styles.sheet, { backgroundColor: colors.surface }]}>
                     <View style={styles.header}>
                         <Text style={[styles.title, { color: colors.text }]}>{t('edit_profile')}</Text>
@@ -57,7 +57,8 @@ export default function EditProfileModal({ visible, onClose, form, onChange, onS
                     <ScrollView 
                         showsVerticalScrollIndicator={false} 
                         keyboardShouldPersistTaps="handled"
-                        contentContainerStyle={{ paddingBottom: 20 }}
+                        contentContainerStyle={{ paddingBottom: 40 }}
+                        bounces={false}
                     >
                             {([
                                 { label: t('full_name') + ' *', field: 'name' as const, placeholder: t('your_name'), keyboard: 'default' as const },

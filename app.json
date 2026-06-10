@@ -27,7 +27,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "pan",
+      "softwareKeyboardLayoutMode": "resize",
       "package": "com.evarist0.meandhealth"
     },
     "web": {
